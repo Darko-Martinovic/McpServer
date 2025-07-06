@@ -14,15 +14,24 @@ public static class SupermarketMcpTools
     {
         try
         {
-            Serilog.Log.Information("MCP Tool 'GetProducts' called");
+            // Log to Serilog
+            Serilog.Log.Information("MCP Tool 'GetProducts' called at {Timestamp}", DateTime.Now);
+
+            // Also write to a simple debug file to verify tool execution
+            await File.AppendAllTextAsync("debug-tool-calls.txt", $"{DateTime.Now:yyyy-MM-dd HH:mm:ss.fff}: GetProducts called\n");
+
             var products = await dataService.GetProductsAsync();
             var result = JsonSerializer.Serialize(products, new JsonSerializerOptions { WriteIndented = true });
+
             Serilog.Log.Information("MCP Tool 'GetProducts' completed successfully. Returned {Count} products", products.Count());
+            await File.AppendAllTextAsync("debug-tool-calls.txt", $"{DateTime.Now:yyyy-MM-dd HH:mm:ss.fff}: GetProducts completed with {products.Count()} products\n");
+
             return result;
         }
         catch (Exception ex)
         {
             Serilog.Log.Error(ex, "MCP Tool 'GetProducts' failed: {Message}", ex.Message);
+            await File.AppendAllTextAsync("debug-tool-calls.txt", $"{DateTime.Now:yyyy-MM-dd HH:mm:ss.fff}: GetProducts failed: {ex.Message}\n");
             return $"Error retrieving products: {ex.Message}";
         }
     }

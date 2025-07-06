@@ -30,7 +30,8 @@ Log.Logger = new LoggerConfiguration()
     .WriteTo.File(
         path: "Logs/mcpserver.log",
         rollingInterval: RollingInterval.Day,
-        retainedFileCountLimit: 7)
+        retainedFileCountLimit: 7,
+        flushToDiskInterval: TimeSpan.FromSeconds(1))
     .Enrich.FromLogContext()
     .CreateLogger();
 
