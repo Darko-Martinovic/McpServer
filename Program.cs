@@ -19,8 +19,8 @@ builder.Configuration.AddJsonFile("appsettings.json", optional: true, reloadOnCh
 Directory.CreateDirectory("Logs");
 
 // Configure Serilog explicitly to avoid any console output issues
-Log.Logger = new LoggerConfiguration()
-    .MinimumLevel.Information()
+Log.Logger = new LoggerConfiguration().MinimumLevel
+    .Information()
     .MinimumLevel.Override("Microsoft", Serilog.Events.LogEventLevel.Warning)
     .MinimumLevel.Override("System", Serilog.Events.LogEventLevel.Warning)
     .MinimumLevel.Override("ModelContextProtocol", Serilog.Events.LogEventLevel.Information)
@@ -28,7 +28,8 @@ Log.Logger = new LoggerConfiguration()
         path: "Logs/mcpserver.log",
         rollingInterval: RollingInterval.Day,
         retainedFileCountLimit: 7,
-        flushToDiskInterval: TimeSpan.FromSeconds(1))
+        flushToDiskInterval: TimeSpan.FromSeconds(1)
+    )
     .Enrich.FromLogContext()
     .CreateLogger();
 
@@ -46,17 +47,15 @@ builder.Services.Configure<ConnectionStringOptions>(options =>
     else
     {
         // Fallback connection string if config file is missing
-        options.DefaultConnection = "Server=DARKO\\SQLEXPRESS;Database=SupermarketDB;Integrated Security=true;TrustServerCertificate=true;";
+        options.DefaultConnection =
+            "Server=DARKO\\SQLEXPRESS;Database=SupermarketDB;Integrated Security=true;TrustServerCertificate=true;";
     }
 });
 
 builder.Services.AddScoped<ISupermarketDataService, SupermarketDataService>();
 
 // Configure MCP server
-builder.Services
-    .AddMcpServer()
-    .WithStdioServerTransport()
-    .WithToolsFromAssembly();
+builder.Services.AddMcpServer().WithStdioServerTransport().WithToolsFromAssembly();
 
 try
 {
@@ -64,12 +63,20 @@ try
     var logger = host.Services.GetRequiredService<ILogger<Program>>();
 
     // Log startup information (this goes to file via Serilog)
-    logger.LogInformation("Supermarket MCP Server starting up... [Version with enhanced logging - Build {BuildTime}]", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
-    logger.LogInformation("Database connection: {ConnectionString}",
-        builder.Configuration.GetConnectionString("DefaultConnection") ?? "Using fallback connection");
+    logger.LogInformation(
+        "Supermarket MCP Server starting up... [Version with enhanced logging - Build {BuildTime}]",
+        DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
+    );
+    logger.LogInformation(
+        "Database connection: {ConnectionString}",
+        builder.Configuration.GetConnectionString("DefaultConnection")
+            ?? "Using fallback connection"
+    );
 
     // Write startup debug info to stderr (not stdout to avoid breaking MCP)
-    Console.Error.WriteLine($"[DEBUG] MCP Server with enhanced logging starting at {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
+    Console.Error.WriteLine(
+        $"[DEBUG] MCP Server with enhanced logging starting at {DateTime.Now:yyyy-MM-dd HH:mm:ss}"
+    );
     Console.Error.WriteLine($"[DEBUG] Logging to: Logs/mcpserver.log");
 
     await host.RunAsync();

@@ -1,10 +1,7 @@
 using ModelContextProtocol.Server;
 using System.ComponentModel;
 using System.Text.Json;
-using Microsoft.Extensions.Logging;
 using McpServer.Services.Interfaces;
-using McpServer.Models;
-using McpServer.Services;
 
 [McpServerToolType]
 public static class SupermarketMcpTools
