@@ -67,12 +67,12 @@ try
     var logger = host.Services.GetRequiredService<ILogger<Program>>();
 
     // Log startup information (this goes to file via Serilog)
-    logger.LogInformation("Supermarket MCP Server starting up...");
+    logger.LogInformation("Supermarket MCP Server starting up... [Version with enhanced logging - Build {BuildTime}]", DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss"));
     logger.LogInformation("Database connection: {ConnectionString}",
         builder.Configuration.GetConnectionString("DefaultConnection") ?? "Using fallback connection");
 
     // Write startup debug info to stderr (not stdout to avoid breaking MCP)
-    Console.Error.WriteLine($"[DEBUG] MCP Server starting at {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
+    Console.Error.WriteLine($"[DEBUG] MCP Server with enhanced logging starting at {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
     Console.Error.WriteLine($"[DEBUG] Logging to: Logs/mcpserver.log");
 
     await host.RunAsync();
