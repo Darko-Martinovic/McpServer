@@ -137,6 +137,17 @@ After configuration, Claude should be able to access the supermarket tools:
 - GetLowStockProducts
 - GetSalesByCategory
 
+### Editing the Claude Desktop Configuration
+
+To use the MCP server with the Anthropic Claude Desktop app, you must edit the configuration file:
+
+- **File name:** `claude_desktop_config.json`
+- **Typical location:**  
+  `C:\Users\<YourUsername>\AppData\Roaming\Claude`
+
+Open this file in a text editor and add or update the MCP server configuration as shown in the examples above.
+After saving your changes, restart the Claude Desktop app for the new settings to take effect.
+
 ## Testing Scripts
 
 The project includes testing scripts for different environments:
