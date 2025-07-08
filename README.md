@@ -73,6 +73,70 @@ Analyzes sales performance by product category.
 
 3. Open the web interface provided by the inspector to test the tools.
 
+## Configuring Claude from Anthropic as MCP Client
+
+To use this MCP server with Claude from Anthropic, you need to configure Claude's MCP settings. Here are two configuration examples:
+
+### Development Configuration (Using dotnet run)
+
+For development and testing, use the `dotnet run` command:
+
+```json
+{
+  "mcpServers": {
+    "supermarket": {
+      "command": "dotnet",
+      "args": [
+        "run",
+        "--project",
+        "/path/to/your/McpServer",
+        "--no-build"
+      ]
+    }
+  }
+}
+```
+
+**Note**: Replace `/path/to/your/McpServer` with the actual path to your project folder.
+
+### Production Configuration (Using Published Application)
+
+For production deployment, first publish the application:
+
+```bash
+dotnet publish -c Release -o publish
+```
+
+Then use the published executable in your MCP configuration:
+
+```json
+{
+  "mcpServers": {
+    "supermarket": {
+      "command": "/path/to/your/McpServer/publish/McpServer.exe"
+    }
+  }
+}
+```
+
+**Note**: Replace `/path/to/your/McpServer/publish/McpServer.exe` with the actual path to your published executable.
+
+### Configuration Steps
+
+1. **Open Claude's MCP Settings**: In Claude's interface, navigate to the MCP configuration section
+2. **Add the Configuration**: Paste the appropriate JSON configuration above
+3. **Update Paths**: Replace the placeholder paths with your actual project or published directory paths
+4. **Save and Restart**: Save the configuration and restart Claude to load the MCP server
+
+### Verification
+
+After configuration, Claude should be able to access the supermarket tools:
+- GetProducts
+- GetSalesData
+- GetTotalRevenue
+- GetLowStockProducts
+- GetSalesByCategory
+
 ## Testing Scripts
 
 The project includes testing scripts for different environments:
