@@ -10,4 +10,9 @@ public interface ISupermarketDataService
     Task<decimal> GetTotalRevenueAsync(DateTime startDate, DateTime endDate);
     Task<IEnumerable<Product>> GetLowStockProductsAsync(int threshold);
     Task<IEnumerable<CategorySales>> GetSalesByCategoryAsync(DateTime startDate, DateTime endDate);
+
+    // MCP Resource methods
+    Task<IEnumerable<InventoryStatus>> GetInventoryStatusAsync();
+    Task<IEnumerable<DailySummary>> GetDailySummaryAsync(DateTime? date = null);
+    Task<IEnumerable<Product>> GetDetailedInventoryAsync();
 }

@@ -207,4 +207,89 @@ public static class SupermarketMcpTools
             return $"Error retrieving category sales: {ex.Message}";
         }
     }
+
+    // === RESOURCE-LIKE TOOLS (Real-time Data) ===
+
+    [McpServerTool, Description("Get real-time inventory status with stock levels and recent sales data")]
+    public static async Task<string> GetInventoryStatus(ISupermarketDataService dataService)
+    {
+        try
+        {
+            Serilog.Log.Information("MCP Tool 'GetInventoryStatus' called at {Timestamp}", DateTime.Now);
+
+            var inventoryStatus = await dataService.GetInventoryStatusAsync();
+            var result = JsonSerializer.Serialize(inventoryStatus, new JsonSerializerOptions
+            {
+                WriteIndented = true
+            });
+
+            Serilog.Log.Information("MCP Tool 'GetInventoryStatus' completed successfully. Returned {Count} products", inventoryStatus.Count());
+            return result;
+        }
+        catch (Exception ex)
+        {
+            Serilog.Log.Error(ex, "MCP Tool 'GetInventoryStatus' failed: {Message}", ex.Message);
+            return $"Error retrieving inventory status: {ex.Message}";
+        }
+    }
+
+    [McpServerTool, Description("Get daily sales summary with transactions and revenue data (today by default)")]
+    public static async Task<string> GetDailySummary(
+        ISupermarketDataService dataService,
+        [Description("Specific date in YYYY-MM-DD format (optional, defaults to today)")] string? date = null
+    )
+    {
+        try
+        {
+            Serilog.Log.Information("MCP Tool 'GetDailySummary' called with date: {Date}", date ?? "today");
+
+            DateTime? targetDate = null;
+            if (!string.IsNullOrEmpty(date))
+            {
+                if (!DateTime.TryParse(date, out var parsedDate))
+                {
+                    Serilog.Log.Warning("MCP Tool 'GetDailySummary' validation failed: Invalid date format");
+                    return "Invalid date format. Please use YYYY-MM-DD format.";
+                }
+                targetDate = parsedDate;
+            }
+
+            var dailySummary = await dataService.GetDailySummaryAsync(targetDate);
+            var result = JsonSerializer.Serialize(dailySummary, new JsonSerializerOptions
+            {
+                WriteIndented = true
+            });
+
+            Serilog.Log.Information("MCP Tool 'GetDailySummary' completed successfully. Returned {Count} summaries", dailySummary.Count());
+            return result;
+        }
+        catch (Exception ex)
+        {
+            Serilog.Log.Error(ex, "MCP Tool 'GetDailySummary' failed: {Message}", ex.Message);
+            return $"Error retrieving daily summary: {ex.Message}";
+        }
+    }
+
+    [McpServerTool, Description("Get detailed inventory information for all products")]
+    public static async Task<string> GetDetailedInventory(ISupermarketDataService dataService)
+    {
+        try
+        {
+            Serilog.Log.Information("MCP Tool 'GetDetailedInventory' called at {Timestamp}", DateTime.Now);
+
+            var detailedInventory = await dataService.GetDetailedInventoryAsync();
+            var result = JsonSerializer.Serialize(detailedInventory, new JsonSerializerOptions
+            {
+                WriteIndented = true
+            });
+
+            Serilog.Log.Information("MCP Tool 'GetDetailedInventory' completed successfully. Returned {Count} products", detailedInventory.Count());
+            return result;
+        }
+        catch (Exception ex)
+        {
+            Serilog.Log.Error(ex, "MCP Tool 'GetDetailedInventory' failed: {Message}", ex.Message);
+            return $"Error retrieving detailed inventory: {ex.Message}";
+        }
+    }
 }
