@@ -1,16 +1,27 @@
 # Supermarket MCP Server
 
-A modern Model Context Protocol (MCP) server for supermarket inventory and sales management with dependency injection, clean architecture, and comprehensive logging.
+A modern Model Context Protocol (MCP) server for supermarket inventory and sales management with dependency injection, clean architecture, and comprehensive logging. Features real-time inventory monitoring, advanced sales analytics, and resource-like tools for AI integration.
 
 ## Features
 
-- **Product Management**: Get all products in inventory
-- **Sales Analytics**: Retrieve sales data for specific date ranges
-- **Revenue Tracking**: Calculate total revenue for periods
-- **Inventory Monitoring**: Identify products with low stock levels
-- **Category Analysis**: Get sales performance by product category
-- **Comprehensive Logging**: Structured logging with Serilog to file and console
+### Core Functionality
+- **Product Management**: Get all products in inventory with detailed information
+- **Sales Analytics**: Retrieve sales data for specific date ranges with comprehensive reporting
+- **Revenue Tracking**: Calculate total revenue for periods with detailed breakdowns
+- **Inventory Monitoring**: Identify products with low stock levels and automated alerts
+- **Category Analysis**: Get sales performance by product category with trend analysis
+
+### Advanced Resource-like Tools
+- **Real-time Inventory Status**: Live inventory monitoring with stock levels, reorder points, and recent sales data
+- **Daily Sales Summaries**: Automated daily reporting with transaction counts, revenue, and top-performing categories
+- **Detailed Inventory Reports**: Comprehensive product information for inventory management
+
+### Technical Features
+- **Comprehensive Logging**: Structured logging with Serilog to file (MCP protocol compliant)
 - **MCP Protocol Compliance**: Proper JSON-RPC communication with stderr output redirection
+- **Clean Architecture**: Dependency injection, service interfaces, and SOLID principles
+- **Database Integration**: SQL Server connectivity with advanced queries and performance monitoring
+- **Error Handling**: Robust exception handling with detailed logging and graceful degradation
 
 ## Prerequisites
 
@@ -34,20 +45,60 @@ A modern Model Context Protocol (MCP) server for supermarket inventory and sales
    }
    ```
 
-3. **Database Schema**: The database includes the following tables:
-   - `Products` (ProductId, ProductName, Category, Price, StockQuantity, Supplier)
+3. **Database Schema**: The database includes the following tables with enhanced functionality:
+   - `Products` (ProductId, ProductName, Category, Price, StockQuantity, Supplier, ReorderLevel, LastUpdated)
    - `Sales` (SaleId, ProductId, Quantity, UnitPrice, TotalAmount, SaleDate)
 
 ## Available Tools
 
+### Core Supermarket Tools
+
 ### GetProducts
-Retrieves all products in the supermarket inventory.
+Retrieves all products in the supermarket inventory with complete product information.
 
 ### GetSalesData
-Gets sales data for a specific date range.
+Gets comprehensive sales data for a specific date range with product details.
 - Parameters: `startDate` (YYYY-MM-DD), `endDate` (YYYY-MM-DD)
 
 ### GetTotalRevenue
+Calculates total revenue for a date range with detailed analytics.
+- Parameters: `startDate` (YYYY-MM-DD), `endDate` (YYYY-MM-DD)
+
+### GetLowStockProducts
+Identifies products with stock levels below a threshold for inventory management.
+- Parameters: `threshold` (default: 10)
+
+### GetSalesByCategory
+Analyzes sales performance by product category with detailed metrics.
+- Parameters: `startDate` (YYYY-MM-DD), `endDate` (YYYY-MM-DD)
+
+### Resource-like Tools (Real-time Data)
+
+### GetInventoryStatus
+**Real-time inventory monitoring** with comprehensive status information including:
+- Current stock levels and reorder points
+- Stock status classification (Out of Stock, Low Stock, Medium Stock, In Stock)
+- Recent sales data (last 7 days)
+- Last updated timestamps
+- Organized by category for easy management
+
+### GetDailySummary
+**Daily sales summary** with comprehensive business intelligence including:
+- Total transactions and revenue for the day
+- Number of unique products sold
+- Total items sold count
+- Average transaction value
+- Top-performing category and its revenue
+- Configurable date parameter (defaults to today)
+- Parameters: `date` (YYYY-MM-DD, optional - defaults to today)
+
+### GetDetailedInventory
+**Detailed inventory information** providing complete product catalog with:
+- Full product details and specifications
+- Current inventory levels
+- Pricing information
+- Supplier details
+- Ideal for comprehensive inventory audits and reporting
 Calculates total revenue for a date range.
 - Parameters: `startDate` (YYYY-MM-DD), `endDate` (YYYY-MM-DD)
 
@@ -130,12 +181,19 @@ Then use the published executable in your MCP configuration:
 
 ### Verification
 
-After configuration, Claude should be able to access the supermarket tools:
+After configuration, Claude should be able to access all supermarket tools:
+
+**Core Tools:**
 - GetProducts
-- GetSalesData
+- GetSalesData  
 - GetTotalRevenue
 - GetLowStockProducts
 - GetSalesByCategory
+
+**Resource-like Tools (Real-time Data):**
+- GetInventoryStatus
+- GetDailySummary
+- GetDetailedInventory
 
 ### Editing the Claude Desktop Configuration
 
