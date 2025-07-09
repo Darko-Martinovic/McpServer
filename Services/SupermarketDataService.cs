@@ -35,7 +35,7 @@ public class SupermarketDataService : ISupermarketDataService
             await connection.OpenAsync();
 
             var sql =
-                "SELECT ProductId, ProductName, Category, Price, StockQuantity, Supplier FROM Products";
+                "SELECT ProductId, ProductName, Category, UnitPrice, StockQuantity, Supplier FROM Products";
             LoggingHelper.LogDatabaseOperationStart(_logger, requestId, "GetProducts", sql);
 
             var stopwatch = System.Diagnostics.Stopwatch.StartNew();
@@ -50,7 +50,7 @@ public class SupermarketDataService : ISupermarketDataService
                         ProductId = reader.GetInt32("ProductId"),
                         ProductName = reader.GetString("ProductName"),
                         Category = reader.GetString("Category"),
-                        Price = reader.GetDecimal("Price"),
+                        Price = reader.GetDecimal("UnitPrice"),
                         StockQuantity = reader.GetInt32("StockQuantity"),
                         Supplier = reader.GetString("Supplier")
                     }
@@ -210,7 +210,7 @@ public class SupermarketDataService : ISupermarketDataService
             await connection.OpenAsync();
 
             var sql =
-                "SELECT ProductId, ProductName, Category, Price, StockQuantity, Supplier FROM Products WHERE StockQuantity <= @Threshold";
+                "SELECT ProductId, ProductName, Category, UnitPrice, StockQuantity, Supplier FROM Products WHERE StockQuantity <= @Threshold";
             LoggingHelper.LogDatabaseOperationStart(
                 _logger,
                 requestId,
@@ -232,7 +232,7 @@ public class SupermarketDataService : ISupermarketDataService
                         ProductId = reader.GetInt32("ProductId"),
                         ProductName = reader.GetString("ProductName"),
                         Category = reader.GetString("Category"),
-                        Price = reader.GetDecimal("Price"),
+                        Price = reader.GetDecimal("UnitPrice"),
                         StockQuantity = reader.GetInt32("StockQuantity"),
                         Supplier = reader.GetString("Supplier")
                     }
