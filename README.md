@@ -229,6 +229,141 @@ To use the MCP server with the Anthropic Claude Desktop app, you must edit the c
 Open this file in a text editor and add or update the MCP server configuration as shown in the examples above.
 After saving your changes, restart the Claude Desktop app for the new settings to take effect.
 
+## Asking Questions to Claude Desktop
+
+Once the MCP server is configured with Claude Desktop, you can ask various types of questions to leverage the supermarket data. Here are examples organized from basic single-tool queries to advanced multi-tool combinations.
+
+### 🔵 **Basic Questions (Single Tool)**
+
+#### Product Information
+
+- _"What products do you have in your inventory?"_
+- _"Show me all products in the dairy category"_
+- _"What's the price of milk products?"_
+
+#### Sales Analysis
+
+- _"What were the sales for last week?"_ (GetSalesData)
+- _"Show me total revenue for the month of June 2025"_ (GetTotalRevenue)
+- _"Which categories performed best last month?"_ (GetSalesByCategory)
+
+#### Inventory Management
+
+- _"What products are running low on stock?"_ (GetLowStockProducts)
+- _"Show me current inventory status"_ (GetInventoryStatus)
+- _"What's today's sales summary?"_ (GetDailySummary)
+
+### 🟡 **Intermediate Questions (2-3 Tools)**
+
+#### Stock and Sales Correlation
+
+- _"Show me low stock products and their recent sales performance"_
+  - Uses: GetLowStockProducts + GetInventoryStatus
+- _"What products need restocking based on current inventory and recent sales?"_
+  - Uses: GetInventoryStatus + GetSalesData
+
+#### Performance Analysis
+
+- _"Compare today's sales with inventory levels - what's selling well?"_
+  - Uses: GetDailySummary + GetInventoryStatus
+- _"Show me products with high inventory but low recent sales"_
+  - Uses: GetDetailedInventory + GetSalesData
+
+### 🔴 **Advanced Questions (Multiple Tool Combinations)**
+
+#### Comprehensive Business Intelligence
+
+- _"Give me a complete business overview: current inventory status, today's performance, products needing attention, and category analysis"_
+
+  - Uses: GetInventoryStatus + GetDailySummary + GetLowStockProducts + GetSalesByCategory
+
+- _"Analyze our business health: what's selling well, what's not moving, what needs restocking, and revenue trends"_
+  - Uses: GetInventoryStatus + GetSalesData + GetTotalRevenue + GetDetailedInventory
+
+#### Strategic Decision Making
+
+- _"I'm meeting with suppliers tomorrow - what should I order based on current stock, recent sales trends, and revenue impact?"_
+
+  - Uses: GetInventoryStatus + GetSalesData + GetTotalRevenue + GetSalesByCategory
+
+- _"Create a dashboard view showing inventory alerts, sales performance, and revenue analysis for management"_
+  - Uses: GetInventoryStatus + GetDailySummary + GetSalesByCategory + GetTotalRevenue
+
+#### Operational Optimization
+
+- _"Identify opportunities to optimize inventory levels based on sales velocity, current stock, and profitability"_
+
+  - Uses: GetInventoryStatus + GetSalesData + GetDetailedInventory + GetSalesByCategory
+
+- _"What products should I promote this week based on high inventory, low recent sales, and category performance?"_
+  - Uses: GetInventoryStatus + GetSalesData + GetSalesByCategory + GetDailySummary
+
+### 🎯 **Real-time Operational Questions**
+
+#### Daily Operations
+
+- _"What critical issues need my attention right now?"_
+- _"Show me out-of-stock items and their sales history"_
+- _"What categories are underperforming and why?"_
+- _"Calculate potential revenue loss from current stock-outs"_
+
+#### Supply Chain Management
+
+- _"Based on current inventory and sales trends, what will stock out in the next week?"_
+- _"Which supplier's products are performing best in terms of inventory turnover?"_
+- _"Show me products with unusual sales spikes that might deplete inventory quickly"_
+
+### 🔍 **Analytical Deep Dives**
+
+#### Trend Analysis
+
+- _"Compare this week's performance with the same period last month across all metrics"_
+- _"What's our inventory turnover rate by category and how does it correlate with profitability?"_
+- _"Identify seasonal patterns in our sales and inventory data"_
+
+#### Exception Management
+
+- _"Alert me to any unusual patterns: products with rapid stock depletion, categories with declining sales, or inventory imbalances"_
+- _"Show me products where actual sales significantly differ from expected patterns"_
+- _"Identify products that have been sitting in inventory longest without recent sales"_
+
+### 💡 **Advanced Business Scenarios**
+
+#### Financial Planning
+
+- _"Calculate our current inventory value, today's revenue, and projected losses from stock-outs"_
+- _"Show me the financial impact of our current inventory decisions"_
+- _"What's our most profitable product mix based on inventory investment and sales performance?"_
+
+#### Competitive Analysis
+
+- _"Which product categories drive the most revenue and how are their inventory levels?"_
+- _"What's our market positioning based on product availability and sales velocity?"_
+- _"Identify products where we're missing sales opportunities due to stock issues"_
+
+### 🚀 **Multi-dimensional Analysis**
+
+Claude can combine all tools to answer complex questions like:
+
+- _"Create a comprehensive report showing: current inventory health, today's sales performance, products requiring immediate action, revenue analysis by category, and recommendations for tomorrow's operations"_
+
+- _"Analyze our supermarket's operational efficiency: inventory turnover, sales trends, stock availability, category performance, and identify three key areas for improvement"_
+
+- _"Prepare a business intelligence summary for the weekly management meeting covering: performance metrics, inventory status, category analysis, and strategic recommendations"_
+
+### 🎯 **Key Advantages**
+
+With the enhanced MCP tools, Claude can:
+
+- **Provide real-time insights** without needing specific date parameters
+- **Combine multiple data sources** for comprehensive analysis
+- **Identify actionable items** requiring immediate attention
+- **Support strategic decision-making** with live business intelligence
+- **Generate executive summaries** combining operational and financial metrics
+- **Predict potential issues** before they impact operations
+
+These capabilities transform Claude into a **comprehensive business intelligence assistant** for supermarket operations!
+
 ## Testing Scripts
 
 The project includes testing scripts for different environments:
