@@ -5,6 +5,7 @@ A modern Model Context Protocol (MCP) server for supermarket inventory and sales
 ## Features
 
 ### Core Functionality
+
 - **Product Management**: Get all products in inventory with detailed information
 - **Sales Analytics**: Retrieve sales data for specific date ranges with comprehensive reporting
 - **Revenue Tracking**: Calculate total revenue for periods with detailed breakdowns
@@ -12,11 +13,13 @@ A modern Model Context Protocol (MCP) server for supermarket inventory and sales
 - **Category Analysis**: Get sales performance by product category with trend analysis
 
 ### Advanced Resource-like Tools
+
 - **Real-time Inventory Status**: Live inventory monitoring with stock levels, reorder points, and recent sales data
 - **Daily Sales Summaries**: Automated daily reporting with transaction counts, revenue, and top-performing categories
 - **Detailed Inventory Reports**: Comprehensive product information for inventory management
 
 ### Technical Features
+
 - **Comprehensive Logging**: Structured logging with Serilog to file (MCP protocol compliant)
 - **MCP Protocol Compliance**: Proper JSON-RPC communication with stderr output redirection
 - **Clean Architecture**: Dependency injection, service interfaces, and SOLID principles
@@ -32,11 +35,13 @@ A modern Model Context Protocol (MCP) server for supermarket inventory and sales
 ## Setup
 
 1. **Database Setup**: Run the database scripts in the `Database/` folder:
+
    - `CreateDatabase.sql` - Creates the database and tables
    - `SampleData.sql` - Inserts sample data for testing
    - `SetupComplete.sql` - Complete setup script
 
 2. **Update Connection String**: Edit `appsettings.json` and replace the connection string with your SQL Server details:
+
    ```json
    {
      "ConnectionStrings": {
@@ -54,28 +59,39 @@ A modern Model Context Protocol (MCP) server for supermarket inventory and sales
 ### Core Supermarket Tools
 
 ### GetProducts
+
 Retrieves all products in the supermarket inventory with complete product information.
 
 ### GetSalesData
+
 Gets comprehensive sales data for a specific date range with product details.
+
 - Parameters: `startDate` (YYYY-MM-DD), `endDate` (YYYY-MM-DD)
 
 ### GetTotalRevenue
+
 Calculates total revenue for a date range with detailed analytics.
+
 - Parameters: `startDate` (YYYY-MM-DD), `endDate` (YYYY-MM-DD)
 
 ### GetLowStockProducts
+
 Identifies products with stock levels below a threshold for inventory management.
+
 - Parameters: `threshold` (default: 10)
 
 ### GetSalesByCategory
+
 Analyzes sales performance by product category with detailed metrics.
+
 - Parameters: `startDate` (YYYY-MM-DD), `endDate` (YYYY-MM-DD)
 
 ### Resource-like Tools (Real-time Data)
 
 ### GetInventoryStatus
+
 **Real-time inventory monitoring** with comprehensive status information including:
+
 - Current stock levels and reorder points
 - Stock status classification (Out of Stock, Low Stock, Medium Stock, In Stock)
 - Recent sales data (last 7 days)
@@ -83,7 +99,9 @@ Analyzes sales performance by product category with detailed metrics.
 - Organized by category for easy management
 
 ### GetDailySummary
+
 **Daily sales summary** with comprehensive business intelligence including:
+
 - Total transactions and revenue for the day
 - Number of unique products sold
 - Total items sold count
@@ -93,31 +111,39 @@ Analyzes sales performance by product category with detailed metrics.
 - Parameters: `date` (YYYY-MM-DD, optional - defaults to today)
 
 ### GetDetailedInventory
+
 **Detailed inventory information** providing complete product catalog with:
+
 - Full product details and specifications
 - Current inventory levels
 - Pricing information
 - Supplier details
 - Ideal for comprehensive inventory audits and reporting
-Calculates total revenue for a date range.
+  Calculates total revenue for a date range.
 - Parameters: `startDate` (YYYY-MM-DD), `endDate` (YYYY-MM-DD)
 
 ### GetLowStockProducts
+
 Identifies products with stock levels below a threshold.
+
 - Parameters: `threshold` (default: 10)
 
 ### GetSalesByCategory
+
 Analyzes sales performance by product category.
+
 - Parameters: `startDate` (YYYY-MM-DD), `endDate` (YYYY-MM-DD)
 
 ## Testing with MCP Inspector
 
 1. Install the MCP Inspector:
+
    ```bash
    npm install -g @modelcontextprotocol/inspector
    ```
 
 2. Run the MCP server with the inspector:
+
    ```bash
    npx @modelcontextprotocol/inspector dotnet run --project .
    ```
@@ -137,12 +163,7 @@ For development and testing, use the `dotnet run` command:
   "mcpServers": {
     "supermarket": {
       "command": "dotnet",
-      "args": [
-        "run",
-        "--project",
-        "/path/to/your/McpServer",
-        "--no-build"
-      ]
+      "args": ["run", "--project", "/path/to/your/McpServer", "--no-build"]
     }
   }
 }
@@ -184,13 +205,15 @@ Then use the published executable in your MCP configuration:
 After configuration, Claude should be able to access all supermarket tools:
 
 **Core Tools:**
+
 - GetProducts
-- GetSalesData  
+- GetSalesData
 - GetTotalRevenue
 - GetLowStockProducts
 - GetSalesByCategory
 
 **Resource-like Tools (Real-time Data):**
+
 - GetInventoryStatus
 - GetDailySummary
 - GetDetailedInventory
@@ -211,11 +234,13 @@ After saving your changes, restart the Claude Desktop app for the new settings t
 The project includes testing scripts for different environments:
 
 ### PowerShell Testing
+
 ```powershell
 .\test-mcp-server.ps1
 ```
 
 ### Batch Testing
+
 ```cmd
 test-mcp-server.bat
 ```
@@ -232,6 +257,7 @@ The application uses Serilog for comprehensive logging:
 - **MCP Protocol Compliance**: All console output redirected to stderr to avoid breaking JSON-RPC communication
 
 ### Log Configuration
+
 ```json
 {
   "Serilog": {
@@ -259,6 +285,7 @@ The application uses Serilog for comprehensive logging:
 ## Architecture
 
 The application uses:
+
 - **Clean Architecture**: Organized into Models, Services, and Configuration
 - **Dependency Injection**: Configured with Microsoft.Extensions.Hosting
 - **Configuration**: JSON-based configuration with appsettings.json
@@ -273,11 +300,13 @@ McpServer/
 ├── Models/                          # Data models
 │   ├── Product.cs                   # Product entity
 │   ├── SalesRecord.cs               # Sales record entity
-│   └── CategorySales.cs             # Category sales summary
+│   ├── CategorySales.cs             # Category sales summary
+│   ├── InventoryStatus.cs           # Real-time inventory status model
+│   └── DailySummary.cs              # Daily sales summary model
 ├── Services/                        # Business logic and data access
 │   ├── Interfaces/                  # Service interfaces
-│   │   └── ISupermarketDataService.cs
-│   ├── SupermarketDataService.cs    # SQL Server implementation
+│   │   └── ISupermarketDataService.cs # Extended with resource methods
+│   ├── SupermarketDataService.cs    # SQL Server implementation with advanced queries
 │   └── LoggingHelper.cs             # Logging utilities
 ├── Configuration/                   # Configuration classes
 │   └── ConnectionStringOptions.cs   # Database connection options
@@ -286,7 +315,7 @@ McpServer/
 │   ├── SampleData.sql               # Sample data insertion
 │   └── SetupComplete.sql            # Complete setup script
 ├── Program.cs                       # Application entry point and DI setup
-├── SupermarketMcpTools.cs           # MCP tools definitions
+├── SupermarketMcpTools.cs           # MCP tools definitions (8 tools total)
 ├── appsettings.json                 # Configuration file
 ├── test-mcp-server.ps1              # PowerShell testing script
 ├── test-mcp-server.bat              # Batch testing script
@@ -319,13 +348,14 @@ npx @modelcontextprotocol/inspector dotnet run --project .
 ## Deployment
 
 1. **Publish the application**:
+
    ```bash
    dotnet publish -c Release -o publish
    ```
 
 2. **Copy configuration**: Ensure `appsettings.json` is in the publish directory
 
-3. **Run the executable**: 
+3. **Run the executable**:
    ```bash
    cd publish
    ./McpServer.exe
@@ -344,6 +374,32 @@ npx @modelcontextprotocol/inspector dotnet run --project .
 
 This MCP server can be integrated with AI applications that support the Model Context Protocol, providing them with access to supermarket data through the defined tools. All tools return JSON-formatted data for easy consumption by AI systems.
 
+### Advanced Query Features
+
+The server implements sophisticated SQL queries for real-time analytics:
+
+- **Inventory Status Queries**: Complex joins with sales data to provide recent sales trends
+- **Daily Summary Analytics**: Common Table Expressions (CTEs) for aggregated reporting
+- **Performance Optimization**: Indexed queries with proper parameterization
+- **Real-time Data**: Live database connections for up-to-date information
+
+### MCP Resources Implementation
+
+Originally designed to support MCP Resources, the server now implements resource-like functionality through specialized tools:
+
+- **GetInventoryStatus**: Provides real-time inventory data equivalent to `supermarket://inventory/status` resource
+- **GetDailySummary**: Offers daily reporting equivalent to `supermarket://sales/daily-summary` resource
+- **GetDetailedInventory**: Delivers comprehensive inventory equivalent to `supermarket://inventory/detailed` resource
+
+This approach ensures compatibility with current MCP library versions while providing the same functionality.
+
+### Logging and Monitoring
+
+- **Request Correlation IDs**: Each operation gets a unique identifier for tracing
+- **Performance Metrics**: Database operation timing and result counts
+- **Error Tracking**: Comprehensive exception logging with stack traces
+- **MCP Protocol Compliance**: All output properly routed to avoid JSON-RPC interference
+
 ## Troubleshooting
 
 ### Common Issues
@@ -352,12 +408,23 @@ This MCP server can be integrated with AI applications that support the Model Co
 2. **MCP Protocol Errors**: Check that no console output is going to stdout (should all go to stderr)
 3. **Logging Issues**: Verify the `Logs/` directory exists and is writable
 4. **Tool Execution**: Check the log files for detailed error information
+5. **Resource Tools Not Appearing**: The resource-like tools (GetInventoryStatus, GetDailySummary, GetDetailedInventory) appear as regular tools in MCP Inspector
+6. **Database Schema Issues**: Ensure your Products table has ReorderLevel and LastUpdated columns for inventory status queries
 
 ### Debug Information
 
-- Logs are stored in `Logs/mcpserver.log`
-- Debug tool calls are logged to `debug-tool-calls.txt` in the publish directory
+- Logs are stored in `Logs/mcpserver.log` with daily rotation
+- Debug tool calls are logged to `debug-tool-calls.txt`
 - Startup information is written to stderr for debugging
+- Each database operation includes timing and result count information
+- Request correlation IDs help trace operations across logs
+
+### Performance Tips
+
+- **Database Indexing**: Ensure proper indexes on ProductId, SaleDate, and Category columns
+- **Connection Pooling**: SQL Server connection pooling is automatically handled
+- **Query Optimization**: All queries use parameterized statements for security and performance
+- **Logging Level**: Adjust logging level in appsettings.json for production environments
 
 ## Benefits of the Architecture
 
@@ -367,4 +434,33 @@ This MCP server can be integrated with AI applications that support the Model Co
 - **Scalability**: Easy to add new models, services, or tools
 - **Clean Architecture**: Follows SOLID principles and clean architecture patterns
 - **Production Ready**: Comprehensive logging and error handling
-- **MCP Compliance**: Proper protocol implementation for AI tool integration 
+- **MCP Compliance**: Proper protocol implementation for AI tool integration
+- **Real-time Analytics**: Advanced SQL queries provide live business intelligence
+- **Extensible Design**: Resource-like tools demonstrate how to add sophisticated functionality
+- **Database Performance**: Optimized queries with proper indexing and parameterization
+- **Robust Error Handling**: Graceful degradation with detailed error logging
+
+## Future Extensibility
+
+The current architecture supports easy extension with additional features:
+
+### Potential Enhancements
+
+- **MCP Prompts**: Pre-defined prompts for common business scenarios
+- **Streaming Data**: Real-time updates for inventory changes
+- **Audit Logging**: Track all data modifications and access
+- **Legacy System Integration**: Adapters for existing retail systems
+- **Advanced Analytics**: Machine learning integration for demand forecasting
+- **Multi-tenant Support**: Support for multiple store locations
+- **Caching Layer**: Redis integration for improved performance
+- **API Versioning**: Support for multiple API versions
+
+### Adding New Tools
+
+1. Define new models in the `Models/` folder
+2. Add service methods to `ISupermarketDataService`
+3. Implement methods in `SupermarketDataService`
+4. Add MCP tool methods to `SupermarketMcpTools.cs`
+5. Update documentation and tests
+
+This modular approach ensures the system can grow with your business requirements while maintaining clean architecture principles.
