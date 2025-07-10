@@ -438,7 +438,7 @@ public static class SupermarketMcpTools
                 WriteIndented = true
             });
 
-            Serilog.Log.Information("MCP Tool 'GetCriticalAlerts' completed successfully. Returned {CriticalRisks} critical risks and {UrgentRecommendations} urgent recommendations", 
+            Serilog.Log.Information("MCP Tool 'GetCriticalAlerts' completed successfully. Returned {CriticalRisks} critical risks and {UrgentRecommendations} urgent recommendations",
                 criticalRisks.Count(), urgentRecommendations.Count());
             return result;
         }

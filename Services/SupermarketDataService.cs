@@ -778,8 +778,8 @@ public class SupermarketDataService : ISupermarketDataService
     {
         var currentMonth = DateTime.Now.Month;
         var patterns = await GetSeasonalTrendsAsync();
-        
-        return patterns.Where(p => 
+
+        return patterns.Where(p =>
         {
             for (int i = 1; i <= monthsAhead; i++)
             {

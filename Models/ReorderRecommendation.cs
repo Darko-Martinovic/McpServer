@@ -19,7 +19,7 @@ public class ReorderRecommendation
     public decimal PredictedSalesDuringLeadTime { get; set; }
     public decimal DaysUntilStockout { get; set; }
     public decimal RiskScore { get; set; }
-    
+
     // Legacy properties for backward compatibility
     public int RecommendedOrderQuantity { get; set; }
 }

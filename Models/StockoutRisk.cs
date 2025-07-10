@@ -16,7 +16,7 @@ public class StockoutRisk
     public string RecommendedAction { get; set; } = string.Empty;
     public DateTime? EstimatedStockoutDate { get; set; }
     public decimal PotentialLostRevenue { get; set; }
-    
+
     // Legacy properties for backward compatibility
     public decimal AverageDailySales { get; set; }
     public int DaysUntilStockout { get; set; }
