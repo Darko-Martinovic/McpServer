@@ -15,4 +15,14 @@ public interface ISupermarketDataService
     Task<IEnumerable<InventoryStatus>> GetInventoryStatusAsync();
     Task<IEnumerable<DailySummary>> GetDailySummaryAsync(DateTime? date = null);
     Task<IEnumerable<Product>> GetDetailedInventoryAsync();
+
+    // Phase 3: Predictive Analytics methods
+    Task<IEnumerable<DemandForecast>> PredictDemandAsync(int daysAhead = 7);
+    Task<DemandForecast?> PredictProductDemandAsync(int productId, int daysAhead = 7);
+    Task<IEnumerable<StockoutRisk>> GetStockoutRisksAsync(int daysAhead = 14);
+    Task<IEnumerable<StockoutRisk>> GetCriticalStockoutRisksAsync();
+    Task<IEnumerable<SeasonalPattern>> GetSeasonalTrendsAsync(string? category = null);
+    Task<IEnumerable<SeasonalPattern>> GetSeasonalForecastAsync(int monthsAhead = 3);
+    Task<IEnumerable<ReorderRecommendation>> GetReorderRecommendationsAsync();
+    Task<IEnumerable<ReorderRecommendation>> GetUrgentReorderRecommendationsAsync();
 }

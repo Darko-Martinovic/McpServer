@@ -80,6 +80,12 @@ Edit `appsettings.json` and replace the connection string with your SQL Server d
    - `Products` (ProductId, ProductName, Category, Price, StockQuantity, Supplier, ReorderLevel, LastUpdated)
    - `Sales` (SaleId, ProductId, Quantity, UnitPrice, TotalAmount, SaleDate)
 
+4. **Enhanced Database Schema (Phase 3)**: New schemas organize related functionality:
+   - `inventory.*` - Inventory movements and reorder history
+   - `analytics.*` - Demand forecasts, seasonal patterns, and stockout risks  
+   - `reporting.*` - Business intelligence snapshots and reporting
+   - `sales.*` - Advanced sales analytics (reserved for future use)
+
 ## Available Tools
 
 ### Core Supermarket Tools
@@ -159,6 +165,50 @@ Identifies products with stock levels below a threshold.
 Analyzes sales performance by product category.
 
 - Parameters: `startDate` (YYYY-MM-DD), `endDate` (YYYY-MM-DD)
+
+### Phase 3: Predictive Analytics Tools
+
+**Advanced business intelligence and forecasting capabilities:**
+
+### PredictDemand
+
+Predicts product demand for upcoming days with confidence levels and trend analysis.
+
+- Parameters: `daysAhead` (1-30, default: 7)
+- Returns: Demand forecasts with confidence levels, trend direction, and recommended stock levels
+- Uses: Historical sales data, seasonal patterns, and advanced forecasting algorithms
+
+### GetStockoutRisks
+
+Identifies products at risk of stockout with risk levels and recommended actions.
+
+- Parameters: `daysAhead` (1-60, default: 14)
+- Returns: Risk assessments with scores, estimated stockout dates, and potential revenue impact
+- Features: High/Medium/Low risk categorization with actionable recommendations
+
+### GetSeasonalTrends
+
+Analyzes seasonal sales trends and patterns by category with monthly forecasts.
+
+- Parameters: `category` (optional - analyzes all categories if not specified)
+- Returns: Seasonal patterns, seasonality factors, and trend classifications
+- Applications: Strategic planning, inventory optimization, seasonal preparation
+
+### GetReorderRecommendations
+
+Generates intelligent reorder recommendations based on demand prediction and risk analysis.
+
+- Returns: Prioritized recommendations with quantities, timing, and reasoning
+- Categories: IMMEDIATE, URGENT, SCHEDULED, MONITOR
+- Integrates: Demand forecasts, stockout risks, and current inventory levels
+
+### GetCriticalAlerts
+
+Provides high-priority alerts for items requiring immediate attention.
+
+- Returns: Combined critical stockout risks and urgent reorder recommendations
+- Features: Real-time alerting, priority scoring, and executive summary format
+- Use cases: Daily operations management, emergency response, proactive intervention
 
 ## Testing with MCP Inspector
 
@@ -376,6 +426,38 @@ Claude can combine all tools to answer complex questions like:
 - _"Analyze our supermarket's operational efficiency: inventory turnover, sales trends, stock availability, category performance, and identify three key areas for improvement"_
 
 - _"Prepare a business intelligence summary for the weekly management meeting covering: performance metrics, inventory status, category analysis, and strategic recommendations"_
+
+### 🔮 **Phase 3: Predictive Analytics Questions**
+
+**Demand Forecasting:**
+- _"What products will likely run out of stock in the next two weeks?"_
+- _"Predict tomorrow's demand for dairy products with confidence levels"_
+- _"Show me demand forecasts for all products with their recommended stock levels"_
+
+**Risk Analysis:**
+- _"Which products have the highest stockout risk and what's the potential revenue impact?"_
+- _"Alert me to critical inventory situations requiring immediate action"_
+- _"Analyze stockout risks for the next month and categorize by priority"_
+
+**Seasonal Intelligence:**
+- _"What seasonal patterns exist in our sales data and how should I prepare?"_
+- _"Show me seasonal trends for beverage categories and predict next quarter's performance"_
+- _"Compare current sales to seasonal expectations - are we on track?"_
+
+**Smart Reordering:**
+- _"Generate intelligent reorder recommendations based on predictive analytics"_
+- _"What products need urgent reordering and in what quantities?"_
+- _"Create a prioritized reorder plan for the next two weeks"_
+
+**Proactive Management:**
+- _"Show me all critical alerts that need my immediate attention"_
+- _"Combine demand forecasts with current inventory to identify optimization opportunities"_
+- _"What's my risk-adjusted inventory strategy for next month?"_
+
+**Strategic Planning:**
+- _"Based on seasonal trends and demand forecasts, how should I adjust inventory levels?"_
+- _"Predict which categories will outperform or underperform next quarter"_
+- _"Create a data-driven inventory optimization plan with ROI projections"_
 
 ### 🎯 **Key Advantages**
 

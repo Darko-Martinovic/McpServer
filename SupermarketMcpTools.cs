@@ -292,4 +292,160 @@ public static class SupermarketMcpTools
             return $"Error retrieving detailed inventory: {ex.Message}";
         }
     }
+
+    // =============================================================================
+    // Phase 3: Predictive Analytics Tools
+    // =============================================================================
+
+    [McpServerTool, Description("Predict product demand for upcoming days with confidence levels and trend analysis")]
+    public static async Task<string> PredictDemand(
+        ISupermarketDataService dataService,
+        [Description("Number of days to forecast ahead (default: 7)")] int daysAhead = 7
+    )
+    {
+        try
+        {
+            Serilog.Log.Information("MCP Tool 'PredictDemand' called with daysAhead: {DaysAhead}", daysAhead);
+
+            if (daysAhead < 1 || daysAhead > 30)
+            {
+                Serilog.Log.Warning("MCP Tool 'PredictDemand' validation failed: Invalid daysAhead value");
+                return "Invalid daysAhead value. Please use a value between 1 and 30.";
+            }
+
+            var forecasts = await dataService.PredictDemandAsync(daysAhead);
+            var result = JsonSerializer.Serialize(forecasts, new JsonSerializerOptions
+            {
+                WriteIndented = true
+            });
+
+            Serilog.Log.Information("MCP Tool 'PredictDemand' completed successfully. Returned {Count} forecasts", forecasts.Count());
+            return result;
+        }
+        catch (Exception ex)
+        {
+            Serilog.Log.Error(ex, "MCP Tool 'PredictDemand' failed: {Message}", ex.Message);
+            return $"Error predicting demand: {ex.Message}";
+        }
+    }
+
+    [McpServerTool, Description("Identify products at risk of stockout with risk levels and recommended actions")]
+    public static async Task<string> GetStockoutRisks(
+        ISupermarketDataService dataService,
+        [Description("Number of days to analyze ahead (default: 14)")] int daysAhead = 14
+    )
+    {
+        try
+        {
+            Serilog.Log.Information("MCP Tool 'GetStockoutRisks' called with daysAhead: {DaysAhead}", daysAhead);
+
+            if (daysAhead < 1 || daysAhead > 60)
+            {
+                Serilog.Log.Warning("MCP Tool 'GetStockoutRisks' validation failed: Invalid daysAhead value");
+                return "Invalid daysAhead value. Please use a value between 1 and 60.";
+            }
+
+            var risks = await dataService.GetStockoutRisksAsync(daysAhead);
+            var result = JsonSerializer.Serialize(risks, new JsonSerializerOptions
+            {
+                WriteIndented = true
+            });
+
+            Serilog.Log.Information("MCP Tool 'GetStockoutRisks' completed successfully. Returned {Count} risk assessments", risks.Count());
+            return result;
+        }
+        catch (Exception ex)
+        {
+            Serilog.Log.Error(ex, "MCP Tool 'GetStockoutRisks' failed: {Message}", ex.Message);
+            return $"Error analyzing stockout risks: {ex.Message}";
+        }
+    }
+
+    [McpServerTool, Description("Analyze seasonal sales trends and patterns by category with monthly forecasts")]
+    public static async Task<string> GetSeasonalTrends(
+        ISupermarketDataService dataService,
+        [Description("Specific category to analyze (optional - analyzes all categories if not specified)")] string? category = null
+    )
+    {
+        try
+        {
+            Serilog.Log.Information("MCP Tool 'GetSeasonalTrends' called with category: {Category}", category ?? "All");
+
+            var trends = await dataService.GetSeasonalTrendsAsync(category);
+            var result = JsonSerializer.Serialize(trends, new JsonSerializerOptions
+            {
+                WriteIndented = true
+            });
+
+            Serilog.Log.Information("MCP Tool 'GetSeasonalTrends' completed successfully. Returned {Count} seasonal patterns", trends.Count());
+            return result;
+        }
+        catch (Exception ex)
+        {
+            Serilog.Log.Error(ex, "MCP Tool 'GetSeasonalTrends' failed: {Message}", ex.Message);
+            return $"Error analyzing seasonal trends: {ex.Message}";
+        }
+    }
+
+    [McpServerTool, Description("Get intelligent reorder recommendations based on demand prediction and risk analysis")]
+    public static async Task<string> GetReorderRecommendations(
+        ISupermarketDataService dataService
+    )
+    {
+        try
+        {
+            Serilog.Log.Information("MCP Tool 'GetReorderRecommendations' called");
+
+            var recommendations = await dataService.GetReorderRecommendationsAsync();
+            var result = JsonSerializer.Serialize(recommendations, new JsonSerializerOptions
+            {
+                WriteIndented = true
+            });
+
+            Serilog.Log.Information("MCP Tool 'GetReorderRecommendations' completed successfully. Returned {Count} recommendations", recommendations.Count());
+            return result;
+        }
+        catch (Exception ex)
+        {
+            Serilog.Log.Error(ex, "MCP Tool 'GetReorderRecommendations' failed: {Message}", ex.Message);
+            return $"Error generating reorder recommendations: {ex.Message}";
+        }
+    }
+
+    [McpServerTool, Description("Get critical items requiring immediate attention with high-priority alerts")]
+    public static async Task<string> GetCriticalAlerts(
+        ISupermarketDataService dataService
+    )
+    {
+        try
+        {
+            Serilog.Log.Information("MCP Tool 'GetCriticalAlerts' called");
+
+            // Combine critical stockout risks and urgent reorder recommendations
+            var criticalRisks = await dataService.GetCriticalStockoutRisksAsync();
+            var urgentRecommendations = await dataService.GetUrgentReorderRecommendationsAsync();
+
+            var alerts = new
+            {
+                CriticalStockoutRisks = criticalRisks,
+                UrgentReorderRecommendations = urgentRecommendations,
+                AlertCount = criticalRisks.Count() + urgentRecommendations.Count(),
+                GeneratedAt = DateTime.Now
+            };
+
+            var result = JsonSerializer.Serialize(alerts, new JsonSerializerOptions
+            {
+                WriteIndented = true
+            });
+
+            Serilog.Log.Information("MCP Tool 'GetCriticalAlerts' completed successfully. Returned {CriticalRisks} critical risks and {UrgentRecommendations} urgent recommendations", 
+                criticalRisks.Count(), urgentRecommendations.Count());
+            return result;
+        }
+        catch (Exception ex)
+        {
+            Serilog.Log.Error(ex, "MCP Tool 'GetCriticalAlerts' failed: {Message}", ex.Message);
+            return $"Error generating critical alerts: {ex.Message}";
+        }
+    }
 }
