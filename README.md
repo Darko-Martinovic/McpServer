@@ -34,21 +34,47 @@ A modern Model Context Protocol (MCP) server for supermarket inventory and sales
 
 ## Setup
 
-1. **Database Setup**: Run the database scripts in the `Database/` folder:
+### 1. Database Setup
 
-   - `CreateDatabase.sql` - Creates the database and tables
-   - `SampleData.sql` - Inserts sample data for testing
-   - `SetupComplete.sql` - Complete setup script
+The database setup has been consolidated into two main scripts:
 
-2. **Update Connection String**: Edit `appsettings.json` and replace the connection string with your SQL Server details:
+- **`Database/SetupDatabase.sql`** - Complete database setup script that:
 
-   ```json
-   {
-     "ConnectionStrings": {
-       "DefaultConnection": "Server=your-server-name;Database=your-database-name;Integrated Security=true;TrustServerCertificate=true;"
-     }
-   }
-   ```
+  - Creates the SupermarketDB database
+  - Creates all tables with enhanced schema (Products, Sales)
+  - Adds required columns for MCP Resource tools (ReorderLevel, LastUpdated, UnitPrice)
+  - Creates performance indexes
+  - Inserts realistic sample data with proper prices
+  - Handles schema migrations from older versions
+
+- **`Database/TestDatabase.sql`** - Comprehensive verification script that:
+  - Tests all database structures and columns
+  - Verifies all MCP tool queries execute successfully
+  - Performs data quality checks
+  - Shows inventory and sales summaries
+  - Confirms the database is ready for AI integration
+
+**To setup the database:**
+
+```bash
+# Run the complete setup (from the Database folder)
+sqlcmd -S "your-server-name" -i "SetupDatabase.sql"
+
+# Verify the setup
+sqlcmd -S "your-server-name" -i "TestDatabase.sql"
+```
+
+### 2. Update Connection String
+
+Edit `appsettings.json` and replace the connection string with your SQL Server details:
+
+```json
+{
+  "ConnectionStrings": {
+    "DefaultConnection": "Server=your-server-name;Database=your-database-name;Integrated Security=true;TrustServerCertificate=true;"
+  }
+}
+```
 
 3. **Database Schema**: The database includes the following tables with enhanced functionality:
    - `Products` (ProductId, ProductName, Category, Price, StockQuantity, Supplier, ReorderLevel, LastUpdated)
