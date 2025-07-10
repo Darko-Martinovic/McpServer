@@ -625,3 +625,45 @@ The current architecture supports easy extension with additional features:
 5. Update documentation and tests
 
 This modular approach ensures the system can grow with your business requirements while maintaining clean architecture principles.
+
+### 3. Build for Claude Desktop Integration
+
+For the best development experience with Claude Desktop, use the published executable approach:
+
+```bash
+# Build and publish the MCP server
+.\build-and-publish.ps1
+
+# Or use the batch file
+.\build-and-publish.bat
+```
+
+This approach:
+
+- ✅ **Eliminates file locking issues** with Claude Desktop
+- ✅ **Provides consistent performance** with optimized builds
+- ✅ **Automates the build process** with dependency checks
+- ✅ **Gracefully handles running processes**
+
+### 4. Claude Desktop Configuration
+
+Use this configuration in your `claude_desktop_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "supermarket": {
+      "command": "D:\\DotNetOpenAI\\McpServer\\publish\\McpServer.exe"
+    }
+  }
+}
+```
+
+**Development Workflow:**
+
+1. Make code changes
+2. Run `.\build-and-publish.ps1`
+3. Restart Claude Desktop (if prompted)
+4. Test your changes
+
+> **Note**: See `claude-configs-reference.md` for alternative configuration options.

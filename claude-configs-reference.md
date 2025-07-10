@@ -17,8 +17,9 @@ This file contains different configuration options for your `claude_desktop_conf
 ```
 
 **Workflow:**
+
 1. Make code changes
-2. Run `.\build-and-publish.ps1` 
+2. Run `.\build-and-publish.ps1`
 3. Restart Claude Desktop if needed
 4. Test your changes
 
@@ -31,18 +32,14 @@ This file contains different configuration options for your `claude_desktop_conf
   "mcpServers": {
     "supermarket-dev": {
       "command": "dotnet",
-      "args": [
-        "run",
-        "--project",
-        "D:\\DotNetOpenAI\\McpServer",
-        "--no-build"
-      ]
+      "args": ["run", "--project", "D:\\DotNetOpenAI\\McpServer", "--no-build"]
     }
   }
 }
 ```
 
 **Issues with this approach:**
+
 - File locking when Claude Desktop is running
 - Need to manually kill processes
 - More complex workflow
