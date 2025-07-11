@@ -1,30 +1,26 @@
 # Supermarket MCP Server
 
-A modern Model Context Protocol (MCP) server for supermarket inventory and sales management with dependency injection, clean architecture, and comprehensive logging. Features real-time inventory monitoring, advanced sales analytics, and resource-like tools for AI integration.
+A Model Context Protocol (MCP) server for supermarket inventory and sales management with clean architecture and comprehensive logging.
 
 ## Features
 
-### Core Functionality
+### Core Tools
+- **Product Management**: Get all products in inventory
+- **Sales Analytics**: Retrieve sales data for date ranges
+- **Revenue Tracking**: Calculate total revenue for periods
+- **Inventory Monitoring**: Identify low stock products
+- **Category Analysis**: Get sales performance by category
 
-- **Product Management**: Get all products in inventory with detailed information
-- **Sales Analytics**: Retrieve sales data for specific date ranges with comprehensive reporting
-- **Revenue Tracking**: Calculate total revenue for periods with detailed breakdowns
-- **Inventory Monitoring**: Identify products with low stock levels and automated alerts
-- **Category Analysis**: Get sales performance by product category with trend analysis
-
-### Advanced Resource-like Tools
-
-- **Real-time Inventory Status**: Live inventory monitoring with stock levels, reorder points, and recent sales data
-- **Daily Sales Summaries**: Automated daily reporting with transaction counts, revenue, and top-performing categories
-- **Detailed Inventory Reports**: Comprehensive product information for inventory management
+### Resource-like Tools
+- **Inventory Status**: Real-time inventory monitoring with stock levels
+- **Daily Summaries**: Automated daily reporting with transaction counts and revenue
+- **Detailed Inventory**: Comprehensive product information
 
 ### Technical Features
-
-- **Comprehensive Logging**: Structured logging with Serilog to file (MCP protocol compliant)
-- **MCP Protocol Compliance**: Proper JSON-RPC communication with stderr output redirection
-- **Clean Architecture**: Dependency injection, service interfaces, and SOLID principles
-- **Database Integration**: SQL Server connectivity with advanced queries and performance monitoring
-- **Error Handling**: Robust exception handling with detailed logging and graceful degradation
+- **MCP Protocol Compliance**: Proper JSON-RPC communication
+- **Clean Architecture**: Dependency injection and service interfaces
+- **Database Integration**: SQL Server connectivity
+- **Comprehensive Logging**: Structured logging with Serilog
 
 ## Prerequisites
 
@@ -36,37 +32,22 @@ A modern Model Context Protocol (MCP) server for supermarket inventory and sales
 
 ### 1. Database Setup
 
-The database setup has been consolidated into two main scripts:
+Run the database setup scripts:
 
-- **`Database/SetupDatabase.sql`** - Complete database setup script that:
-
-  - Creates the SupermarketDB database
-  - Creates all tables with enhanced schema (Products, Sales)
-  - Adds required columns for MCP Resource tools (ReorderLevel, LastUpdated, UnitPrice)
-  - Creates performance indexes
-  - Inserts realistic sample data with proper prices
-  - Handles schema migrations from older versions
-
-- **`Database/TestDatabase.sql`** - Comprehensive verification script that:
-  - Tests all database structures and columns
-  - Verifies all MCP tool queries execute successfully
-  - Performs data quality checks
-  - Shows inventory and sales summaries
-  - Confirms the database is ready for AI integration
-
-**To setup the database:**
+- **`Database/SetupDatabase.sql`** - Creates database, tables, and sample data
+- **`Database/TestDatabase.sql`** - Verifies setup and tests queries
 
 ```bash
-# Run the complete setup (from the Database folder)
-sqlcmd -S "your-server-name" -i "SetupDatabase.sql"
+# Run the complete setup
+sqlcmd -S "your-server-name" -i "Database/SetupDatabase.sql"
 
 # Verify the setup
-sqlcmd -S "your-server-name" -i "TestDatabase.sql"
+sqlcmd -S "your-server-name" -i "Database/TestDatabase.sql"
 ```
 
 ### 2. Update Connection String
 
-Edit `appsettings.json` and replace the connection string with your SQL Server details:
+Edit `appsettings.json`:
 
 ```json
 {
@@ -76,164 +57,35 @@ Edit `appsettings.json` and replace the connection string with your SQL Server d
 }
 ```
 
-3. **Database Schema**: The database includes the following tables with enhanced functionality:
-
-   - `Products` (ProductId, ProductName, Category, Price, StockQuantity, Supplier, ReorderLevel, LastUpdated)
-   - `Sales` (SaleId, ProductId, Quantity, UnitPrice, TotalAmount, SaleDate)
-
-4. **Enhanced Database Schema (Phase 3)**: New schemas organize related functionality:
-   - `inventory.*` - Inventory movements and reorder history
-   - `analytics.*` - Demand forecasts, seasonal patterns, and stockout risks
-   - `reporting.*` - Business intelligence snapshots and reporting
-   - `sales.*` - Advanced sales analytics (reserved for future use)
-
 ## Available Tools
 
-### Core Supermarket Tools
+### Core Tools
 
-### GetProducts
+- **GetProducts**: Retrieve all products
+- **GetSalesData**: Get sales data for date range (startDate, endDate)
+- **GetTotalRevenue**: Calculate revenue for period (startDate, endDate)
+- **GetLowStockProducts**: Find products below threshold (threshold, default: 10)
+- **GetSalesByCategory**: Sales performance by category (startDate, endDate)
 
-Retrieves all products in the supermarket inventory with complete product information.
+### Resource-like Tools
 
-### GetSalesData
-
-Gets comprehensive sales data for a specific date range with product details.
-
-- Parameters: `startDate` (YYYY-MM-DD), `endDate` (YYYY-MM-DD)
-
-### GetTotalRevenue
-
-Calculates total revenue for a date range with detailed analytics.
-
-- Parameters: `startDate` (YYYY-MM-DD), `endDate` (YYYY-MM-DD)
-
-### GetLowStockProducts
-
-Identifies products with stock levels below a threshold for inventory management.
-
-- Parameters: `threshold` (default: 10)
-
-### GetSalesByCategory
-
-Analyzes sales performance by product category with detailed metrics.
-
-- Parameters: `startDate` (YYYY-MM-DD), `endDate` (YYYY-MM-DD)
-
-### Resource-like Tools (Real-time Data)
-
-### GetInventoryStatus
-
-**Real-time inventory monitoring** with comprehensive status information including:
-
-- Current stock levels and reorder points
-- Stock status classification (Out of Stock, Low Stock, Medium Stock, In Stock)
-- Recent sales data (last 7 days)
-- Last updated timestamps
-- Organized by category for easy management
-
-### GetDailySummary
-
-**Daily sales summary** with comprehensive business intelligence including:
-
-- Total transactions and revenue for the day
-- Number of unique products sold
-- Total items sold count
-- Average transaction value
-- Top-performing category and its revenue
-- Configurable date parameter (defaults to today)
-- Parameters: `date` (YYYY-MM-DD, optional - defaults to today)
-
-### GetDetailedInventory
-
-**Detailed inventory information** providing complete product catalog with:
-
-- Full product details and specifications
-- Current inventory levels
-- Pricing information
-- Supplier details
-- Ideal for comprehensive inventory audits and reporting
-  Calculates total revenue for a date range.
-- Parameters: `startDate` (YYYY-MM-DD), `endDate` (YYYY-MM-DD)
-
-### GetLowStockProducts
-
-Identifies products with stock levels below a threshold.
-
-- Parameters: `threshold` (default: 10)
-
-### GetSalesByCategory
-
-Analyzes sales performance by product category.
-
-- Parameters: `startDate` (YYYY-MM-DD), `endDate` (YYYY-MM-DD)
-
-### Phase 3: Predictive Analytics Tools
-
-**Advanced business intelligence and forecasting capabilities:**
-
-### PredictDemand
-
-Predicts product demand for upcoming days with confidence levels and trend analysis.
-
-- Parameters: `daysAhead` (1-30, default: 7)
-- Returns: Demand forecasts with confidence levels, trend direction, and recommended stock levels
-- Uses: Historical sales data, seasonal patterns, and advanced forecasting algorithms
-
-### GetStockoutRisks
-
-Identifies products at risk of stockout with risk levels and recommended actions.
-
-- Parameters: `daysAhead` (1-60, default: 14)
-- Returns: Risk assessments with scores, estimated stockout dates, and potential revenue impact
-- Features: High/Medium/Low risk categorization with actionable recommendations
-
-### GetSeasonalTrends
-
-Analyzes seasonal sales trends and patterns by category with monthly forecasts.
-
-- Parameters: `category` (optional - analyzes all categories if not specified)
-- Returns: Seasonal patterns, seasonality factors, and trend classifications
-- Applications: Strategic planning, inventory optimization, seasonal preparation
-
-### GetReorderRecommendations
-
-Generates intelligent reorder recommendations based on demand prediction and risk analysis.
-
-- Returns: Prioritized recommendations with quantities, timing, and reasoning
-- Categories: IMMEDIATE, URGENT, SCHEDULED, MONITOR
-- Integrates: Demand forecasts, stockout risks, and current inventory levels
-
-### GetCriticalAlerts
-
-Provides high-priority alerts for items requiring immediate attention.
-
-- Returns: Combined critical stockout risks and urgent reorder recommendations
-- Features: Real-time alerting, priority scoring, and executive summary format
-- Use cases: Daily operations management, emergency response, proactive intervention
+- **GetInventoryStatus**: Real-time inventory with stock levels and recent sales
+- **GetDailySummary**: Daily sales summary with transactions and revenue (date, optional)
+- **GetDetailedInventory**: Complete product catalog with inventory levels
 
 ## Testing with MCP Inspector
 
-1. Install the MCP Inspector:
+```bash
+# Install MCP Inspector
+npm install -g @modelcontextprotocol/inspector
 
-   ```bash
-   npm install -g @modelcontextprotocol/inspector
-   ```
+# Run with inspector
+npx @modelcontextprotocol/inspector dotnet run --project .
+```
 
-2. Run the MCP server with the inspector:
+## Configuring Claude Desktop
 
-   ```bash
-   npx @modelcontextprotocol/inspector dotnet run --project .
-   ```
-
-3. Open the web interface provided by the inspector to test the tools.
-
-## Configuring Claude from Anthropic as MCP Client
-
-To use this MCP server with Claude from Anthropic, you need to configure Claude's MCP settings. Here are two configuration examples:
-
-### Development Configuration (Using dotnet run)
-
-For development and testing, use the `dotnet run` command:
+### Development Configuration
 
 ```json
 {
@@ -246,17 +98,15 @@ For development and testing, use the `dotnet run` command:
 }
 ```
 
-**Note**: Replace `/path/to/your/McpServer` with the actual path to your project folder.
+### Production Configuration
 
-### Production Configuration (Using Published Application)
-
-For production deployment, first publish the application:
+First publish the application:
 
 ```bash
 dotnet publish -c Release -o publish
 ```
 
-Then use the published executable in your MCP configuration:
+Then configure Claude:
 
 ```json
 {
@@ -268,36 +118,67 @@ Then use the published executable in your MCP configuration:
 }
 ```
 
-**Note**: Replace `/path/to/your/McpServer/publish/McpServer.exe` with the actual path to your published executable.
+## Building and Running
 
-### Configuration Steps
+```bash
+# Build the project
+dotnet build
 
-1. **Open Claude's MCP Settings**: In Claude's interface, navigate to the MCP configuration section
-2. **Add the Configuration**: Paste the appropriate JSON configuration above
-3. **Update Paths**: Replace the placeholder paths with your actual project or published directory paths
-4. **Save and Restart**: Save the configuration and restart Claude to load the MCP server
+# Run the MCP server
+dotnet run
 
-### Verification
+# Publish for deployment
+dotnet publish -c Release -o publish
 
-After configuration, Claude should be able to access all supermarket tools:
+# Use the build script
+.\build-and-publish.ps1
+```
 
-**Core Tools:**
+## Dependencies
 
-- GetProducts
-- GetSalesData
-- GetTotalRevenue
-- GetLowStockProducts
-- GetSalesByCategory
+- **ModelContextProtocol**: 0.3.0-preview.2
+- **Microsoft.Data.SqlClient**: 6.0.2
+- **Microsoft.Extensions.Hosting**: 9.0.6
+- **Serilog.AspNetCore**: 9.0.0
+- **Serilog.Settings.Configuration**: 9.0.0
+- **Serilog.Sinks.File**: 7.0.0
 
-**Resource-like Tools (Real-time Data):**
+## Troubleshooting
 
-- GetInventoryStatus
-- GetDailySummary
-- GetDetailedInventory
+### Common Issues
 
-### Editing the Claude Desktop Configuration
+1. **Database Connection**: Ensure SQL Server is running and connection string is correct
+2. **MCP Protocol Errors**: Check that console output goes to stderr, not stdout
+3. **Logging Issues**: Verify `Logs/` directory exists and is writable
+4. **Tool Execution**: Check log files for detailed error information
 
-To use the MCP server with the Anthropic Claude Desktop app, you must edit the configuration file:
+### Debug Information
+
+- Logs stored in `Logs/mcpserver.log` with daily rotation
+- Debug tool calls logged to `debug-tool-calls.txt`
+- Startup information written to stderr
+- Request correlation IDs for operation tracing
+
+## Claude Desktop Integration
+
+For the best development experience:
+
+```bash
+# Build and publish
+.\build-and-publish.ps1
+```
+
+Use this configuration in `claude_desktop_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "supermarket": {
+      "command": "D:\\DotNetOpenAI\\McpServer\\publish\\McpServer.exe"
+    }
+  }
+}
+```
 
 - **File name:** `claude_desktop_config.json`
 - **Typical location:**  
