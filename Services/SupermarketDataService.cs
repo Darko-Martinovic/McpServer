@@ -21,6 +21,9 @@ public class SupermarketDataService : ISupermarketDataService
     {
         _connectionString = connectionOptions.Value.DefaultConnection;
         _logger = logger;
+
+        _logger.LogInformation("SupermarketDataService initialized with connection string: {ConnectionString}",
+            string.IsNullOrEmpty(_connectionString) ? "[EMPTY]" : "[SET]");
     }
 
     public async Task<IEnumerable<Product>> GetProductsAsync()
