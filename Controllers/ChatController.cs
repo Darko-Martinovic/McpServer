@@ -1,7 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using McpServer.Services;
-using System.Text.Json;
 
 namespace McpServer.Controllers;
 
@@ -13,7 +11,10 @@ public class ChatController : ControllerBase
     private readonly IAIConversationService _conversationService;
     private readonly ILogger<ChatController> _logger;
 
-    public ChatController(IAIConversationService conversationService, ILogger<ChatController> logger)
+    public ChatController(
+        IAIConversationService conversationService,
+        ILogger<ChatController> logger
+    )
     {
         _conversationService = conversationService;
         _logger = logger;
@@ -26,31 +27,40 @@ public class ChatController : ControllerBase
         {
             _logger.LogInformation("Processing chat message: {Message}", request.Message);
 
-            var response = await _conversationService.ProcessMessageAsync(request.Message, request.History ?? new List<ConversationMessage>());
+            var response = await _conversationService.ProcessMessageAsync(
+                request.Message,
+                request.History ?? new List<ConversationMessage>()
+            );
 
-            return Ok(new ChatResponse
-            {
-                Success = true,
-                Speaker = "AI",
-                Response = response,
-                UserMessage = request.Message,
-                UserSpeaker = "You",
-                Timestamp = DateTime.UtcNow
-            });
+            return Ok(
+                new ChatResponse
+                {
+                    Success = true,
+                    Speaker = "AI",
+                    Response = response,
+                    UserMessage = request.Message,
+                    UserSpeaker = "You",
+                    Timestamp = DateTime.UtcNow
+                }
+            );
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error processing chat message");
-            return StatusCode(500, new ChatResponse
-            {
-                Success = false,
-                Speaker = "AI",
-                Response = "I apologize, but I encountered an error while processing your request.",
-                UserMessage = request.Message,
-                UserSpeaker = "You",
-                Error = ex.Message,
-                Timestamp = DateTime.UtcNow
-            });
+            return StatusCode(
+                500,
+                new ChatResponse
+                {
+                    Success = false,
+                    Speaker = "AI",
+                    Response =
+                        "I apologize, but I encountered an error while processing your request.",
+                    UserMessage = request.Message,
+                    UserSpeaker = "You",
+                    Error = ex.Message,
+                    Timestamp = DateTime.UtcNow
+                }
+            );
         }
     }
 
@@ -60,13 +70,15 @@ public class ChatController : ControllerBase
         try
         {
             var functions = await _conversationService.GetAvailableFunctionsAsync();
-            return Ok(new
-            {
-                success = true,
-                functions = functions,
-                count = functions.Count,
-                timestamp = DateTime.UtcNow
-            });
+            return Ok(
+                new
+                {
+                    success = true,
+                    functions = functions,
+                    count = functions.Count,
+                    timestamp = DateTime.UtcNow
+                }
+            );
         }
         catch (Exception ex)
         {
@@ -95,16 +107,21 @@ public class ChatController : ControllerBase
             conversation.Add($"You: {request.Message}");
 
             // Get AI response
-            var response = await _conversationService.ProcessMessageAsync(request.Message, request.History ?? new List<ConversationMessage>());
+            var response = await _conversationService.ProcessMessageAsync(
+                request.Message,
+                request.History ?? new List<ConversationMessage>()
+            );
             conversation.Add($"AI: {response}");
 
-            return Ok(new
-            {
-                success = true,
-                conversation = conversation,
-                formattedConversation = string.Join("\n\n", conversation),
-                timestamp = DateTime.UtcNow
-            });
+            return Ok(
+                new
+                {
+                    success = true,
+                    conversation = conversation,
+                    formattedConversation = string.Join("\n\n", conversation),
+                    timestamp = DateTime.UtcNow
+                }
+            );
         }
         catch (Exception ex)
         {

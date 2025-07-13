@@ -1,10 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using McpServer.Services;
+﻿using McpServer.Services;
 using McpServer.Services.Interfaces;
 using McpServer.Configuration;
 using Serilog;
@@ -53,7 +47,9 @@ static async Task RunWebApiAsync(string[] args)
     ConfigureCommonServices(builder.Services, builder.Configuration);
 
     // Configure URLs from appsettings
-    var appModeOptions = builder.Configuration.GetSection("ApplicationMode").Get<ApplicationModeOptions>();
+    var appModeOptions = builder.Configuration
+        .GetSection("ApplicationMode")
+        .Get<ApplicationModeOptions>();
     if (appModeOptions?.Web?.Urls?.Any() == true)
     {
         builder.WebHost.UseUrls(appModeOptions.Web.Urls.ToArray());
@@ -68,21 +64,22 @@ static async Task RunWebApiAsync(string[] args)
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen(c =>
     {
-        c.SwaggerDoc("v1", new()
-        {
-            Title = "Supermarket MCP API",
-            Version = "v1",
-            Description = "REST API exposing supermarket MCP tools for React applications"
-        });
+        c.SwaggerDoc(
+            "v1",
+            new()
+            {
+                Title = "Supermarket MCP API",
+                Version = "v1",
+                Description = "REST API exposing supermarket MCP tools for React applications"
+            }
+        );
     });
 
     builder.Services.AddCors(options =>
     {
         options.AddDefaultPolicy(policy =>
         {
-            policy.AllowAnyOrigin()
-                  .AllowAnyMethod()
-                  .AllowAnyHeader();
+            policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader();
         });
     });
 
@@ -119,7 +116,10 @@ static async Task RunWebApiAsync(string[] args)
     }
     catch (Exception ex)
     {
-        logger.LogError(ex, "Failed to index MCP tools to Azure Search - continuing without indexing");
+        logger.LogError(
+            ex,
+            "Failed to index MCP tools to Azure Search - continuing without indexing"
+        );
     }
 
     await app.RunAsync();
@@ -131,8 +131,8 @@ static void ConfigureCommonServices(IServiceCollection services, IConfiguration 
     Directory.CreateDirectory("Logs");
 
     // Configure Serilog
-    Log.Logger = new LoggerConfiguration()
-        .MinimumLevel.Information()
+    Log.Logger = new LoggerConfiguration().MinimumLevel
+        .Information()
         .MinimumLevel.Override("Microsoft", Serilog.Events.LogEventLevel.Warning)
         .MinimumLevel.Override("System", Serilog.Events.LogEventLevel.Warning)
         .MinimumLevel.Override("ModelContextProtocol", Serilog.Events.LogEventLevel.Information)
@@ -153,7 +153,8 @@ static void ConfigureCommonServices(IServiceCollection services, IConfiguration 
 
     // Configure application mode options
     services.Configure<ApplicationModeOptions>(
-        configuration.GetSection(ApplicationModeOptions.SectionName));
+        configuration.GetSection(ApplicationModeOptions.SectionName)
+    );
 
     // Configure connection string with fallback
     services.Configure<ConnectionStringOptions>(options =>
@@ -183,8 +184,10 @@ static void ConfigureCommonServices(IServiceCollection services, IConfiguration 
     {
         options.Endpoint = Environment.GetEnvironmentVariable("AOAI_ENDPOINT") ?? "";
         options.ApiKey = Environment.GetEnvironmentVariable("AOAI_APIKEY") ?? "";
-        options.ChatCompletionDeploymentName = Environment.GetEnvironmentVariable("CHATCOMPLETION_DEPLOYMENTNAME") ?? "";
-        options.EmbeddingDeploymentName = Environment.GetEnvironmentVariable("EMBEDDING_DEPLOYMENTNAME") ?? "";
+        options.ChatCompletionDeploymentName =
+            Environment.GetEnvironmentVariable("CHATCOMPLETION_DEPLOYMENTNAME") ?? "";
+        options.EmbeddingDeploymentName =
+            Environment.GetEnvironmentVariable("EMBEDDING_DEPLOYMENTNAME") ?? "";
     });
 
     // Register business services
@@ -240,6 +243,6 @@ static void LoadEnvironmentVariables()
 
 enum ApplicationRunMode
 {
-    Console,  // MCP mode only
-    Web       // Web API mode only
+    Console, // MCP mode only
+    Web // Web API mode only
 }
