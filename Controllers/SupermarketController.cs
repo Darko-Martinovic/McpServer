@@ -407,21 +407,34 @@ public class SupermarketController : ControllerBase
     }
 
     /// <summary>
-    /// Get detailed inventory information for all products or filtered by category
+    /// Get detailed inventory information for all products or filtered by category and/or supplier
     /// </summary>
     /// <param name="category">Optional category filter</param>
+    /// <param name="supplier">Optional supplier filter</param>
     /// <returns>Detailed inventory data</returns>
     [HttpGet("inventory/detailed")]
-    public async Task<IActionResult> GetDetailedInventory([FromQuery] string? category = null)
+    public async Task<IActionResult> GetDetailedInventory([FromQuery] string? category = null, [FromQuery] string? supplier = null)
     {
         try
         {
-            _logger.LogInformation("REST API: GetDetailedInventory called with category: {Category}", category ?? "all");
+            _logger.LogInformation("REST API: GetDetailedInventory called with category: {Category}, supplier: {Supplier}",
+                category ?? "all", supplier ?? "all");
 
             IEnumerable<Product> detailedInventory;
-            if (!string.IsNullOrEmpty(category))
+
+            if (!string.IsNullOrEmpty(category) && !string.IsNullOrEmpty(supplier))
+            {
+                // Both filters applied - need to combine results
+                var categoryProducts = await _dataService.GetProductsByCategoryAsync(category);
+                detailedInventory = categoryProducts.Where(p => p.Supplier.Equals(supplier, StringComparison.OrdinalIgnoreCase));
+            }
+            else if (!string.IsNullOrEmpty(category))
             {
                 detailedInventory = await _dataService.GetProductsByCategoryAsync(category);
+            }
+            else if (!string.IsNullOrEmpty(supplier))
+            {
+                detailedInventory = await _dataService.GetProductsBySupplierAsync(supplier);
             }
             else
             {
@@ -435,6 +448,7 @@ public class SupermarketController : ControllerBase
                     data = detailedInventory,
                     count = detailedInventory.Count(),
                     category = category ?? "all",
+                    supplier = supplier ?? "all",
                     timestamp = DateTime.UtcNow
                 }
             );
@@ -511,6 +525,37 @@ public class SupermarketController : ControllerBase
         catch (Exception ex)
         {
             _logger.LogError(ex, "REST API: GetProductsByCategory failed");
+            return StatusCode(500, new { success = false, error = ex.Message });
+        }
+    }
+
+    /// <summary>
+    /// Get products filtered by supplier
+    /// </summary>
+    /// <param name="supplier">Supplier to filter by</param>
+    /// <returns>List of products from the specified supplier</returns>
+    [HttpGet("products/supplier/{supplier}")]
+    public async Task<IActionResult> GetProductsBySupplier(string supplier)
+    {
+        try
+        {
+            _logger.LogInformation("REST API: GetProductsBySupplier called with supplier: {Supplier}", supplier);
+            var products = await _dataService.GetProductsBySupplierAsync(supplier);
+
+            return Ok(
+                new
+                {
+                    success = true,
+                    data = products,
+                    count = products.Count(),
+                    supplier = supplier,
+                    timestamp = DateTime.UtcNow
+                }
+            );
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "REST API: GetProductsBySupplier failed");
             return StatusCode(500, new { success = false, error = ex.Message });
         }
     }

@@ -947,4 +947,55 @@ public class SupermarketDataService : ISupermarketDataService
             return new List<Product>();
         }
     }
+
+    public async Task<IEnumerable<Product>> GetProductsBySupplierAsync(string supplier)
+    {
+        var requestId = LoggingHelper.CreateRequestId();
+        _logger.LogInformation("[{RequestId}] GetProductsBySupplierAsync called with supplier: {Supplier}", requestId, supplier);
+
+        try
+        {
+            var products = new List<Product>();
+            using var connection = new SqlConnection(_connectionString);
+            await connection.OpenAsync();
+
+            var sql = "SELECT ProductId, ProductName, Category, UnitPrice, StockQuantity, Supplier FROM Products WHERE Supplier = @Supplier";
+            LoggingHelper.LogDatabaseOperationStart(_logger, requestId, "GetProductsBySupplier", sql);
+
+            var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+            using var command = new SqlCommand(sql, connection);
+            command.Parameters.AddWithValue("@Supplier", supplier);
+            using var reader = await command.ExecuteReaderAsync();
+
+            while (await reader.ReadAsync())
+            {
+                products.Add(
+                    new Product
+                    {
+                        ProductId = reader.GetInt32("ProductId"),
+                        ProductName = reader.GetString("ProductName"),
+                        Category = reader.GetString("Category"),
+                        Price = reader.GetDecimal("UnitPrice"),
+                        StockQuantity = reader.GetInt32("StockQuantity"),
+                        Supplier = reader.GetString("Supplier")
+                    }
+                );
+            }
+            stopwatch.Stop();
+
+            LoggingHelper.LogDatabaseOperationSuccess(
+                _logger,
+                requestId,
+                "GetProductsBySupplier",
+                products.Count,
+                stopwatch.ElapsedMilliseconds
+            );
+            return products;
+        }
+        catch (Exception ex)
+        {
+            LoggingHelper.LogDatabaseError(_logger, ex, requestId, "GetProductsBySupplierAsync");
+            return new List<Product>();
+        }
+    }
 }

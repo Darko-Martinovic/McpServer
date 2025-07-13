@@ -7,6 +7,7 @@ public interface ISupermarketDataService
 {
     Task<IEnumerable<Product>> GetProductsAsync();
     Task<IEnumerable<Product>> GetProductsByCategoryAsync(string category);
+    Task<IEnumerable<Product>> GetProductsBySupplierAsync(string supplier);
     Task<IEnumerable<SalesRecord>> GetSalesDataAsync(DateTime startDate, DateTime endDate);
     Task<decimal> GetTotalRevenueAsync(DateTime startDate, DateTime endDate);
     Task<IEnumerable<Product>> GetLowStockProductsAsync(int threshold);
