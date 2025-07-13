@@ -30,6 +30,8 @@ static async Task RunMcpServerAsync(string[] args)
     Console.SetOut(Console.Error);
 
     var builder = Host.CreateApplicationBuilder(args);
+    // Explicitly add appsettings.json
+    builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
     ConfigureCommonServices(builder.Services, builder.Configuration);
 
     // Configure MCP server
