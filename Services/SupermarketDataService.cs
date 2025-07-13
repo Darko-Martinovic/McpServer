@@ -896,4 +896,55 @@ public class SupermarketDataService : ISupermarketDataService
         var allRecommendations = await GetReorderRecommendationsAsync();
         return allRecommendations.Where(r => r.Priority == "IMMEDIATE" || r.Priority == "URGENT");
     }
+
+    public async Task<IEnumerable<Product>> GetProductsByCategoryAsync(string category)
+    {
+        var requestId = LoggingHelper.CreateRequestId();
+        _logger.LogInformation("[{RequestId}] GetProductsByCategoryAsync called with category: {Category}", requestId, category);
+
+        try
+        {
+            var products = new List<Product>();
+            using var connection = new SqlConnection(_connectionString);
+            await connection.OpenAsync();
+
+            var sql = "SELECT ProductId, ProductName, Category, UnitPrice, StockQuantity, Supplier FROM Products WHERE Category = @Category";
+            LoggingHelper.LogDatabaseOperationStart(_logger, requestId, "GetProductsByCategory", sql);
+
+            var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+            using var command = new SqlCommand(sql, connection);
+            command.Parameters.AddWithValue("@Category", category);
+            using var reader = await command.ExecuteReaderAsync();
+
+            while (await reader.ReadAsync())
+            {
+                products.Add(
+                    new Product
+                    {
+                        ProductId = reader.GetInt32("ProductId"),
+                        ProductName = reader.GetString("ProductName"),
+                        Category = reader.GetString("Category"),
+                        Price = reader.GetDecimal("UnitPrice"),
+                        StockQuantity = reader.GetInt32("StockQuantity"),
+                        Supplier = reader.GetString("Supplier")
+                    }
+                );
+            }
+            stopwatch.Stop();
+
+            LoggingHelper.LogDatabaseOperationSuccess(
+                _logger,
+                requestId,
+                "GetProductsByCategory",
+                products.Count,
+                stopwatch.ElapsedMilliseconds
+            );
+            return products;
+        }
+        catch (Exception ex)
+        {
+            LoggingHelper.LogDatabaseError(_logger, ex, requestId, "GetProductsByCategoryAsync");
+            return new List<Product>();
+        }
+    }
 }

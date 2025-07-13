@@ -37,7 +37,7 @@ public class WebModeOptions
     /// <summary>
     /// URLs to listen on
     /// </summary>
-    public string[] Urls { get; set; } = { "http://localhost:5555" };
+    public string[] Urls { get; set; } = { "http://localhost:6789" };
 
     /// <summary>
     /// Enable Swagger/OpenAPI documentation
@@ -52,12 +52,12 @@ public class WebModeOptions
     /// <summary>
     /// HTTP port
     /// </summary>
-    public int HttpPort { get; set; } = 5555;
+    public int HttpPort { get; set; } = 6789;
 
     /// <summary>
     /// HTTPS port
     /// </summary>
-    public int HttpsPort { get; set; } = 5556;
+    public int HttpsPort { get; set; } = 6790;
 }
 
 public class ConsoleModeOptions
