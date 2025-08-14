@@ -1,0 +1,637 @@
+{
+  "info": {
+    "name": "McpServer API Collection",
+    "description": "Complete collection of McpServer REST API endpoints for supermarket inventory and sales management",
+    "version": "1.0.0",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "{{base_url}}",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Products",
+      "item": [
+        {
+          "name": "Get All Products",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/supermarket/products",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "supermarket",
+                "products"
+              ]
+            },
+            "description": "Get all products in the supermarket inventory"
+          }
+        },
+        {
+          "name": "Get Low Stock Products",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/supermarket/products/low-stock?threshold={{low_stock_threshold}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "supermarket",
+                "products",
+                "low-stock"
+              ],
+              "query": [
+                {
+                  "key": "threshold",
+                  "value": "{{low_stock_threshold}}",
+                  "description": "Stock threshold (default: 10)"
+                }
+              ]
+            },
+            "description": "Get products with stock levels below threshold"
+          }
+        },
+        {
+          "name": "Get Products by Category",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/supermarket/products/category/{{category}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "supermarket",
+                "products",
+                "category",
+                "{{category}}"
+              ]
+            },
+            "description": "Get products filtered by category"
+          }
+        },
+        {
+          "name": "Get Products by Supplier",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/supermarket/products/supplier/{{supplier}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "supermarket",
+                "products",
+                "supplier",
+                "{{supplier}}"
+              ]
+            },
+            "description": "Get products filtered by supplier"
+          }
+        }
+      ],
+      "description": "Product-related endpoints"
+    },
+    {
+      "name": "Sales",
+      "item": [
+        {
+          "name": "Get Sales Data",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/supermarket/sales?startDate={{start_date}}&endDate={{end_date}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "supermarket",
+                "sales"
+              ],
+              "query": [
+                {
+                  "key": "startDate",
+                  "value": "{{start_date}}",
+                  "description": "Start date in YYYY-MM-DD format"
+                },
+                {
+                  "key": "endDate",
+                  "value": "{{end_date}}",
+                  "description": "End date in YYYY-MM-DD format"
+                }
+              ]
+            },
+            "description": "Get sales data for a specific date range"
+          }
+        },
+        {
+          "name": "Get Total Revenue",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/supermarket/revenue?startDate={{start_date}}&endDate={{end_date}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "supermarket",
+                "revenue"
+              ],
+              "query": [
+                {
+                  "key": "startDate",
+                  "value": "{{start_date}}",
+                  "description": "Start date in YYYY-MM-DD format"
+                },
+                {
+                  "key": "endDate",
+                  "value": "{{end_date}}",
+                  "description": "End date in YYYY-MM-DD format"
+                }
+              ]
+            },
+            "description": "Calculate total revenue for a date range"
+          }
+        },
+        {
+          "name": "Get Sales by Category",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/supermarket/sales/by-category?startDate={{start_date}}&endDate={{end_date}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "supermarket",
+                "sales",
+                "by-category"
+              ],
+              "query": [
+                {
+                  "key": "startDate",
+                  "value": "{{start_date}}",
+                  "description": "Start date in YYYY-MM-DD format"
+                },
+                {
+                  "key": "endDate",
+                  "value": "{{end_date}}",
+                  "description": "End date in YYYY-MM-DD format"
+                }
+              ]
+            },
+            "description": "Get sales performance by product category"
+          }
+        },
+        {
+          "name": "Get Daily Summary",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/supermarket/sales/daily-summary?date={{target_date}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "supermarket",
+                "sales",
+                "daily-summary"
+              ],
+              "query": [
+                {
+                  "key": "date",
+                  "value": "{{target_date}}",
+                  "description": "Date in YYYY-MM-DD format (optional, defaults to today)"
+                }
+              ]
+            },
+            "description": "Get daily sales summary"
+          }
+        }
+      ],
+      "description": "Sales-related endpoints"
+    },
+    {
+      "name": "Inventory",
+      "item": [
+        {
+          "name": "Get Inventory Status",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/supermarket/inventory/status",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "supermarket",
+                "inventory",
+                "status"
+              ]
+            },
+            "description": "Get real-time inventory status with stock levels and recent sales"
+          }
+        },
+        {
+          "name": "Get Detailed Inventory",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/supermarket/inventory/detailed",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "supermarket",
+                "inventory",
+                "detailed"
+              ]
+            },
+            "description": "Get detailed inventory information for all products"
+          }
+        },
+        {
+          "name": "Get Detailed Inventory by Category",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/supermarket/inventory/detailed?category={{category}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "supermarket",
+                "inventory",
+                "detailed"
+              ],
+              "query": [
+                {
+                  "key": "category",
+                  "value": "{{category}}",
+                  "description": "Optional category filter"
+                }
+              ]
+            },
+            "description": "Get detailed inventory information filtered by category"
+          }
+        },
+        {
+          "name": "Get Detailed Inventory by Supplier",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/supermarket/inventory/detailed?supplier={{supplier}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "supermarket",
+                "inventory",
+                "detailed"
+              ],
+              "query": [
+                {
+                  "key": "supplier",
+                  "value": "{{supplier}}",
+                  "description": "Optional supplier filter"
+                }
+              ]
+            },
+            "description": "Get detailed inventory information filtered by supplier"
+          }
+        },
+        {
+          "name": "Get Detailed Inventory by Category and Supplier",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/supermarket/inventory/detailed?category={{category}}&supplier={{supplier}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "supermarket",
+                "inventory",
+                "detailed"
+              ],
+              "query": [
+                {
+                  "key": "category",
+                  "value": "{{category}}",
+                  "description": "Optional category filter"
+                },
+                {
+                  "key": "supplier",
+                  "value": "{{supplier}}",
+                  "description": "Optional supplier filter"
+                }
+              ]
+            },
+            "description": "Get detailed inventory information filtered by both category and supplier"
+          }
+        }
+      ],
+      "description": "Inventory-related endpoints"
+    },
+    {
+      "name": "Tools",
+      "item": [
+        {
+          "name": "Get Tools Schema",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/supermarket/tools/schema",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "supermarket",
+                "tools",
+                "schema"
+              ]
+            },
+            "description": "Get the schema for MCP tools index"
+          }
+        },
+        {
+          "name": "Get Indexed Tools",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/supermarket/tools/indexed",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "supermarket",
+                "tools",
+                "indexed"
+              ]
+            },
+            "description": "Get indexed MCP tools from Azure Search (for testing)"
+          }
+        }
+      ],
+      "description": "MCP tools and schema endpoints"
+    },
+    {
+      "name": "Chat",
+      "item": [
+        {
+          "name": "Process Chat Message",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"message\": \"{{chat_message}}\",\n  \"history\": [\n    {\n      \"speaker\": \"You\",\n      \"message\": \"Hello\",\n      \"timestamp\": \"2025-08-14T10:00:00Z\",\n      \"formattedMessage\": \"You: Hello\"\n    },\n    {\n      \"speaker\": \"AI\",\n      \"message\": \"Hi there! How can I help you today?\",\n      \"timestamp\": \"2025-08-14T10:00:01Z\",\n      \"formattedMessage\": \"AI: Hi there! How can I help you today?\"\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/chat/message",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "chat",
+                "message"
+              ]
+            },
+            "description": "Process a chat message with optional conversation history"
+          }
+        },
+        {
+          "name": "Get Available Functions",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/chat/functions",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "chat",
+                "functions"
+              ]
+            },
+            "description": "Get list of available AI functions"
+          }
+        },
+        {
+          "name": "Get Formatted Conversation",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"message\": \"{{chat_message}}\",\n  \"history\": [\n    {\n      \"speaker\": \"You\",\n      \"message\": \"What are your available functions?\",\n      \"timestamp\": \"2025-08-14T10:00:00Z\",\n      \"formattedMessage\": \"You: What are your available functions?\"\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/chat/conversation",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "chat",
+                "conversation"
+              ]
+            },
+            "description": "Get a formatted conversation with speaker labels"
+          }
+        }
+      ],
+      "description": "AI chat and conversation endpoints"
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "pm.test(\"Status code is 200\", function () {",
+          "    pm.response.to.have.status(200);",
+          "});",
+          "",
+          "pm.test(\"Response has success field\", function () {",
+          "    var jsonData = pm.response.json();",
+          "    pm.expect(jsonData).to.have.property('success');",
+          "});",
+          "",
+          "pm.test(\"Response has timestamp\", function () {",
+          "    var jsonData = pm.response.json();",
+          "    pm.expect(jsonData).to.have.property('timestamp');",
+          "});"
+        ]
+      }
+    }
+  ]
+}
