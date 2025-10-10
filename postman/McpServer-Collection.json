@@ -5,13 +5,7 @@
     "version": "1.0.0",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
-  "variable": [
-    {
-      "key": "baseUrl",
-      "value": "{{base_url}}",
-      "type": "string"
-    }
-  ],
+  "variable": [],
   "item": [
     {
       "name": "Products",
@@ -28,15 +22,9 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/supermarket/products",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "supermarket",
-                "products"
-              ]
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/supermarket/products",
+              "host": ["{{protocol}}://{{host}}:{{port}}"],
+              "path": ["api", "supermarket", "products"]
             },
             "description": "Get all products in the supermarket inventory"
           }
@@ -53,16 +41,9 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/supermarket/products/low-stock?threshold={{low_stock_threshold}}",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "supermarket",
-                "products",
-                "low-stock"
-              ],
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/supermarket/products/low-stock?threshold={{low_stock_threshold}}",
+              "host": ["{{protocol}}://{{host}}:{{port}}"],
+              "path": ["api", "supermarket", "products", "low-stock"],
               "query": [
                 {
                   "key": "threshold",
@@ -86,10 +67,8 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/supermarket/products/category/{{category}}",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/supermarket/products/category/{{category}}",
+              "host": ["{{protocol}}://{{host}}:{{port}}"],
               "path": [
                 "api",
                 "supermarket",
@@ -113,10 +92,8 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/supermarket/products/supplier/{{supplier}}",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/supermarket/products/supplier/{{supplier}}",
+              "host": ["{{protocol}}://{{host}}:{{port}}"],
               "path": [
                 "api",
                 "supermarket",
@@ -146,15 +123,9 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/supermarket/sales?startDate={{start_date}}&endDate={{end_date}}",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "supermarket",
-                "sales"
-              ],
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/supermarket/sales?startDate={{start_date}}&endDate={{end_date}}",
+              "host": ["{{protocol}}://{{host}}:{{port}}"],
+              "path": ["api", "supermarket", "sales"],
               "query": [
                 {
                   "key": "startDate",
@@ -183,15 +154,9 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/supermarket/revenue?startDate={{start_date}}&endDate={{end_date}}",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "supermarket",
-                "revenue"
-              ],
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/supermarket/revenue?startDate={{start_date}}&endDate={{end_date}}",
+              "host": ["{{protocol}}://{{host}}:{{port}}"],
+              "path": ["api", "supermarket", "revenue"],
               "query": [
                 {
                   "key": "startDate",
@@ -220,16 +185,9 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/supermarket/sales/by-category?startDate={{start_date}}&endDate={{end_date}}",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "supermarket",
-                "sales",
-                "by-category"
-              ],
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/supermarket/sales/by-category?startDate={{start_date}}&endDate={{end_date}}",
+              "host": ["{{protocol}}://{{host}}:{{port}}"],
+              "path": ["api", "supermarket", "sales", "by-category"],
               "query": [
                 {
                   "key": "startDate",
@@ -258,16 +216,9 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/supermarket/sales/daily-summary?date={{target_date}}",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "supermarket",
-                "sales",
-                "daily-summary"
-              ],
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/supermarket/sales/daily-summary?date={{target_date}}",
+              "host": ["{{protocol}}://{{host}}:{{port}}"],
+              "path": ["api", "supermarket", "sales", "daily-summary"],
               "query": [
                 {
                   "key": "date",
@@ -297,16 +248,9 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/supermarket/inventory/status",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "supermarket",
-                "inventory",
-                "status"
-              ]
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/supermarket/inventory/status",
+              "host": ["{{protocol}}://{{host}}:{{port}}"],
+              "path": ["api", "supermarket", "inventory", "status"]
             },
             "description": "Get real-time inventory status with stock levels and recent sales"
           }
@@ -323,16 +267,9 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/supermarket/inventory/detailed",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "supermarket",
-                "inventory",
-                "detailed"
-              ]
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/supermarket/inventory/detailed",
+              "host": ["{{protocol}}://{{host}}:{{port}}"],
+              "path": ["api", "supermarket", "inventory", "detailed"]
             },
             "description": "Get detailed inventory information for all products"
           }
@@ -349,16 +286,9 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/supermarket/inventory/detailed?category={{category}}",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "supermarket",
-                "inventory",
-                "detailed"
-              ],
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/supermarket/inventory/detailed?category={{category}}",
+              "host": ["{{protocol}}://{{host}}:{{port}}"],
+              "path": ["api", "supermarket", "inventory", "detailed"],
               "query": [
                 {
                   "key": "category",
@@ -382,16 +312,9 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/supermarket/inventory/detailed?supplier={{supplier}}",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "supermarket",
-                "inventory",
-                "detailed"
-              ],
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/supermarket/inventory/detailed?supplier={{supplier}}",
+              "host": ["{{protocol}}://{{host}}:{{port}}"],
+              "path": ["api", "supermarket", "inventory", "detailed"],
               "query": [
                 {
                   "key": "supplier",
@@ -415,16 +338,9 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/supermarket/inventory/detailed?category={{category}}&supplier={{supplier}}",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "supermarket",
-                "inventory",
-                "detailed"
-              ],
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/supermarket/inventory/detailed?category={{category}}&supplier={{supplier}}",
+              "host": ["{{protocol}}://{{host}}:{{port}}"],
+              "path": ["api", "supermarket", "inventory", "detailed"],
               "query": [
                 {
                   "key": "category",
@@ -459,16 +375,9 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/supermarket/tools/schema",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "supermarket",
-                "tools",
-                "schema"
-              ]
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/supermarket/tools/schema",
+              "host": ["{{protocol}}://{{host}}:{{port}}"],
+              "path": ["api", "supermarket", "tools", "schema"]
             },
             "description": "Get the schema for MCP tools index"
           }
@@ -485,16 +394,9 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/supermarket/tools/indexed",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "supermarket",
-                "tools",
-                "indexed"
-              ]
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/supermarket/tools/indexed",
+              "host": ["{{protocol}}://{{host}}:{{port}}"],
+              "path": ["api", "supermarket", "tools", "indexed"]
             },
             "description": "Get indexed MCP tools from Azure Search (for testing)"
           }
@@ -526,15 +428,9 @@
               "raw": "{\n  \"message\": \"{{chat_message}}\",\n  \"history\": [\n    {\n      \"speaker\": \"You\",\n      \"message\": \"Hello\",\n      \"timestamp\": \"2025-08-14T10:00:00Z\",\n      \"formattedMessage\": \"You: Hello\"\n    },\n    {\n      \"speaker\": \"AI\",\n      \"message\": \"Hi there! How can I help you today?\",\n      \"timestamp\": \"2025-08-14T10:00:01Z\",\n      \"formattedMessage\": \"AI: Hi there! How can I help you today?\"\n    }\n  ]\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/chat/message",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "chat",
-                "message"
-              ]
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/chat/message",
+              "host": ["{{protocol}}://{{host}}:{{port}}"],
+              "path": ["api", "chat", "message"]
             },
             "description": "Process a chat message with optional conversation history"
           }
@@ -551,15 +447,9 @@
               }
             ],
             "url": {
-              "raw": "{{baseUrl}}/api/chat/functions",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "chat",
-                "functions"
-              ]
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/chat/functions",
+              "host": ["{{protocol}}://{{host}}:{{port}}"],
+              "path": ["api", "chat", "functions"]
             },
             "description": "Get list of available AI functions"
           }
@@ -585,15 +475,9 @@
               "raw": "{\n  \"message\": \"{{chat_message}}\",\n  \"history\": [\n    {\n      \"speaker\": \"You\",\n      \"message\": \"What are your available functions?\",\n      \"timestamp\": \"2025-08-14T10:00:00Z\",\n      \"formattedMessage\": \"You: What are your available functions?\"\n    }\n  ]\n}"
             },
             "url": {
-              "raw": "{{baseUrl}}/api/chat/conversation",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "chat",
-                "conversation"
-              ]
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/chat/conversation",
+              "host": ["{{protocol}}://{{host}}:{{port}}"],
+              "path": ["api", "chat", "conversation"]
             },
             "description": "Get a formatted conversation with speaker labels"
           }
@@ -607,9 +491,7 @@
       "listen": "prerequest",
       "script": {
         "type": "text/javascript",
-        "exec": [
-          ""
-        ]
+        "exec": [""]
       }
     },
     {

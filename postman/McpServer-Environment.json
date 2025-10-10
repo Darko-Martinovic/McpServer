@@ -1,27 +1,35 @@
 {
-  "id": "mcpserver-development",
-  "name": "McpServer Development",
+  "id": "mcpserver-environment",
+  "name": "McpServer Environment",
   "values": [
     {
-      "key": "base_url",
-      "value": "http://localhost:5000",
+      "key": "protocol",
+      "value": "http",
       "type": "default",
       "enabled": true,
-      "description": "Base URL for McpServer API"
+      "description": "Protocol for API requests (http or https)"
     },
     {
-      "key": "base_url_https",
-      "value": "https://localhost:5001",
+      "key": "host",
+      "value": "localhost",
       "type": "default",
       "enabled": true,
-      "description": "HTTPS Base URL for McpServer API"
+      "description": "Host for API requests"
     },
     {
-      "key": "base_url_webapi",
-      "value": "http://localhost:5000",
+      "key": "port",
+      "value": "5000",
       "type": "default",
       "enabled": true,
-      "description": "Base URL when running with --web argument (hardcoded in Program.cs)"
+      "description": "Port for API requests"
+    },
+
+    {
+      "key": "https_port",
+      "value": "5001",
+      "type": "default",
+      "enabled": true,
+      "description": "HTTPS port (when protocol is set to https, update port to this value)"
     },
     {
       "key": "start_date",
@@ -39,7 +47,7 @@
     },
     {
       "key": "target_date",
-      "value": "2025-08-14",
+      "value": "2025-10-10",
       "type": "default",
       "enabled": true,
       "description": "Target date for single-date queries (today's date)"
