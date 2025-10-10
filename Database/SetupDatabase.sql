@@ -17,17 +17,31 @@ PRINT 'STEP 1: Creating SupermarketDB database...';
 -- Check if database exists and create if not
 IF NOT EXISTS (SELECT name FROM sys.databases WHERE name = 'SupermarketDB')
 BEGIN
-    CREATE DATABASE SupermarketDB;
+    CREATE DATABASE SupermarketDB
+    COLLATE SQL_Latin1_General_CP1_CI_AS;
     PRINT '✓ Database SupermarketDB created successfully';
+    
+    -- Small delay to ensure database is ready
+    WAITFOR DELAY '00:00:01';
 END
 ELSE
 BEGIN
     PRINT '✓ Database SupermarketDB already exists';
 END
 
--- Switch to the database
+-- Now switch to the database
 USE SupermarketDB;
-GO
+
+-- Verify we're in the correct database
+IF DB_NAME() = 'SupermarketDB'
+BEGIN
+    PRINT '✓ Successfully connected to SupermarketDB database';
+END
+ELSE
+BEGIN
+    PRINT 'ERROR: Failed to connect to SupermarketDB. Current database: ' + ISNULL(DB_NAME(), 'NULL');
+    RAISERROR('Database connection failed', 16, 1);
+END
 
 -- =============================================================================
 -- STEP 2: CREATE TABLES WITH ENHANCED SCHEMA
@@ -170,6 +184,18 @@ END
 -- =============================================================================
 PRINT 'STEP 4: Inserting sample data...';
 
+-- Enable error handling
+SET NOCOUNT ON;
+SET XACT_ABORT ON;
+
+-- Optional: Uncomment the following lines if you want to reset all data
+-- PRINT 'Clearing existing data for fresh start...';
+-- DELETE FROM Sales;
+-- DELETE FROM Products;
+-- DBCC CHECKIDENT ('Sales', RESEED, 0);
+-- DBCC CHECKIDENT ('Products', RESEED, 0);
+-- PRINT '✓ Existing data cleared';
+
 -- Check if we already have data
 IF (SELECT COUNT(*) FROM Products) = 0
 BEGIN
@@ -229,36 +255,84 @@ IF (SELECT COUNT(*) FROM Sales) = 0
 BEGIN
     PRINT 'Inserting sample sales data...';
     
-    -- Generate realistic sales data for the past 30 days
-    DECLARE @StartDate DATE = DATEADD(day, -30, GETDATE());
-    DECLARE @EndDate DATE = GETDATE();
-    DECLARE @CurrentDate DATE = @StartDate;
+    BEGIN TRY
+        BEGIN TRANSACTION;
+        
+        -- Generate realistic sales data for the past 30 days
+    DECLARE @StartDate DATETIME2 = CAST(DATEADD(day, -30, GETDATE()) AS DATE);
+    DECLARE @EndDate DATETIME2 = CAST(GETDATE() AS DATE);
+    DECLARE @CurrentDate DATETIME2 = @StartDate;
     DECLARE @ProductCount INT = (SELECT COUNT(*) FROM Products);
+    DECLARE @DayOffset INT = 0;
     
-    WHILE @CurrentDate <= @EndDate
+    -- Validate that we have products to work with
+    IF @ProductCount = 0
     BEGIN
+        PRINT 'ERROR: No products found. Cannot generate sales data.';
+        RETURN;
+    END
+    
+    PRINT 'Generating sales data for ' + CAST(@ProductCount AS VARCHAR) + ' products over 30 days...';
+    
+    -- Use a more reliable approach for date iteration
+    WHILE @DayOffset <= 30
+    BEGIN
+        SET @CurrentDate = DATEADD(day, @DayOffset, @StartDate);
+        
         -- Generate 15-25 random sales per day
-        DECLARE @DailySales INT = 15 + (ABS(CHECKSUM(NEWID())) % 10);
+        DECLARE @DailySales INT = 15 + (ABS(CHECKSUM(NEWID())) % 11); -- 15-25 sales
         DECLARE @SaleCount INT = 0;
         
         WHILE @SaleCount < @DailySales
         BEGIN
-            DECLARE @ProductId INT = 1 + (ABS(CHECKSUM(NEWID())) % @ProductCount);
-            DECLARE @Quantity INT = 1 + (ABS(CHECKSUM(NEWID())) % 5);
-            DECLARE @UnitPrice DECIMAL(10,2) = (SELECT UnitPrice FROM Products WHERE ProductId = @ProductId);
-            DECLARE @SaleTime DATETIME2 = DATEADD(hour, ABS(CHECKSUM(NEWID())) % 12 + 8, @CurrentDate); -- Sales between 8 AM and 8 PM
+            -- Get a random product ID (ensure it exists)
+            DECLARE @RandomProductId INT = 1 + (ABS(CHECKSUM(NEWID())) % @ProductCount);
             
+            -- Verify the product exists and get its price
+            DECLARE @ProductId INT, @UnitPrice DECIMAL(10,2);
+            SELECT TOP 1 @ProductId = ProductId, @UnitPrice = UnitPrice 
+            FROM Products 
+            WHERE ProductId >= @RandomProductId
+            ORDER BY ProductId;
+            
+            -- If no product found, get the first product
+            IF @ProductId IS NULL
+            BEGIN
+                SELECT TOP 1 @ProductId = ProductId, @UnitPrice = UnitPrice 
+                FROM Products 
+                ORDER BY ProductId;
+            END
+            
+            -- Generate sale details
+            DECLARE @Quantity INT = 1 + (ABS(CHECKSUM(NEWID())) % 5); -- 1-5 items
+            DECLARE @RandomHour INT = 8 + (ABS(CHECKSUM(NEWID())) % 12); -- 8 AM to 7 PM
+            DECLARE @RandomMinute INT = ABS(CHECKSUM(NEWID())) % 60;
+            DECLARE @SaleTime DATETIME2 = DATEADD(minute, @RandomMinute, DATEADD(hour, @RandomHour, @CurrentDate));
+            
+            -- Insert the sale record
             INSERT INTO Sales (ProductId, Quantity, UnitPrice, TotalAmount, SaleDate)
             VALUES (@ProductId, @Quantity, @UnitPrice, @Quantity * @UnitPrice, @SaleTime);
             
             SET @SaleCount = @SaleCount + 1;
+            
+            -- Reset variables for next iteration
+            SET @ProductId = NULL;
+            SET @UnitPrice = NULL;
         END
         
-        SET @CurrentDate = DATEADD(day, 1, @CurrentDate);
+        SET @DayOffset = @DayOffset + 1;
     END
     
-    PRINT '✓ Inserted sample sales data for the past 30 days';
-    SELECT 'Sales Count' AS Info, COUNT(*) AS Count FROM Sales;
+        COMMIT TRANSACTION;
+        PRINT '✓ Inserted sample sales data for the past 30 days';
+        SELECT 'Sales Count' AS Info, COUNT(*) AS Count FROM Sales;
+        
+    END TRY
+    BEGIN CATCH
+        ROLLBACK TRANSACTION;
+        PRINT 'ERROR: Failed to insert sales data: ' + ERROR_MESSAGE();
+        THROW;
+    END CATCH
 END
 ELSE
 BEGIN

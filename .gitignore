@@ -43,9 +43,11 @@ data/Archive/*
 .env.test
 
 # API Keys and secrets (additional protection)
-appsettings.json
-appsettings.*.json
 secrets.json
+appsettings.Production.json
+appsettings.Staging.json
+
+# Keep appsettings.json and appsettings.Development.json but exclude production configs
 
 # NuGet
 *.nupkg
