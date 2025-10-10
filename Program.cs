@@ -46,10 +46,6 @@ static async Task RunWebApiAsync(string[] args)
     var builder = WebApplication.CreateBuilder(args);
     ConfigureCommonServices(builder.Services, builder.Configuration);
 
-    // Force port 9090 to bypass configuration issues
-    builder.WebHost.UseUrls("http://localhost:9090");
-
-    /*
     // Configure URLs from appsettings
     var appModeOptions = builder.Configuration
         .GetSection("ApplicationMode")
@@ -62,7 +58,6 @@ static async Task RunWebApiAsync(string[] args)
     {
         builder.WebHost.UseUrls("http://localhost:5000");
     }
-    */
 
     // Web API configuration
     builder.Services.AddControllers();
