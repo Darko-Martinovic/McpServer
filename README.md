@@ -2,6 +2,12 @@
 
 A modern, dual-mode server for supermarket inventory and sales management. Supports both **Web API** (REST) and **console/MCP** operation for integration with AI tools like Claude Desktop.
 
+## Demo Video
+
+🎥 **[Watch the Demo](https://github.com/user-attachments/assets/ccc24fc6-070b-4109-a28c-80573c69381b)**
+
+See the McpServer in action with Claude Desktop integration and Web API functionality.
+
 ## Features
 - **Dual Mode:** Run as a Web API (REST endpoints) or as a console MCP tool provider
 - **Product & Sales Analytics:** Inventory, sales, revenue, category, and stock tools
