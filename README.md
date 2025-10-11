@@ -9,6 +9,7 @@ A modern, dual-mode server for supermarket inventory and sales management. Suppo
 See the McpServer in action with Claude Desktop integration and Web API functionality.
 
 ## Features
+
 - **Dual Mode:** Run as a Web API (REST endpoints) or as a console MCP tool provider
 - **Product & Sales Analytics:** Inventory, sales, revenue, category, and stock tools
 - **Resource-like Endpoints:** Real-time inventory, daily summaries, detailed product info
@@ -18,11 +19,13 @@ See the McpServer in action with Claude Desktop integration and Web API function
 ## Quick Start
 
 ### Prerequisites
+
 - .NET 9.0+
 - SQL Server 2014+
 - Node.js (for MCP Inspector, optional)
 
 ### Setup
+
 1. **Database:**
    - Run `Database/SetupDatabase.sql` to create tables and sample data
 2. **Configure:**
@@ -46,6 +49,7 @@ See the McpServer in action with Claude Desktop integration and Web API function
 ## Usage
 
 ### Web API Mode
+
 - Start the server with `--webapi`
 - Access endpoints like:
   - `GET http://localhost:5000/api/Supermarket/products` (all products)
@@ -53,6 +57,7 @@ See the McpServer in action with Claude Desktop integration and Web API function
 - Any HTTP client or frontend can consume the API
 
 ### MCP Tool Provider Mode
+
 - Start the server without `--webapi`
 - Integrate with Claude Desktop or MCP Inspector
 - Example Claude config (`claude_desktop_config.json`):
@@ -69,6 +74,7 @@ See the McpServer in action with Claude Desktop integration and Web API function
 - Config file location: `C:\Users\<YourUsername>\AppData\Roaming\Claude`
 
 ## Configuration
+
 - **Connection String:** Edit `appsettings.json`:
   ```json
   {
@@ -80,6 +86,7 @@ See the McpServer in action with Claude Desktop integration and Web API function
 - **Claude Desktop:** See above for config example and file location
 
 ## Troubleshooting & Logs
+
 - Logs: `Logs/mcpserver.log` (file), console output
 - Common issues: Check connection string, database setup, and logs for errors
 - For MCP/Claude issues: Ensure config file is correct and restart the app after changes
