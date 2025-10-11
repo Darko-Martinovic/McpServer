@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "supermarket-mcp": {
+      "command": "C:\\Source\\AiRun\\McpServer\\publish\\McpServer.exe",
+      "args": ["--console"],
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Production"
+      }
+    }
+  }
+}

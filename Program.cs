@@ -20,18 +20,33 @@ else
 
 static async Task RunMcpServerAsync(string[] args)
 {
-    // MCP Server mode - redirect console output to stderr
+    // MCP Server mode - redirect console output to stderr to avoid polluting JSON-RPC
     Console.SetOut(Console.Error);
 
-    var builder = Host.CreateApplicationBuilder(args);
-    // Explicitly add appsettings.json
-    builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
-    ConfigureCommonServices(builder.Services, builder.Configuration);
+    // Create a minimal host builder for console-only operation
+    var builder = new HostBuilder();
 
-    // Configure MCP server
-    builder.Services.AddMcpServer().WithStdioServerTransport().WithToolsFromAssembly();
+    // Configure configuration sources
+    builder.ConfigureAppConfiguration((context, config) =>
+    {
+        config.Sources.Clear();
+        config.AddJsonFile("appsettings.json", optional: false, reloadOnChange: false)
+              .AddEnvironmentVariables()
+              .AddCommandLine(args);
+    });
 
-    var host = builder.Build();
+    // Configure services for MCP mode only
+    builder.ConfigureServices((context, services) =>
+    {
+        // Configure common services but exclude web-specific ones
+        ConfigureMcpOnlyServices(services, context.Configuration);
+
+        // Configure MCP server with proper lifecycle management
+        services.AddMcpServer().WithStdioServerTransport().WithToolsFromAssembly();
+
+        // Add hosted service to keep the host alive
+        services.AddHostedService<McpServer.McpServerHostedService>();
+    }); var host = builder.Build();
     var logger = host.Services.GetRequiredService<ILogger<Program>>();
 
     logger.LogInformation("Starting Supermarket MCP Server in Console mode");
@@ -39,6 +54,75 @@ static async Task RunMcpServerAsync(string[] args)
     Console.Error.WriteLine($"[DEBUG] Logging to: Logs/mcpserver.log");
 
     await host.RunAsync();
+}
+
+static void ConfigureMcpOnlyServices(IServiceCollection services, IConfiguration configuration)
+{
+    // Ensure Logs directory exists for Serilog
+    Directory.CreateDirectory("Logs");
+
+    // Configure Serilog
+    Log.Logger = new LoggerConfiguration().MinimumLevel
+        .Information()
+        .MinimumLevel.Override("Microsoft", Serilog.Events.LogEventLevel.Warning)
+        .MinimumLevel.Override("System", Serilog.Events.LogEventLevel.Warning)
+        .MinimumLevel.Override("ModelContextProtocol", Serilog.Events.LogEventLevel.Information)
+        .WriteTo.File(
+            path: "Logs/mcpserver.log",
+            rollingInterval: RollingInterval.Day,
+            retainedFileCountLimit: 7,
+            flushToDiskInterval: TimeSpan.FromSeconds(1)
+        )
+        .Enrich.FromLogContext()
+        .CreateLogger();
+
+    services.AddLogging(builder =>
+    {
+        builder.ClearProviders();
+        builder.AddSerilog(Log.Logger, dispose: true);
+    });
+
+    // Configure connection string with fallback
+    services.Configure<ConnectionStringOptions>(options =>
+    {
+        var connectionSection = configuration.GetSection("ConnectionStrings");
+        if (connectionSection.Exists())
+        {
+            connectionSection.Bind(options);
+        }
+        else
+        {
+            options.DefaultConnection =
+                "Server=(localdb)\\MSSQLLocalDB;Database=SupermarketDB;Integrated Security=true;TrustServerCertificate=true;";
+        }
+    });
+
+    // Configure Azure Search options (optional for MCP)
+    services.Configure<AzureSearchOptions>(options =>
+    {
+        options.Endpoint = Environment.GetEnvironmentVariable("COGNITIVESEARCH_ENDPOINT") ?? "";
+        options.ApiKey = Environment.GetEnvironmentVariable("COGNITIVESEARCH_APIKEY") ?? "";
+        options.IndexName = "mcp-tools";
+    });
+
+    // Configure Azure OpenAI options (optional for MCP)
+    services.Configure<AzureOpenAIOptions>(options =>
+    {
+        options.Endpoint = Environment.GetEnvironmentVariable("AOAI_ENDPOINT") ?? "";
+        options.ApiKey = Environment.GetEnvironmentVariable("AOAI_APIKEY") ?? "";
+        options.ChatCompletionDeploymentName =
+            Environment.GetEnvironmentVariable("CHATCOMPLETION_DEPLOYMENTNAME") ?? "";
+        options.EmbeddingDeploymentName =
+            Environment.GetEnvironmentVariable("EMBEDDING_DEPLOYMENTNAME") ?? "";
+    });
+
+    // Register ONLY business services (no web services)
+    services.AddScoped<ISupermarketDataService, SupermarketDataService>();
+
+    // Register Azure services (but don't require them to start)
+    services.AddScoped<IAzureSearchService, AzureSearchService>();
+    services.AddScoped<IMcpToolIndexingService, McpToolIndexingService>();
+    services.AddScoped<IAIConversationService, AIConversationService>();
 }
 
 static async Task RunWebApiAsync(string[] args)
@@ -222,7 +306,7 @@ static void LoadEnvironmentVariables()
 
     if (!File.Exists(envFilePath))
     {
-        Console.WriteLine($"Warning: .env file not found at {envFilePath}");
+        Console.Error.WriteLine($"Warning: .env file not found at {envFilePath}");
         return;
     }
 
