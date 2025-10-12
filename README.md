@@ -6,7 +6,7 @@ A modern, dual-mode server for supermarket inventory and sales management. Suppo
 
 See the McpServer in action with Claude Desktop integration and Web API functionality:
 
-https://github.com/user-attachments/assets/ccc24fc6-070b-4109-a28c-80573c69381b
+https://github.com/user-attachments/assets/e660dc73-7c24-43a5-ab14-05a65a69dba9
 
 _The demo showcases dual-mode operation, MCP tool integration with Claude Desktop, and REST API endpoints._
 
