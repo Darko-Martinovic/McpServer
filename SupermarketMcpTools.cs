@@ -109,9 +109,9 @@ public static class SupermarketMcpTools
             }
 
             var revenue = await dataService.GetTotalRevenueAsync(start, end);
-            var result = $"Total revenue from {startDate} to {endDate}: ${revenue:N2}";
+            var result = $"Total revenue from {startDate} to {endDate}: €{revenue:N2}";
             Serilog.Log.Information(
-                "MCP Tool 'GetTotalRevenue' completed successfully. Revenue: ${Revenue:N2}",
+                "MCP Tool 'GetTotalRevenue' completed successfully. Revenue: €{Revenue:N2}",
                 revenue
             );
             return result;

@@ -93,7 +93,7 @@ public static class LoggingHelper
         decimal? revenue = null
     )
     {
-        var revenueInfo = revenue.HasValue ? $", Revenue: ${revenue:N2}" : "";
+        var revenueInfo = revenue.HasValue ? $", Revenue: €{revenue:N2}" : "";
         logger.LogInformation(
             "[{RequestId}] {Operation} completed successfully. Retrieved {Count} records{RevenueInfo} in {ElapsedMs}ms",
             requestId,
