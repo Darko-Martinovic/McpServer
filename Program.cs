@@ -1,6 +1,10 @@
 ﻿using McpServer.Services;
 using McpServer.Services.Interfaces;
 using McpServer.Configuration;
+using McpServer.Plugins.Services;
+using McpServer.Controllers;
+using McpServer.Plugins.GkApi;
+using McpServer.Plugins.GkApi.Controllers;
 using Serilog;
 
 // Load environment variables from .env file
@@ -41,17 +45,39 @@ static async Task RunMcpServerAsync(string[] args)
         // Configure common services but exclude web-specific ones
         ConfigureMcpOnlyServices(services, context.Configuration);
 
-        // Configure MCP server with proper lifecycle management
+        // Configure plugin system
+        services.AddSingleton<IPluginDiscoveryService, PluginDiscoveryService>();
+
+        // Register plugin providers
+        services.AddSingleton<SupermarketToolProvider>();
+        services.AddSingleton<GkApiToolProvider>();
+
+        // For now, keep the existing MCP server configuration
+        // TODO: Implement dynamic tool discovery in next iteration
         services.AddMcpServer().WithStdioServerTransport().WithToolsFromAssembly();
 
         // Add hosted service to keep the host alive
         services.AddHostedService<McpServer.McpServerHostedService>();
-    }); var host = builder.Build();
+    });
+
+    var host = builder.Build();
     var logger = host.Services.GetRequiredService<ILogger<Program>>();
 
     logger.LogInformation("Starting Supermarket MCP Server in Console mode");
     Console.Error.WriteLine($"[DEBUG] MCP Server starting at {DateTime.Now:yyyy-MM-dd HH:mm:ss}");
     Console.Error.WriteLine($"[DEBUG] Logging to: Logs/mcpserver.log");
+
+    // Initialize plugin system for future use
+    try
+    {
+        var pluginDiscovery = host.Services.GetRequiredService<IPluginDiscoveryService>();
+        var plugins = await pluginDiscovery.DiscoverPluginsAsync();
+        logger.LogInformation("Plugin system initialized with {PluginCount} plugins", plugins.Count());
+    }
+    catch (Exception ex)
+    {
+        logger.LogWarning(ex, "Plugin system initialization failed - continuing with standard MCP tools");
+    }
 
     await host.RunAsync();
 }
@@ -130,6 +156,19 @@ static async Task RunWebApiAsync(string[] args)
     var builder = WebApplication.CreateBuilder(args);
     ConfigureCommonServices(builder.Services, builder.Configuration);
 
+    // Configure plugin system for Web API
+    builder.Services.AddSingleton<IPluginDiscoveryService, PluginDiscoveryService>();
+    builder.Services.AddSingleton<SupermarketToolProvider>();
+    builder.Services.AddSingleton<GkApiToolProvider>();
+    builder.Services.AddScoped<IPluginControllerService, PluginControllerService>();
+
+    // Configure services for each plugin
+    var supermarketProvider = new SupermarketToolProvider();
+    supermarketProvider.ConfigureServices(builder.Services);
+
+    var gkApiProvider = new GkApiToolProvider();
+    gkApiProvider.ConfigureServices(builder.Services);
+
     // Configure URLs from appsettings
     var appModeOptions = builder.Configuration
         .GetSection("ApplicationMode")
@@ -143,8 +182,11 @@ static async Task RunWebApiAsync(string[] args)
         builder.WebHost.UseUrls("http://localhost:5000");
     }
 
-    // Web API configuration
-    builder.Services.AddControllers();
+    // Web API configuration - include plugin assemblies
+    // Manually include both SupermarketController and GkApiController assemblies
+    builder.Services.AddControllers()
+        .AddApplicationPart(typeof(SupermarketController).Assembly)
+        .AddApplicationPart(typeof(GkApiController).Assembly);
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen(c =>
     {
@@ -172,6 +214,18 @@ static async Task RunWebApiAsync(string[] args)
 
     logger.LogInformation("Starting Supermarket Server in Web API mode");
 
+    // Initialize plugin system for Web API
+    try
+    {
+        var pluginDiscovery = app.Services.GetRequiredService<IPluginDiscoveryService>();
+        var plugins = await pluginDiscovery.DiscoverPluginsAsync();
+        logger.LogInformation("Plugin system initialized with {PluginCount} plugins for Web API", plugins.Count());
+    }
+    catch (Exception ex)
+    {
+        logger.LogWarning(ex, "Plugin system initialization failed for Web API - continuing with standard controllers");
+    }
+
     // Configure web pipeline
     // Always enable Swagger for API documentation
     app.UseSwagger();
@@ -194,7 +248,8 @@ static async Task RunWebApiAsync(string[] args)
     // Index MCP tools to Azure Search
     try
     {
-        var indexingService = app.Services.GetRequiredService<IMcpToolIndexingService>();
+        using var scope = app.Services.CreateScope();
+        var indexingService = scope.ServiceProvider.GetRequiredService<IMcpToolIndexingService>();
         await indexingService.IndexToolsAsync();
         logger.LogInformation("Successfully indexed MCP tools to Azure Search");
     }
@@ -286,7 +341,7 @@ static void ConfigureCommonServices(IServiceCollection services, IConfiguration 
 static ApplicationRunMode DetermineRunMode(string[] args)
 {
     // Check command line arguments first
-    if (args.Contains("--web"))
+    if (args.Contains("--web") || args.Contains("--webapi"))
         return ApplicationRunMode.Web;
     if (args.Contains("--console") || args.Contains("--mcp"))
         return ApplicationRunMode.Console;

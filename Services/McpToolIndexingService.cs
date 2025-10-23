@@ -1,8 +1,11 @@
 using McpServer.Models;
 using McpServer.Services.Interfaces;
+using McpServer.Plugins.Services;
 using Microsoft.Extensions.Logging;
 using System.Reflection;
 using System.Text.Json;
+using System.ComponentModel;
+using ModelContextProtocol.Server;
 
 namespace McpServer.Services;
 
@@ -16,13 +19,16 @@ public class McpToolIndexingService : IMcpToolIndexingService
 {
     private readonly IAzureSearchService _azureSearchService;
     private readonly ILogger<McpToolIndexingService> _logger;
+    private readonly IPluginDiscoveryService _pluginDiscoveryService;
 
     public McpToolIndexingService(
         IAzureSearchService azureSearchService,
-        ILogger<McpToolIndexingService> logger)
+        ILogger<McpToolIndexingService> logger,
+        IPluginDiscoveryService pluginDiscoveryService)
     {
         _azureSearchService = azureSearchService;
         _logger = logger;
+        _pluginDiscoveryService = pluginDiscoveryService;
     }
 
     public async Task IndexToolsAsync()
@@ -75,103 +81,144 @@ public class McpToolIndexingService : IMcpToolIndexingService
         var documents = new List<McpToolDocument>();
         int idCounter = 1;
 
-        // Define the MCP tools with their metadata
-        var toolDefinitions = new[]
+        try
         {
-            new
+            // Get all registered plugins
+            var plugins = _pluginDiscoveryService.GetRegisteredPlugins();
+
+            foreach (var plugin in plugins)
             {
-                FunctionName = "GetProducts",
-                Description = "Retrieve all products from the supermarket inventory with optional filtering by category, name, or stock status. Returns product details including ID, name, category, price, and stock quantity.",
-                Endpoint = "/api/supermarket/products",
-                HttpMethod = "GET",
-                Parameters = "category (optional), name (optional), minStock (optional)",
-                ResponseType = "Array of Product objects with id, name, category, price, stockQuantity"
-            },
-            new
-            {
-                FunctionName = "GetSalesData",
-                Description = "Retrieve sales transaction data within a specified date range. Useful for analyzing sales patterns, revenue trends, and transaction volumes.",
-                Endpoint = "/api/supermarket/sales",
-                HttpMethod = "GET",
-                Parameters = "startDate (optional), endDate (optional)",
-                ResponseType = "Array of SalesRecord objects with transactionId, productId, productName, quantity, unitPrice, totalAmount, saleDate"
-            },
-            new
-            {
-                FunctionName = "GetTotalRevenue",
-                Description = "Calculate and retrieve the total revenue generated within a specified date range. Essential for financial reporting and business performance analysis.",
-                Endpoint = "/api/supermarket/revenue",
-                HttpMethod = "GET",
-                Parameters = "startDate (optional), endDate (optional)",
-                ResponseType = "Object with totalRevenue, period, transactionCount"
-            },
-            new
-            {
-                FunctionName = "GetLowStockProducts",
-                Description = "Identify products with inventory levels below a specified threshold. Critical for inventory management and preventing stockouts.",
-                Endpoint = "/api/supermarket/products/low-stock",
-                HttpMethod = "GET",
-                Parameters = "threshold (optional, default: 10)",
-                ResponseType = "Array of Product objects with low stock levels"
-            },
-            new
-            {
-                FunctionName = "GetSalesByCategory",
-                Description = "Analyze sales performance grouped by product categories within a date range. Valuable for category management and merchandising decisions.",
-                Endpoint = "/api/supermarket/sales/by-category",
-                HttpMethod = "GET",
-                Parameters = "startDate (optional), endDate (optional)",
-                ResponseType = "Array of CategorySales objects with categoryName, totalSales, totalRevenue, averagePrice"
-            },
-            new
-            {
-                FunctionName = "GetInventoryStatus",
-                Description = "Get a comprehensive overview of current inventory status including total products, categories, stock levels, and value metrics.",
-                Endpoint = "/api/supermarket/inventory/status",
-                HttpMethod = "GET",
-                Parameters = "None",
-                ResponseType = "Object with totalProducts, totalCategories, lowStockCount, totalInventoryValue, averageStockLevel"
-            },
-            new
-            {
-                FunctionName = "GetDailySummary",
-                Description = "Generate a comprehensive daily business summary including sales, revenue, top products, and key performance indicators for a specific date.",
-                Endpoint = "/api/supermarket/sales/daily-summary",
-                HttpMethod = "GET",
-                Parameters = "date (optional, defaults to today)",
-                ResponseType = "Object with date, totalSales, totalRevenue, transactionCount, topSellingProducts, averageTransactionValue"
-            },
-            new
-            {
-                FunctionName = "GetDetailedInventory",
-                Description = "Retrieve comprehensive inventory details including stock levels, values, turnover rates, and category breakdown. Essential for detailed inventory analysis.",
-                Endpoint = "/api/supermarket/inventory/detailed",
-                HttpMethod = "GET",
-                Parameters = "includeZeroStock (optional, boolean)",
-                ResponseType = "Object with products array, categoryBreakdown, totalValue, stockMetrics"
+                var pluginName = plugin.Metadata.Name;
+                var pluginId = plugin.Metadata.Id;
+                var routePrefix = plugin.Metadata.RoutePrefix;
+
+                _logger.LogDebug("Extracting tools from plugin: {PluginName} ({PluginId})", pluginName, pluginId);
+
+                // Get MCP tools from the plugin
+                var mcpTools = plugin.GetMcpTools();
+
+                foreach (var method in mcpTools)
+                {
+                    try
+                    {
+                        var mcpAttribute = method.GetCustomAttribute<McpServerToolAttribute>();
+                        var descriptionAttribute = method.GetCustomAttribute<DescriptionAttribute>();
+
+                        if (mcpAttribute != null)
+                        {
+                            // Extract method information
+                            var functionName = method.Name;
+                            var description = descriptionAttribute?.Description ?? $"MCP tool: {functionName}";
+
+                            // Generate endpoint based on plugin route prefix and method name
+                            var endpoint = GenerateEndpointFromMethod(routePrefix, method);
+
+                            // Extract parameters
+                            var parameters = ExtractMethodParameters(method);
+
+                            // Generate response type information
+                            var responseType = GenerateResponseTypeInfo(method);
+
+                            documents.Add(new McpToolDocument
+                            {
+                                Id = idCounter.ToString(),
+                                FunctionName = functionName,
+                                Description = description,
+                                Category = pluginId,
+                                HttpMethod = "GET", // Most MCP tools are read operations
+                                Endpoint = endpoint,
+                                Parameters = parameters,
+                                ResponseType = responseType,
+                                LastUpdated = DateTimeOffset.UtcNow,
+                                IsActive = true
+                            });
+
+                            idCounter++;
+                            _logger.LogDebug("Added tool: {FunctionName} from plugin {PluginId}", functionName, pluginId);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogWarning(ex, "Failed to extract tool metadata for method {MethodName} in plugin {PluginId}",
+                            method.Name, pluginId);
+                    }
+                }
             }
+
+            _logger.LogInformation("Extracted {Count} tool documents from {PluginCount} plugins",
+                documents.Count, plugins.Count());
+            return documents;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to extract tool documents from plugins");
+            return new List<McpToolDocument>();
+        }
+    }
+
+    private string GenerateEndpointFromMethod(string routePrefix, MethodInfo method)
+    {
+        // Map MCP tool method names to actual REST controller endpoints
+        var methodName = method.Name;
+
+        // Use explicit mapping for known methods instead of automatic kebab-case conversion
+        var endpointMap = new Dictionary<string, string>
+        {
+            // Supermarket Plugin endpoints
+            {"GetProducts", "products"},
+            {"GetSalesData", "sales"},
+            {"GetTotalRevenue", "revenue"},
+            {"GetLowStockProducts", "products/low-stock"},
+            {"GetSalesByCategory", "sales/by-category"},
+            {"GetInventoryStatus", "inventory/status"},
+            {"GetDailySummary", "sales/daily-summary"},
+            {"GetDetailedInventory", "inventory/detailed"},
+            
+            // GkApi Plugin endpoints
+            {"GetPricesWithoutBaseItem", "prices-without-base-item"},
+            {"GetLatestStatistics", "latest-statistics"},
+            {"GetContentTypesSummary", "content-types"}
         };
 
-        foreach (var tool in toolDefinitions)
-        {
-            documents.Add(new McpToolDocument
+        // Use explicit mapping if available, otherwise fall back to kebab-case conversion
+        var endpoint = endpointMap.ContainsKey(methodName)
+            ? endpointMap[methodName]
+            : string.Concat(methodName.Select((x, i) => i > 0 && char.IsUpper(x) ? "-" + x : x.ToString())).ToLowerInvariant();
+
+        return $"/api/{routePrefix}/{endpoint}";
+    }
+    private string ExtractMethodParameters(MethodInfo method)
+    {
+        var parameters = method.GetParameters()
+            .Skip(1) // Skip the first parameter (usually the data service)
+            .Select(p =>
             {
-                Id = idCounter.ToString(),
-                FunctionName = tool.FunctionName,
-                Description = tool.Description,
-                Category = "supermarket",
-                HttpMethod = tool.HttpMethod,
-                Endpoint = tool.Endpoint,
-                Parameters = tool.Parameters,
-                ResponseType = tool.ResponseType,
-                LastUpdated = DateTimeOffset.UtcNow,
-                IsActive = true
+                var descAttr = p.GetCustomAttribute<DescriptionAttribute>();
+                var paramInfo = $"{p.Name} ({p.ParameterType.Name})";
+                if (descAttr != null)
+                {
+                    paramInfo += $" - {descAttr.Description}";
+                }
+                return paramInfo;
             });
 
-            idCounter++;
+        return string.Join(", ", parameters);
+    }
+
+    private string GenerateResponseTypeInfo(MethodInfo method)
+    {
+        var returnType = method.ReturnType;
+
+        // Handle Task<T> return types
+        if (returnType.IsGenericType && returnType.GetGenericTypeDefinition() == typeof(Task<>))
+        {
+            returnType = returnType.GetGenericArguments()[0];
         }
 
-        _logger.LogInformation("Extracted {Count} tool documents from MCP definitions", documents.Count);
-        return documents;
+        return returnType.Name switch
+        {
+            "String" => "JSON string containing the result data",
+            _ => $"JSON object of type {returnType.Name}"
+        };
     }
 }

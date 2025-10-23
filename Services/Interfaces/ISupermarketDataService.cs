@@ -1,9 +1,10 @@
 using System.Data;
 using McpServer.Models;
+using McpServer.Plugins.Interfaces;
 
 namespace McpServer.Services.Interfaces;
 
-public interface ISupermarketDataService
+public interface ISupermarketDataService : IDataService<Product>, IHealthCheckableDataService
 {
     Task<IEnumerable<Product>> GetProductsAsync();
     Task<IEnumerable<Product>> GetProductsByCategoryAsync(string category);

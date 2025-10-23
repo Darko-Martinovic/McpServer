@@ -6,6 +6,7 @@ using System.Diagnostics;
 using McpServer.Models;
 using McpServer.Services.Interfaces;
 using McpServer.Configuration;
+using McpServer.Plugins.Interfaces;
 
 namespace McpServer.Services;
 
@@ -13,6 +14,9 @@ public class SupermarketDataService : ISupermarketDataService
 {
     private readonly string _connectionString;
     private readonly ILogger<SupermarketDataService> _logger;
+
+    // Implementation of IDataService.Metadata
+    public IPluginMetadata Metadata { get; }
 
     public SupermarketDataService(
         IOptions<ConnectionStringOptions> connectionOptions,
@@ -22,8 +26,33 @@ public class SupermarketDataService : ISupermarketDataService
         _connectionString = connectionOptions.Value.DefaultConnection;
         _logger = logger;
 
+        // Initialize metadata
+        Metadata = new SupermarketPluginMetadata();
+
         _logger.LogInformation("SupermarketDataService initialized with connection string: {ConnectionString}",
             string.IsNullOrEmpty(_connectionString) ? "[EMPTY]" : "[SET]");
+    }
+
+    // Implementation of IDataService<Product>.GetAllAsync()
+    public async Task<IEnumerable<Product>> GetAllAsync()
+    {
+        return await GetProductsAsync();
+    }
+
+    // Implementation of IHealthCheckableDataService.IsHealthyAsync()
+    public async Task<bool> IsHealthyAsync()
+    {
+        try
+        {
+            using var connection = new SqlConnection(_connectionString);
+            await connection.OpenAsync();
+            return true;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Health check failed for SupermarketDataService");
+            return false;
+        }
     }
 
     public async Task<IEnumerable<Product>> GetProductsAsync()
