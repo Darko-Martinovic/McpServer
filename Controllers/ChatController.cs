@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using McpServer.Services;
+using McpServer.Models;
 
 namespace McpServer.Controllers;
 
@@ -33,14 +34,20 @@ public class ChatController : ControllerBase
             );
 
             return Ok(
-                new ChatResponse
+                new
                 {
                     Success = true,
                     Speaker = "AI",
-                    Response = response,
+                    Response = response.Content,
                     UserMessage = request.Message,
                     UserSpeaker = "You",
-                    Timestamp = DateTime.UtcNow
+                    Timestamp = DateTime.UtcNow,
+                    // Token usage and cost information
+                    TokensUsed = response.TokensUsed,
+                    EstimatedCost = response.EstimatedCost,
+                    Model = response.Model,
+                    UsedTools = response.UsedTools,
+                    ToolsCalled = response.ToolsCalled
                 }
             );
         }
@@ -111,7 +118,7 @@ public class ChatController : ControllerBase
                 request.Message,
                 request.History ?? new List<ConversationMessage>()
             );
-            conversation.Add($"AI: {response}");
+            conversation.Add($"AI: {response.Content}");
 
             return Ok(
                 new
@@ -119,7 +126,11 @@ public class ChatController : ControllerBase
                     success = true,
                     conversation = conversation,
                     formattedConversation = string.Join("\n\n", conversation),
-                    timestamp = DateTime.UtcNow
+                    timestamp = DateTime.UtcNow,
+                    // Include token usage for the entire conversation
+                    tokensUsed = response.TokensUsed,
+                    estimatedCost = response.EstimatedCost,
+                    model = response.Model
                 }
             );
         }

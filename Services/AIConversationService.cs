@@ -11,7 +11,7 @@ namespace McpServer.Services;
 
 public interface IAIConversationService
 {
-    Task<string> ProcessMessageAsync(string userMessage, List<ConversationMessage> conversationHistory);
+    Task<AIResponse> ProcessMessageAsync(string userMessage, List<ConversationMessage> conversationHistory);
     Task<List<AvailableFunction>> GetAvailableFunctionsAsync();
 }
 
@@ -36,13 +36,15 @@ public class AIConversationService : IAIConversationService
         _systemPrompt = "You are a helpful assistant for a supermarket system. You have access to various tools to help answer questions about products, sales, and inventory. When users ask for data, use the appropriate tools to get real information instead of providing generic responses. Always maintain context from previous messages in the conversation.";
     }
 
-    public async Task<string> ProcessMessageAsync(string userMessage, List<ConversationMessage> conversationHistory)
+    public async Task<AIResponse> ProcessMessageAsync(string userMessage, List<ConversationMessage> conversationHistory)
     {
         try
         {
             _logger.LogInformation("Processing message: {Message}", userMessage);
 
             var chatClient = _client.GetChatClient(_options.ChatModel);
+            var toolsCalled = new List<string>();
+            bool usedTools = false;
 
             // Build conversation messages
             var messages = new List<ChatMessage> { new SystemChatMessage(_systemPrompt) };
@@ -65,10 +67,15 @@ public class AIConversationService : IAIConversationService
 
             var chatCompletion = await chatClient.CompleteChatAsync(messages, chatCompletionOptions);
 
+            int totalPromptTokens = chatCompletion.Value.Usage.InputTokenCount;
+            int totalCompletionTokens = chatCompletion.Value.Usage.OutputTokenCount;
+
             // Check if AI wants to call a function
             if (chatCompletion.Value.FinishReason == ChatFinishReason.ToolCalls)
             {
+                usedTools = true;
                 var toolCall = chatCompletion.Value.ToolCalls[0];
+                toolsCalled.Add(toolCall.FunctionName);
 
                 _logger.LogInformation("AI is calling function: {FunctionName}", toolCall.FunctionName);
 
@@ -81,16 +88,35 @@ public class AIConversationService : IAIConversationService
 
                 // Get final response from AI with function result
                 var finalCompletion = await chatClient.CompleteChatAsync(messages);
+
+                // Add tokens from second call
+                totalPromptTokens += finalCompletion.Value.Usage.InputTokenCount;
+                totalCompletionTokens += finalCompletion.Value.Usage.OutputTokenCount;
+
                 var finalResponse = finalCompletion.Value.Content[0].Text;
 
                 _logger.LogInformation("AI Response with function data: {Response}", finalResponse);
-                return finalResponse;
+
+                return CreateAIResponse(
+                    finalResponse,
+                    totalPromptTokens,
+                    totalCompletionTokens,
+                    usedTools,
+                    toolsCalled
+                );
             }
             else
             {
                 var textResponse = chatCompletion.Value.Content[0].Text;
                 _logger.LogInformation("AI Response: {Response}", textResponse);
-                return textResponse;
+
+                return CreateAIResponse(
+                    textResponse,
+                    totalPromptTokens,
+                    totalCompletionTokens,
+                    usedTools,
+                    toolsCalled
+                );
             }
         }
         catch (Exception ex)
@@ -254,6 +280,65 @@ public class AIConversationService : IAIConversationService
             _logger.LogError(ex, "Error executing function: {FunctionName}", functionName);
             return $"Error executing function: {ex.Message}";
         }
+    }
+
+    private AIResponse CreateAIResponse(
+        string content,
+        int promptTokens,
+        int completionTokens,
+        bool usedTools,
+        List<string> toolsCalled)
+    {
+        var totalTokens = promptTokens + completionTokens;
+
+        // Calculate cost based on model pricing
+        var cost = CalculateCost(_options.ChatModel, promptTokens, completionTokens);
+
+        return new AIResponse
+        {
+            Content = content,
+            TokensUsed = new TokenUsage
+            {
+                Prompt = promptTokens,
+                Completion = completionTokens,
+                Total = totalTokens
+            },
+            EstimatedCost = cost,
+            Model = _options.ChatModel,
+            Timestamp = DateTime.UtcNow,
+            UsedTools = usedTools,
+            ToolsCalled = toolsCalled
+        };
+    }
+
+    private decimal CalculateCost(string model, int promptTokens, int completionTokens)
+    {
+        // Pricing per 1K tokens (update these based on your Azure OpenAI pricing)
+        // Default to GPT-4o pricing
+        decimal promptCostPer1K = 0.0025m;  // $2.50 per 1M input tokens
+        decimal completionCostPer1K = 0.010m; // $10.00 per 1M output tokens
+
+        // Adjust pricing based on model
+        if (model.Contains("gpt-4o", StringComparison.OrdinalIgnoreCase))
+        {
+            promptCostPer1K = 0.0025m;
+            completionCostPer1K = 0.010m;
+        }
+        else if (model.Contains("gpt-4", StringComparison.OrdinalIgnoreCase))
+        {
+            promptCostPer1K = 0.03m;   // $30 per 1M
+            completionCostPer1K = 0.06m; // $60 per 1M
+        }
+        else if (model.Contains("gpt-3.5", StringComparison.OrdinalIgnoreCase))
+        {
+            promptCostPer1K = 0.0005m;  // $0.50 per 1M
+            completionCostPer1K = 0.0015m; // $1.50 per 1M
+        }
+
+        var promptCost = (promptTokens / 1000.0m) * promptCostPer1K;
+        var completionCost = (completionTokens / 1000.0m) * completionCostPer1K;
+
+        return promptCost + completionCost;
     }
 }
 
