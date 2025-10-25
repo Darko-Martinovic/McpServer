@@ -79,6 +79,20 @@
       "type": "default",
       "enabled": true,
       "description": "Sample chat message for AI conversation testing"
+    },
+    {
+      "key": "article_name",
+      "value": "MASTI",
+      "type": "default",
+      "enabled": true,
+      "description": "Sample article name search term (case-insensitive partial match)"
+    },
+    {
+      "key": "content_key",
+      "value": "1615",
+      "type": "default",
+      "enabled": true,
+      "description": "Sample content key for article lookup (will be zero-padded to 18 digits)"
     }
   ],
   "_postman_variable_scope": "environment"

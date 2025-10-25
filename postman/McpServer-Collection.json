@@ -1,8 +1,8 @@
 {
   "info": {
     "name": "McpServer API Collection",
-    "description": "Complete collection of McpServer REST API endpoints for supermarket inventory and sales management",
-    "version": "1.0.0",
+    "description": "Complete collection of McpServer REST API endpoints - includes Supermarket Plugin (SQL Server) and GkApi Plugin (MongoDB Analytics)",
+    "version": "2.0.0",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [],
@@ -484,6 +484,177 @@
         }
       ],
       "description": "AI chat and conversation endpoints"
+    },
+    {
+      "name": "GkApi Analytics (MongoDB)",
+      "item": [
+        {
+          "name": "Get Prices Without Base Item",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/gkapi/prices-without-base-item",
+              "host": ["{{protocol}}://{{host}}:{{port}}"],
+              "path": ["api", "gkapi", "prices-without-base-item"]
+            },
+            "description": "Analyzes pricing data excluding base items from GK Software retail system. Returns detailed price information including UOM codes, price origins, type codes, effective/expiration dates, and package quantities."
+          }
+        },
+        {
+          "name": "Get Latest Statistics",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/gkapi/latest-statistics",
+              "host": ["{{protocol}}://{{host}}:{{port}}"],
+              "path": ["api", "gkapi", "latest-statistics"]
+            },
+            "description": "Provides comprehensive processing statistics from GK Software retail system including total unique content types, total documents processed (82,056 documents across 51 types), and breakdown by content type with counts."
+          }
+        },
+        {
+          "name": "Get Content Types Summary",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/gkapi/content-types",
+              "host": ["{{protocol}}://{{host}}:{{port}}"],
+              "path": ["api", "gkapi", "content-types"]
+            },
+            "description": "Analyzes and returns the distribution of all GK Software content types in the MongoDB database. Shows content type name, simplified class name, and document count for each type (e.g., ItemShelfAssignmentsDO: 22,115 records, PricingDataDO: 18,340 records)."
+          }
+        },
+        {
+          "name": "Find Articles by Name",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/gkapi/articles/search?name={{article_name}}",
+              "host": ["{{protocol}}://{{host}}:{{port}}"],
+              "path": ["api", "gkapi", "articles", "search"],
+              "query": [
+                {
+                  "key": "name",
+                  "value": "{{article_name}}",
+                  "description": "Part of the article name to search for (case-insensitive)"
+                }
+              ]
+            },
+            "description": "Find articles by name using case-insensitive partial match. Searches BaseItemDO documents in the GK Software retail system. Example: searching for 'MASTI' will find all articles with 'MASTI' anywhere in the name."
+          }
+        },
+        {
+          "name": "Find Article by Content Key",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/gkapi/articles/{{content_key}}",
+              "host": ["{{protocol}}://{{host}}:{{port}}"],
+              "path": ["api", "gkapi", "articles", "{{content_key}}"]
+            },
+            "description": "Find a specific article by its content key. The content key will be automatically zero-padded to 18 digits (e.g., 1615 becomes 000000000000001615). Returns complete BaseItemDO article information including name, description, and item number."
+          }
+        }
+      ],
+      "description": "GkApi Plugin - Advanced analytics and data mining from GK Software retail system stored in MongoDB (82,056 documents, 51 content types)"
+    },
+    {
+      "name": "Health Checks",
+      "item": [
+        {
+          "name": "System Health",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/health",
+              "host": ["{{protocol}}://{{host}}:{{port}}"],
+              "path": ["health"]
+            },
+            "description": "Check overall system health status"
+          }
+        },
+        {
+          "name": "Supermarket Plugin Health",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/supermarket/health",
+              "host": ["{{protocol}}://{{host}}:{{port}}"],
+              "path": ["api", "supermarket", "health"]
+            },
+            "description": "Check SQL Server database connectivity for Supermarket plugin"
+          }
+        },
+        {
+          "name": "GkApi Plugin Health",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/gkapi/health",
+              "host": ["{{protocol}}://{{host}}:{{port}}"],
+              "path": ["api", "gkapi", "health"]
+            },
+            "description": "Check MongoDB database connectivity for GkApi plugin"
+          }
+        }
+      ],
+      "description": "Health monitoring endpoints for system and individual plugins"
     }
   ],
   "event": [

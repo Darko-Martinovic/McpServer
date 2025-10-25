@@ -210,9 +210,88 @@ public class GkApiDataService : IGkApiDataService
             return null;
         }
     }
-}
 
-/// <summary>
+    public async Task<IEnumerable<BsonDocument>> FindArticlesByNameAsync(string name)
+    {
+        try
+        {
+            _logger.LogInformation("Searching for articles with name containing: {Name}", name);
+
+            var pipeline = new[]
+            {
+                // Match only BaseItemDO documents
+                new BsonDocument("$match", new BsonDocument
+                {
+                    ["transportElement.contentType"] = "com.gk_software.gkr.api.server.md.item.dto.dom.BaseItemDO"
+                }),
+                
+                // Match name with regex (case-insensitive)
+                new BsonDocument("$match", new BsonDocument
+                {
+                    ["$expr"] = new BsonDocument("$regexMatch", new BsonDocument
+                    {
+                        ["input"] = new BsonDocument("$getField", new BsonDocument
+                        {
+                            ["field"] = "name",
+                            ["input"] = new BsonDocument("$getField", new BsonDocument
+                            {
+                                ["field"] = "com.gk_software.gkr.api.server.md.item.dto.dom.BaseItemDO",
+                                ["input"] = "$transportElement.content"
+                            })
+                        }),
+                        ["regex"] = name,
+                        ["options"] = "i"
+                    })
+                })
+            };
+
+            var result = await _pumpCollection.AggregateAsync<BsonDocument>(pipeline);
+            var articles = await result.ToListAsync();
+
+            _logger.LogInformation("Found {Count} articles matching name: {Name}", articles.Count, name);
+            return articles;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to find articles by name: {Name}", name);
+            return new List<BsonDocument>();
+        }
+    }
+
+    public async Task<BsonDocument?> FindArticleByContentKeyAsync(string contentKey)
+    {
+        try
+        {
+            // Pad the content key with zeros to 18 digits
+            string paddedContentKey = contentKey.PadLeft(18, '0');
+
+            _logger.LogInformation("Searching for article with content key: {ContentKey} (padded: {PaddedKey})",
+                contentKey, paddedContentKey);
+
+            var filter = Builders<BsonDocument>.Filter.And(
+                Builders<BsonDocument>.Filter.Eq("transportElement.contentType",
+                    "com.gk_software.gkr.api.server.md.item.dto.dom.BaseItemDO"),
+                Builders<BsonDocument>.Filter.Eq("transportElement.contentKey", paddedContentKey)
+            );
+
+            var document = await _pumpCollection.Find(filter).FirstOrDefaultAsync();
+
+            if (document == null)
+            {
+                _logger.LogWarning("No article found with content key: {ContentKey}", paddedContentKey);
+                return null;
+            }
+
+            _logger.LogInformation("Found article with content key: {ContentKey}", paddedContentKey);
+            return document;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to find article by content key: {ContentKey}", contentKey);
+            return null;
+        }
+    }
+}/// <summary>
 /// Metadata for the GkApi plugin
 /// </summary>
 public class GkApiPluginMetadata : PluginMetadataBase

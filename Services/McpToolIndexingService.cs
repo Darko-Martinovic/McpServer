@@ -177,7 +177,9 @@ public class McpToolIndexingService : IMcpToolIndexingService
             // GkApi Plugin endpoints
             {"GetPricesWithoutBaseItem", "prices-without-base-item"},
             {"GetLatestStatistics", "latest-statistics"},
-            {"GetContentTypesSummary", "content-types"}
+            {"GetContentTypesSummary", "content-types"},
+            {"FindArticlesByName", "articles/search"},
+            {"FindArticleByContentKey", "articles/{contentKey}"}
         };
 
         // Use explicit mapping if available, otherwise fall back to kebab-case conversion

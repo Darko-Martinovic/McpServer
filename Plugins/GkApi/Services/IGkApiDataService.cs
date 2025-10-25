@@ -1,5 +1,6 @@
 using McpServer.Plugins.GkApi.Models;
 using McpServer.Plugins.Interfaces;
+using MongoDB.Bson;
 
 namespace McpServer.Plugins.GkApi.Services;
 
@@ -17,4 +18,16 @@ public interface IGkApiDataService : IDataService<ProcessingSummary>, IHealthChe
     /// Get the latest processing statistics from Summary collection
     /// </summary>
     Task<ProcessingStatistics?> GetLatestStatisticsAsync();
+
+    /// <summary>
+    /// Find articles by name (case-insensitive partial match) - returns complete BSON documents
+    /// </summary>
+    /// <param name="name">Part of the article name to search for</param>
+    Task<IEnumerable<BsonDocument>> FindArticlesByNameAsync(string name);
+
+    /// <summary>
+    /// Find article by content key (with automatic zero-padding) - returns complete BSON document
+    /// </summary>
+    /// <param name="contentKey">Content key (will be zero-padded to 18 digits)</param>
+    Task<BsonDocument?> FindArticleByContentKeyAsync(string contentKey);
 }

@@ -109,3 +109,24 @@ public class ProcessingSummary
     [BsonElement("consoleOutput")]
     public ConsoleOutput ConsoleOutput { get; set; } = new ConsoleOutput();
 }
+
+/// <summary>
+/// Represents a BaseItemDO article from the Pump collection
+/// </summary>
+public class BaseItemArticle
+{
+    [BsonElement("contentKey")]
+    public string ContentKey { get; set; } = string.Empty;
+
+    [BsonElement("name")]
+    public string Name { get; set; } = string.Empty;
+
+    [BsonElement("description")]
+    public string? Description { get; set; }
+
+    [BsonElement("itemNumber")]
+    public string? ItemNumber { get; set; }
+
+    [BsonElement("contentType")]
+    public string ContentType { get; set; } = string.Empty;
+}

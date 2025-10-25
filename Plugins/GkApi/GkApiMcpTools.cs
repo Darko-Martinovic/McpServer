@@ -2,6 +2,8 @@ using ModelContextProtocol.Server;
 using System.ComponentModel;
 using System.Text.Json;
 using McpServer.Plugins.GkApi.Services;
+using MongoDB.Bson;
+using MongoDB.Bson.IO;
 
 namespace McpServer.Plugins.GkApi;
 
@@ -98,6 +100,80 @@ public static class GkApiMcpTools
         {
             Serilog.Log.Error(ex, "MCP Tool 'GetContentTypesSummary' failed: {Message}", ex.Message);
             return $"Error retrieving content types summary: {ex.Message}";
+        }
+    }
+
+    [McpServerTool, Description("Find articles by name (case-insensitive partial match) from GkApi Pump collection")]
+    public static async Task<string> FindArticlesByName(
+        IGkApiDataService dataService,
+        [Description("Part of the article name to search for (case-insensitive)")] string name)
+    {
+        try
+        {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                return "Error: Name parameter is required";
+            }
+
+            Serilog.Log.Information("MCP Tool 'FindArticlesByName' called with name: {Name} at {Timestamp}",
+                name, DateTime.Now);
+
+            var articles = await dataService.FindArticlesByNameAsync(name);
+
+            // Convert BsonDocuments to JSON string
+            var articleList = articles.ToList();
+            var result = new BsonArray(articleList).ToJson(new JsonWriterSettings { Indent = true });
+
+            Serilog.Log.Information(
+                "MCP Tool 'FindArticlesByName' completed successfully. Found {Count} articles",
+                articleList.Count
+            );
+            return result;
+        }
+        catch (Exception ex)
+        {
+            Serilog.Log.Error(ex, "MCP Tool 'FindArticlesByName' failed: {Message}", ex.Message);
+            return $"Error finding articles by name: {ex.Message}";
+        }
+    }
+
+    [McpServerTool, Description("Find article by content key (automatically zero-padded to 18 digits) from GkApi Pump collection")]
+    public static async Task<string> FindArticleByContentKey(
+        IGkApiDataService dataService,
+        [Description("Content key (will be automatically zero-padded to 18 digits, e.g., 1615 becomes 000000000000001615)")] string contentKey)
+    {
+        try
+        {
+            if (string.IsNullOrWhiteSpace(contentKey))
+            {
+                return "Error: Content key parameter is required";
+            }
+
+            Serilog.Log.Information("MCP Tool 'FindArticleByContentKey' called with content key: {ContentKey} at {Timestamp}",
+                contentKey, DateTime.Now);
+
+            var article = await dataService.FindArticleByContentKeyAsync(contentKey);
+
+            if (article == null)
+            {
+                var paddedKey = contentKey.PadLeft(18, '0');
+                Serilog.Log.Warning("MCP Tool 'FindArticleByContentKey' found no article with key: {ContentKey}", paddedKey);
+                return $"No article found with content key: {contentKey} (padded: {paddedKey})";
+            }
+
+            // Convert BsonDocument to JSON string
+            var result = article.ToJson(new JsonWriterSettings { Indent = true });
+
+            Serilog.Log.Information(
+                "MCP Tool 'FindArticleByContentKey' completed successfully. Found article with key: {ContentKey}",
+                contentKey
+            );
+            return result;
+        }
+        catch (Exception ex)
+        {
+            Serilog.Log.Error(ex, "MCP Tool 'FindArticleByContentKey' failed: {Message}", ex.Message);
+            return $"Error finding article by content key: {ex.Message}";
         }
     }
 }
