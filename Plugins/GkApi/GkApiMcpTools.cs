@@ -103,7 +103,7 @@ public static class GkApiMcpTools
         }
     }
 
-    [McpServerTool, Description("Find articles by name (case-insensitive partial match) from GkApi Pump collection")]
+    [McpServerTool, Description("Search, find, show, get, list, display, or retrieve articles by name. Shows all articles that contain a specific text, word, or string in their name (case-insensitive partial match). Use this when user asks to find articles, show articles, get articles, list articles, search articles, or display articles that contain any text in their name like 'cola', 'pepsi', 'water', 'masti', 'coca cola', etc. Works with any search term or product name.")]
     public static async Task<string> FindArticlesByName(
         IGkApiDataService dataService,
         [Description("Part of the article name to search for (case-insensitive)")] string name)
