@@ -721,11 +721,11 @@ function extractParametersFromQuery(query) {
     // Pattern 4: "has COLA in", "contains PEPSI"
     /(?:have|has|contains?)\s+['""]?([a-z0-9\s]+)['""]?\s+in/i,
     // Pattern 5: Quoted strings "COLA"
-    /['""]([a-z0-9\s]+)['""]/, 
+    /['""]([a-z0-9\s]+)['""]/,
     // Pattern 6: NEW - Simple pattern "search articles MASTI", "find articles COLA"
     /(?:search|find|show|get|list|display)\s+(?:articles?|items?|products?)\s+([a-z0-9\s]+)/i,
     // Pattern 7: NEW - Last word after "articles" as fallback
-    /articles?\s+([a-z0-9]+)$/i
+    /articles?\s+([a-z0-9]+)$/i,
   ];
 
   for (const pattern of namePatterns) {
@@ -734,7 +734,18 @@ function extractParametersFromQuery(query) {
       // Don't extract name if we already have contentKey
       const extractedName = match[1].trim();
       // Skip if extracted name is too generic or a verb
-      const skipWords = ['with', 'containing', 'named', 'called', 'by', 'that', 'contain', 'in', 'their', 'the'];
+      const skipWords = [
+        "with",
+        "containing",
+        "named",
+        "called",
+        "by",
+        "that",
+        "contain",
+        "in",
+        "their",
+        "the",
+      ];
       if (extractedName && !skipWords.includes(extractedName.toLowerCase())) {
         params.name = extractedName;
         console.log(`✓ Extracted name: ${params.name}`);
