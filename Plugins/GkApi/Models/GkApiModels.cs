@@ -130,3 +130,30 @@ public class BaseItemArticle
     [BsonElement("contentType")]
     public string ContentType { get; set; } = string.Empty;
 }
+
+/// <summary>
+/// Represents PLU data from SAP Fiori (DynamicTableauItemListDO)
+/// </summary>
+public class PluData
+{
+    [BsonElement("contentKey")]
+    public string ContentKey { get; set; } = string.Empty;
+
+    [BsonElement("businessUnitGroupId")]
+    public long BusinessUnitGroupId { get; set; }
+
+    [BsonElement("groupId")]
+    public string GroupId { get; set; } = string.Empty;
+
+    [BsonElement("groupDescription")]
+    public string GroupDescription { get; set; } = string.Empty;
+
+    [BsonElement("posItemId")]
+    public string PosItemId { get; set; } = string.Empty;
+
+    [BsonElement("sequenceNumber")]
+    public int SequenceNumber { get; set; }
+
+    [BsonElement("lastUpdateTimestamp")]
+    public DateTime LastUpdateTimestamp { get; set; }
+}

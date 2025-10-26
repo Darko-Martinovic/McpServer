@@ -179,7 +179,8 @@ public class McpToolIndexingService : IMcpToolIndexingService
             {"GetLatestStatistics", "latest-statistics"},
             {"GetContentTypesSummary", "content-types"},
             {"FindArticlesByName", "articles/search"},
-            {"FindArticleByContentKey", "articles/{contentKey}"}
+            {"FindArticleByContentKey", "articles/{contentKey}"},
+            {"GetPluData", "plu-data"}
         };
 
         // Use explicit mapping if available, otherwise fall back to kebab-case conversion

@@ -176,4 +176,30 @@ public static class GkApiMcpTools
             return $"Error finding article by content key: {ex.Message}";
         }
     }
+
+    [McpServerTool, Description("Get PLU data from SAP Fiori (DynamicTableauItemListDO). Returns PLU codes, group information, and sequence numbers sorted by content key and sequence. Used for POS item lists, product groups, and SAP Fiori integration.")]
+    public static async Task<string> GetPluData(IGkApiDataService dataService)
+    {
+        try
+        {
+            Serilog.Log.Information("MCP Tool 'GetPluData' called at {Timestamp}", DateTime.Now);
+
+            var pluData = await dataService.GetPluDataAsync();
+            var result = JsonSerializer.Serialize(
+                pluData,
+                new JsonSerializerOptions { WriteIndented = true }
+            );
+
+            Serilog.Log.Information(
+                "MCP Tool 'GetPluData' completed successfully. Returned {Count} PLU entries",
+                pluData.Count()
+            );
+            return result;
+        }
+        catch (Exception ex)
+        {
+            Serilog.Log.Error(ex, "MCP Tool 'GetPluData' failed: {Message}", ex.Message);
+            return $"Error retrieving PLU data: {ex.Message}";
+        }
+    }
 }

@@ -251,4 +251,32 @@ public class GkApiController : ControllerBase
             return StatusCode(500, new { success = false, error = ex.Message });
         }
     }
+
+    /// <summary>
+    /// Get PLU data from SAP Fiori (DynamicTableauItemListDO)
+    /// </summary>
+    /// <returns>List of PLU data entries sorted by content key and sequence number</returns>
+    [HttpGet("plu-data")]
+    public async Task<IActionResult> GetPluData()
+    {
+        try
+        {
+            _logger.LogInformation("REST API: GetPluData called");
+
+            var pluData = await _dataService.GetPluDataAsync();
+
+            return Ok(new
+            {
+                success = true,
+                data = pluData,
+                count = pluData.Count(),
+                timestamp = DateTime.UtcNow
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "REST API: GetPluData failed");
+            return StatusCode(500, new { success = false, error = ex.Message });
+        }
+    }
 }

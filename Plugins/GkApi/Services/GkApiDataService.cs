@@ -291,7 +291,80 @@ public class GkApiDataService : IGkApiDataService
             return null;
         }
     }
-}/// <summary>
+
+    public async Task<IEnumerable<PluData>> GetPluDataAsync()
+    {
+        try
+        {
+            _logger.LogInformation("Executing PLU data aggregation pipeline");
+
+            var pipeline = new BsonDocument[]
+            {
+                // Match DynamicTableauItemListDO documents
+                new BsonDocument("$match", new BsonDocument
+                {
+                    ["transportElement.contentType"] = "com.gk_software.gkr.api.server.md.dynamic_tableau.dto.dom.DynamicTableauItemListDO"
+                }),
+                
+                // Extract the DynamicTableauItemListDO from the content
+                new BsonDocument("$addFields", new BsonDocument
+                {
+                    ["tableauItemList"] = new BsonDocument("$getField", new BsonDocument
+                    {
+                        ["field"] = "com.gk_software.gkr.api.server.md.dynamic_tableau.dto.dom.DynamicTableauItemListDO",
+                        ["input"] = "$transportElement.content"
+                    })
+                }),
+                
+                // Unwind the dynamicTableauItemListItemList array to process each item
+                new BsonDocument("$unwind", "$tableauItemList.dynamicTableauItemListItemList"),
+                
+                // Extract the DynamicTableauItemListItemDO from each item
+                new BsonDocument("$addFields", new BsonDocument
+                {
+                    ["tableauItem"] = new BsonDocument("$getField", new BsonDocument
+                    {
+                        ["field"] = "com.gk_software.gkr.api.server.md.dynamic_tableau.dto.dom.DynamicTableauItemListItemDO",
+                        ["input"] = "$tableauItemList.dynamicTableauItemListItemList"
+                    })
+                }),
+                
+                // Project the desired fields
+                new BsonDocument("$project", new BsonDocument
+                {
+                    ["_id"] = 0,
+                    ["contentKey"] = "$transportElement.contentKey",
+                    ["businessUnitGroupId"] = "$tableauItemList.key.businessUnitGroupId",
+                    ["groupId"] = "$tableauItemList.key.itemListId",
+                    ["groupDescription"] = "$tableauItemList.description",
+                    ["posItemId"] = "$tableauItem.posItemId",
+                    ["sequenceNumber"] = "$tableauItem.sequenceNumber",
+                    ["lastUpdateTimestamp"] = "$tableauItemList.lastUpdateTimestamp"
+                }),
+                
+                // Sort by content key and then by sequence number within group
+                new BsonDocument("$sort", new BsonDocument
+                {
+                    ["contentKey"] = 1,
+                    ["sequenceNumber"] = 1
+                })
+            };
+
+            var result = await _pumpCollection.AggregateAsync<PluData>(pipeline);
+            var pluData = await result.ToListAsync();
+
+            _logger.LogInformation("Found {Count} PLU data entries", pluData.Count);
+            return pluData;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to get PLU data");
+            return new List<PluData>();
+        }
+    }
+}
+
+/// <summary>
 /// Metadata for the GkApi plugin
 /// </summary>
 public class GkApiPluginMetadata : PluginMetadataBase

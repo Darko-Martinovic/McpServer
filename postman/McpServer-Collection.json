@@ -589,6 +589,25 @@
             },
             "description": "Find a specific article by its content key. The content key will be automatically zero-padded to 18 digits (e.g., 1615 becomes 000000000000001615). Returns complete BaseItemDO article information including name, description, and item number."
           }
+        },
+        {
+          "name": "Get PLU Data (SAP Fiori)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/gkapi/plu-data",
+              "host": ["{{protocol}}://{{host}}:{{port}}"],
+              "path": ["api", "gkapi", "plu-data"]
+            },
+            "description": "Get PLU (Price Look-Up) data from SAP Fiori DynamicTableauItemListDO. Returns PLU codes, business unit groups, group descriptions, POS item IDs, and sequence numbers. Used for POS item lists and product group organization. Data sorted by content key and sequence number."
+          }
         }
       ],
       "description": "GkApi Plugin - Advanced analytics and data mining from GK Software retail system stored in MongoDB (82,056 documents, 51 content types)"

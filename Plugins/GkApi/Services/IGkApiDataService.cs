@@ -30,4 +30,9 @@ public interface IGkApiDataService : IDataService<ProcessingSummary>, IHealthChe
     /// </summary>
     /// <param name="contentKey">Content key (will be zero-padded to 18 digits)</param>
     Task<BsonDocument?> FindArticleByContentKeyAsync(string contentKey);
+
+    /// <summary>
+    /// Get PLU data from SAP Fiori (DynamicTableauItemListDO) sorted by content key and sequence number
+    /// </summary>
+    Task<IEnumerable<PluData>> GetPluDataAsync();
 }
