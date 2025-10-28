@@ -7,7 +7,7 @@ using McpServer.Plugins.GkApi;
 using McpServer.Plugins.GkApi.Controllers;
 using Serilog;
 
-// Load environment variables from .env file
+
 LoadEnvironmentVariables();
 
 // Determine application mode based on arguments and configuration
