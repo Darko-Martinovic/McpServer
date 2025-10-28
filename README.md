@@ -10,6 +10,18 @@ https://github.com/user-attachments/assets/7675de32-fa05-48e1-9327-8417670e9165
 
 _The demo showcases dual-mode operation, MCP tool integration with Claude Desktop, and REST API endpoints._
 
+## 🆕 Latest Features
+
+Recent Additions:
+
+- **Custom Plugin Support** - Define custom logic to access your database or API through configurable plugins
+- **Advanced JSON Viewer** - Interactive data visualizer with expand/collapse functionality and intelligent formatting
+- **Enhanced AI Response Tracking** - Each AI response now includes detailed metadata:
+  - Number of tokens used (prompt + completion)
+  - Estimated cost breakdown
+  - Tools utilized during processing
+  - AI model information
+
 ## Features
 
 - **Dual Mode:** Run as a Web API (REST endpoints) or as a console MCP tool provider
