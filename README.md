@@ -27,7 +27,7 @@ Recent Additions:
 - **Dual Mode:** Run as a Web API (REST endpoints) or as a console MCP tool provider
 - **Plugin Architecture:** Extensible system supporting multiple data sources and operations
 - **Supermarket Analytics:** Inventory, sales, revenue, category, and stock tools (SQL Server)
-- **GK API Integration:** MongoDB-based operations for prices analysis and content statistics
+- **Third-Party-Provider API Integration:** MongoDB-based operations for prices analysis and content statistics
 - **Resource-like Endpoints:** Real-time inventory, daily summaries, detailed product info
 - **Advanced Analytics:** Complex MongoDB aggregation pipelines for data analysis
 - **Comprehensive Logging:** Serilog-based, file and console
@@ -38,7 +38,7 @@ Recent Additions:
 
 - .NET 9.0+
 - SQL Server 2014+ (for Supermarket plugin)
-- MongoDB 4.0+ (for GkApi plugin, optional)
+- MongoDB 4.0+ (for third-party-provider plugin, optional)
 - Node.js (for MCP Inspector, optional)
 
 ### Setup
@@ -72,11 +72,11 @@ Recent Additions:
   - `GET http://localhost:5000/api/supermarket/products` (all products)
   - `GET http://localhost:5000/api/supermarket/sales?startDate=2025-01-01&endDate=2025-01-31` (sales data)
   - `GET http://localhost:5000/health` (general health check)
-- **GkApi Plugin Endpoints:**
-  - `GET http://localhost:5000/api/gkapi/prices-without-base-item` (prices analysis)
-  - `GET http://localhost:5000/api/gkapi/latest-statistics` (processing statistics)
-  - `GET http://localhost:5000/api/gkapi/content-types` (content types summary)
-  - `GET http://localhost:5000/api/gkapi/health` (MongoDB health check)
+- **Third-Party-Provider Plugin Endpoints:**
+  - `GET http://localhost:5000/api/third-party-provider/prices-without-base-item` (prices analysis)
+  - `GET http://localhost:5000/api/third-party-provider/latest-statistics` (processing statistics)
+  - `GET http://localhost:5000/api/third-party-provider/content-types` (content types summary)
+  - `GET http://localhost:5000/api/third-party-provider/health` (MongoDB health check)
 - **API Documentation:** `GET http://localhost:5000/swagger` (Swagger UI)
 - Any HTTP client or frontend can consume the API
 
@@ -109,8 +109,8 @@ Recent Additions:
     }
   }
   ```
-- **MongoDB (GkApi Plugin):** Default connection to `mongodb://localhost:27017/GkApi`
-  - Connects to `GkApi` database
+- **MongoDB (Third-Party-Provider Plugin):** Default connection to `mongodb://localhost:27017/ThirdPartyProvider`
+  - Connects to `ThirdPartyProvider` database
   - Uses `Pump` collection for price data
   - Uses `Summary` collection for statistics
 
@@ -123,7 +123,7 @@ Recent Additions:
 The server supports a plugin-based architecture allowing multiple data sources:
 
 - **Supermarket Plugin:** SQL Server-based inventory and sales management
-- **GkApi Plugin:** MongoDB-based price analysis and content statistics
+- **Third-Party-Provider Plugin:** MongoDB-based price analysis and content statistics
 - **Extensible Design:** Easy to add new plugins for additional data sources
 
 Each plugin provides:
