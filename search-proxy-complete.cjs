@@ -60,7 +60,7 @@ app.get("/api/tools/schema", async (req, res) => {
       console.warn("Supermarket schema not available:", err.message);
     }
 
-    // Get GkApi plugin schema (if available)
+    // Get a third party plugin schema (if available)
     try {
       const gkapiRes = await axios.get(
         `${mcpServerUrl}/api/gkapi/tools/schema`
