@@ -1,7 +1,4 @@
-// search-proxy.cjs - Complete MCP Tool Proxy with Article Search Support
-//
-// READY TO USE: Copy this file to your client project and run with: node search-proxy.cjs
-//
+
 // FEATURES:
 // - Dual-plugin support (Supermarket SQL + GkApi MongoDB)
 // - Automatic parameter extraction from natural language queries
