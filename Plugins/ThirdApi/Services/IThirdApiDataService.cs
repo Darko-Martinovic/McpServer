@@ -1,13 +1,13 @@
-using McpServer.Plugins.GkApi.Models;
+using McpServer.Plugins.ThirdApi.Models;
 using McpServer.Plugins.Interfaces;
 using MongoDB.Bson;
 
-namespace McpServer.Plugins.GkApi.Services;
+namespace McpServer.Plugins.ThirdApi.Services;
 
 /// <summary>
-/// Interface for GkApi data operations
+/// Interface for ThirdApi data operations
 /// </summary>
-public interface IGkApiDataService : IDataService<ProcessingSummary>, IHealthCheckableDataService
+public interface IThirdApiDataService : IDataService<ProcessingSummary>, IHealthCheckableDataService
 {
     /// <summary>
     /// Get prices without base items using the MongoDB aggregation pipeline

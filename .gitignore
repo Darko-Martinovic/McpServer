@@ -111,9 +111,9 @@ __pycache__/
 *.so
 .Python
 
-# Postman collections and environments
-postman/
-*.postman_collection.json
-*.postman_environment.json
+# Postman collections and environments (now included in version control)
+# postman/
+# *.postman_collection.json
+# *.postman_environment.json
 
 publish/

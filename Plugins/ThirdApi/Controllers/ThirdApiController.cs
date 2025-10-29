@@ -1,26 +1,26 @@
-using McpServer.Plugins.GkApi.Services;
+using McpServer.Plugins.ThirdApi.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using MongoDB.Bson;
 using MongoDB.Bson.IO;
 using System.Text.Json;
 
-namespace McpServer.Plugins.GkApi.Controllers;
+namespace McpServer.Plugins.ThirdApi.Controllers;
 
 /// <summary>
-/// REST API controller for GkApi operations
+/// REST API controller for ThirdApi operations
 /// </summary>
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/thirdapi")]
 [Produces("application/json")]
-public class GkApiController : ControllerBase
+public class ThirdApiController : ControllerBase
 {
-    private readonly IGkApiDataService _dataService;
-    private readonly ILogger<GkApiController> _logger;
+    private readonly IThirdApiDataService _dataService;
+    private readonly ILogger<ThirdApiController> _logger;
 
-    public GkApiController(
-        IGkApiDataService dataService,
-        ILogger<GkApiController> logger
+    public ThirdApiController(
+        IThirdApiDataService dataService,
+        ILogger<ThirdApiController> logger
     )
     {
         _dataService = dataService;
@@ -123,7 +123,7 @@ public class GkApiController : ControllerBase
     }
 
     /// <summary>
-    /// Health check for GkApi MongoDB connection
+    /// Health check for ThirdApi MongoDB connection
     /// </summary>
     /// <returns>Health status</returns>
     [HttpGet("health")]
@@ -139,7 +139,7 @@ public class GkApiController : ControllerBase
                 {
                     success = true,
                     status = "healthy",
-                    database = "GkApi",
+                    database = "ThirdApi",
                     timestamp = DateTime.UtcNow
                 });
             }
@@ -149,7 +149,7 @@ public class GkApiController : ControllerBase
                 {
                     success = false,
                     status = "unhealthy",
-                    database = "GkApi",
+                    database = "ThirdApi",
                     timestamp = DateTime.UtcNow
                 });
             }

@@ -174,7 +174,7 @@ public class McpToolIndexingService : IMcpToolIndexingService
             {"GetDailySummary", "sales/daily-summary"},
             {"GetDetailedInventory", "inventory/detailed"},
             
-            // GkApi Plugin endpoints
+            // ThirdApi Plugin endpoints
             {"GetPricesWithoutBaseItem", "prices-without-base-item"},
             {"GetLatestStatistics", "latest-statistics"},
             {"GetContentTypesSummary", "content-types"},

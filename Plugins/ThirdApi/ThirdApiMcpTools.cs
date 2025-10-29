@@ -1,17 +1,17 @@
 using ModelContextProtocol.Server;
 using System.ComponentModel;
 using System.Text.Json;
-using McpServer.Plugins.GkApi.Services;
+using McpServer.Plugins.ThirdApi.Services;
 using MongoDB.Bson;
 using MongoDB.Bson.IO;
 
-namespace McpServer.Plugins.GkApi;
+namespace McpServer.Plugins.ThirdApi;
 
 [McpServerToolType]
-public static class GkApiMcpTools
+public static class ThirdApiMcpTools
 {
-    [McpServerTool, Description("Get prices without base items from GkApi Pump collection")]
-    public static async Task<string> GetPricesWithoutBaseItem(IGkApiDataService dataService)
+    [McpServerTool, Description("Get prices without base items from ThirdApi Pump collection")]
+    public static async Task<string> GetPricesWithoutBaseItem(IThirdApiDataService dataService)
     {
         try
         {
@@ -36,8 +36,8 @@ public static class GkApiMcpTools
         }
     }
 
-    [McpServerTool, Description("Get latest processing statistics from GkApi Summary collection")]
-    public static async Task<string> GetLatestStatistics(IGkApiDataService dataService)
+    [McpServerTool, Description("Get latest processing statistics from ThirdApi Summary collection")]
+    public static async Task<string> GetLatestStatistics(IThirdApiDataService dataService)
     {
         try
         {
@@ -70,7 +70,7 @@ public static class GkApiMcpTools
     }
 
     [McpServerTool, Description("Get content types summary from latest processing statistics")]
-    public static async Task<string> GetContentTypesSummary(IGkApiDataService dataService)
+    public static async Task<string> GetContentTypesSummary(IThirdApiDataService dataService)
     {
         try
         {
@@ -105,7 +105,7 @@ public static class GkApiMcpTools
 
     [McpServerTool, Description("Search, find, show, get, list, display, or retrieve articles by name. Shows all articles that contain a specific text, word, or string in their name (case-insensitive partial match). Use this when user asks to find articles, show articles, get articles, list articles, search articles, or display articles that contain any text in their name like 'cola', 'pepsi', 'water', 'masti', 'coca cola', etc. Works with any search term or product name.")]
     public static async Task<string> FindArticlesByName(
-        IGkApiDataService dataService,
+        IThirdApiDataService dataService,
         [Description("Part of the article name to search for (case-insensitive)")] string name)
     {
         try
@@ -137,9 +137,9 @@ public static class GkApiMcpTools
         }
     }
 
-    [McpServerTool, Description("Find article by content key (automatically zero-padded to 18 digits) from GkApi Pump collection")]
+    [McpServerTool, Description("Find article by content key (automatically zero-padded to 18 digits) from ThirdApi Pump collection")]
     public static async Task<string> FindArticleByContentKey(
-        IGkApiDataService dataService,
+        IThirdApiDataService dataService,
         [Description("Content key (will be automatically zero-padded to 18 digits, e.g., 1615 becomes 000000000000001615)")] string contentKey)
     {
         try
@@ -178,7 +178,7 @@ public static class GkApiMcpTools
     }
 
     [McpServerTool, Description("Get PLU data from SAP Fiori (DynamicTableauItemListDO). Returns PLU codes, group information, and sequence numbers sorted by content key and sequence. Used for POS item lists, product groups, and SAP Fiori integration.")]
-    public static async Task<string> GetPluData(IGkApiDataService dataService)
+    public static async Task<string> GetPluData(IThirdApiDataService dataService)
     {
         try
         {

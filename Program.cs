@@ -3,8 +3,8 @@ using McpServer.Services.Interfaces;
 using McpServer.Configuration;
 using McpServer.Plugins.Services;
 using McpServer.Controllers;
-using McpServer.Plugins.GkApi;
-using McpServer.Plugins.GkApi.Controllers;
+using McpServer.Plugins.ThirdApi;
+using McpServer.Plugins.ThirdApi.Controllers;
 using Serilog;
 
 
@@ -50,7 +50,7 @@ static async Task RunMcpServerAsync(string[] args)
 
         // Register plugin providers
         services.AddSingleton<SupermarketToolProvider>();
-        services.AddSingleton<GkApiToolProvider>();
+        services.AddSingleton<ThirdApiToolProvider>();
 
         // For now, keep the existing MCP server configuration
         // TODO: Implement dynamic tool discovery in next iteration
@@ -159,15 +159,15 @@ static async Task RunWebApiAsync(string[] args)
     // Configure plugin system for Web API
     builder.Services.AddSingleton<IPluginDiscoveryService, PluginDiscoveryService>();
     builder.Services.AddSingleton<SupermarketToolProvider>();
-    builder.Services.AddSingleton<GkApiToolProvider>();
+    builder.Services.AddSingleton<ThirdApiToolProvider>();
     builder.Services.AddScoped<IPluginControllerService, PluginControllerService>();
 
     // Configure services for each plugin
     var supermarketProvider = new SupermarketToolProvider();
     supermarketProvider.ConfigureServices(builder.Services);
 
-    var gkApiProvider = new GkApiToolProvider();
-    gkApiProvider.ConfigureServices(builder.Services);
+    var thirdApiProvider = new ThirdApiToolProvider();
+    thirdApiProvider.ConfigureServices(builder.Services);
 
     // Configure URLs from appsettings
     var appModeOptions = builder.Configuration
@@ -183,10 +183,10 @@ static async Task RunWebApiAsync(string[] args)
     }
 
     // Web API configuration - include plugin assemblies
-    // Manually include both SupermarketController and GkApiController assemblies
+    // Manually include both SupermarketController and ThirdApiController assemblies
     builder.Services.AddControllers()
-        .AddApplicationPart(typeof(SupermarketController).Assembly)
-        .AddApplicationPart(typeof(GkApiController).Assembly);
+        .AddApplicationPart(typeof(ChatController).Assembly)
+        .AddApplicationPart(typeof(ThirdApiController).Assembly);
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen(c =>
     {

@@ -1,40 +1,40 @@
-using McpServer.Plugins.GkApi.Models;
+using McpServer.Plugins.ThirdApi.Models;
 using McpServer.Plugins.Interfaces;
 using McpServer.Plugins;
 using Microsoft.Extensions.Logging;
 using MongoDB.Driver;
 using MongoDB.Bson;
 
-namespace McpServer.Plugins.GkApi.Services;
+namespace McpServer.Plugins.ThirdApi.Services;
 
 /// <summary>
-/// GkApi data service implementation using MongoDB
+/// ThirdApi data service implementation using MongoDB
 /// </summary>
-public class GkApiDataService : IGkApiDataService
+public class ThirdApiDataService : IThirdApiDataService
 {
     private readonly IMongoDatabase _database;
-    private readonly ILogger<GkApiDataService> _logger;
+    private readonly ILogger<ThirdApiDataService> _logger;
     private readonly IMongoCollection<BsonDocument> _pumpCollection;
     private readonly IMongoCollection<ProcessingSummary> _summaryCollection;
 
     public IPluginMetadata Metadata { get; }
 
-    public GkApiDataService(ILogger<GkApiDataService> logger)
+    public ThirdApiDataService(ILogger<ThirdApiDataService> logger)
     {
         _logger = logger;
 
         // Initialize metadata
-        Metadata = new GkApiPluginMetadata();
+        Metadata = new ThirdApiPluginMetadata();
 
         // Initialize MongoDB connection
         var connectionString = "mongodb://localhost:27017"; // Default MongoDB connection
         var client = new MongoClient(connectionString);
-        _database = client.GetDatabase("GkApi");
+        _database = client.GetDatabase("ThirdApi");
 
         _pumpCollection = _database.GetCollection<BsonDocument>("Pump");
         _summaryCollection = _database.GetCollection<ProcessingSummary>("Summary");
 
-        _logger.LogInformation("GkApiDataService initialized with MongoDB database: GkApi");
+        _logger.LogInformation("ThirdApiDataService initialized with MongoDB database: ThirdApi");
     }
 
     public async Task<IEnumerable<ProcessingSummary>> GetAllAsync()
@@ -365,14 +365,14 @@ public class GkApiDataService : IGkApiDataService
 }
 
 /// <summary>
-/// Metadata for the GkApi plugin
+/// Metadata for the ThirdApi plugin
 /// </summary>
-public class GkApiPluginMetadata : PluginMetadataBase
+public class ThirdApiPluginMetadata : PluginMetadataBase
 {
-    public override string Id => "gkapi";
-    public override string Name => "GK API Plugin";
+    public override string Id => "thirdapi";
+    public override string Name => "Third API Plugin";
     public override string Version => "1.0.0";
-    public override string Description => "A plugin for GK API data operations using MongoDB";
+    public override string Description => "A plugin for Third API data operations using MongoDB";
     public override string Author => "McpServer Team";
-    public override string RoutePrefix => "gkapi";
+    public override string RoutePrefix => "thirdapi";
 }

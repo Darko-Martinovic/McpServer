@@ -1,7 +1,7 @@
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace McpServer.Plugins.GkApi.Models;
+namespace McpServer.Plugins.ThirdApi.Models;
 
 /// <summary>
 /// Represents a price without base item result
