@@ -1,0 +1,709 @@
+{
+  "info": {
+    "name": "McpServer API Collection",
+    "description": "Complete collection of McpServer REST API endpoints - includes Supermarket Plugin (SQL Server) and ThirdApi Plugin (MongoDB Analytics)",
+    "version": "2.0.0",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [],
+  "item": [
+    {
+      "name": "Products",
+      "item": [
+        {
+          "name": "Get All Products",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/supermarket/products",
+              "host": ["{{protocol}}://{{host}}:{{port}}"],
+              "path": ["api", "supermarket", "products"]
+            },
+            "description": "Get all products in the supermarket inventory"
+          }
+        },
+        {
+          "name": "Get Low Stock Products",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/supermarket/products/low-stock?threshold={{low_stock_threshold}}",
+              "host": ["{{protocol}}://{{host}}:{{port}}"],
+              "path": ["api", "supermarket", "products", "low-stock"],
+              "query": [
+                {
+                  "key": "threshold",
+                  "value": "{{low_stock_threshold}}",
+                  "description": "Stock threshold (default: 10)"
+                }
+              ]
+            },
+            "description": "Get products with stock levels below threshold"
+          }
+        },
+        {
+          "name": "Get Products by Category",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/supermarket/products/category/{{category}}",
+              "host": ["{{protocol}}://{{host}}:{{port}}"],
+              "path": [
+                "api",
+                "supermarket",
+                "products",
+                "category",
+                "{{category}}"
+              ]
+            },
+            "description": "Get products filtered by category"
+          }
+        },
+        {
+          "name": "Get Products by Supplier",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/supermarket/products/supplier/{{supplier}}",
+              "host": ["{{protocol}}://{{host}}:{{port}}"],
+              "path": [
+                "api",
+                "supermarket",
+                "products",
+                "supplier",
+                "{{supplier}}"
+              ]
+            },
+            "description": "Get products filtered by supplier"
+          }
+        }
+      ],
+      "description": "Product-related endpoints"
+    },
+    {
+      "name": "Sales",
+      "item": [
+        {
+          "name": "Get Sales Data",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/supermarket/sales?startDate={{start_date}}&endDate={{end_date}}",
+              "host": ["{{protocol}}://{{host}}:{{port}}"],
+              "path": ["api", "supermarket", "sales"],
+              "query": [
+                {
+                  "key": "startDate",
+                  "value": "{{start_date}}",
+                  "description": "Start date in YYYY-MM-DD format"
+                },
+                {
+                  "key": "endDate",
+                  "value": "{{end_date}}",
+                  "description": "End date in YYYY-MM-DD format"
+                }
+              ]
+            },
+            "description": "Get sales data for a specific date range"
+          }
+        },
+        {
+          "name": "Get Total Revenue",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/supermarket/revenue?startDate={{start_date}}&endDate={{end_date}}",
+              "host": ["{{protocol}}://{{host}}:{{port}}"],
+              "path": ["api", "supermarket", "revenue"],
+              "query": [
+                {
+                  "key": "startDate",
+                  "value": "{{start_date}}",
+                  "description": "Start date in YYYY-MM-DD format"
+                },
+                {
+                  "key": "endDate",
+                  "value": "{{end_date}}",
+                  "description": "End date in YYYY-MM-DD format"
+                }
+              ]
+            },
+            "description": "Calculate total revenue for a date range"
+          }
+        },
+        {
+          "name": "Get Sales by Category",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/supermarket/sales/by-category?startDate={{start_date}}&endDate={{end_date}}",
+              "host": ["{{protocol}}://{{host}}:{{port}}"],
+              "path": ["api", "supermarket", "sales", "by-category"],
+              "query": [
+                {
+                  "key": "startDate",
+                  "value": "{{start_date}}",
+                  "description": "Start date in YYYY-MM-DD format"
+                },
+                {
+                  "key": "endDate",
+                  "value": "{{end_date}}",
+                  "description": "End date in YYYY-MM-DD format"
+                }
+              ]
+            },
+            "description": "Get sales performance by product category"
+          }
+        },
+        {
+          "name": "Get Daily Summary",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/supermarket/sales/daily-summary?date={{target_date}}",
+              "host": ["{{protocol}}://{{host}}:{{port}}"],
+              "path": ["api", "supermarket", "sales", "daily-summary"],
+              "query": [
+                {
+                  "key": "date",
+                  "value": "{{target_date}}",
+                  "description": "Date in YYYY-MM-DD format (optional, defaults to today)"
+                }
+              ]
+            },
+            "description": "Get daily sales summary"
+          }
+        }
+      ],
+      "description": "Sales-related endpoints"
+    },
+    {
+      "name": "Inventory",
+      "item": [
+        {
+          "name": "Get Inventory Status",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/supermarket/inventory/status",
+              "host": ["{{protocol}}://{{host}}:{{port}}"],
+              "path": ["api", "supermarket", "inventory", "status"]
+            },
+            "description": "Get real-time inventory status with stock levels and recent sales"
+          }
+        },
+        {
+          "name": "Get Detailed Inventory",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/supermarket/inventory/detailed",
+              "host": ["{{protocol}}://{{host}}:{{port}}"],
+              "path": ["api", "supermarket", "inventory", "detailed"]
+            },
+            "description": "Get detailed inventory information for all products"
+          }
+        },
+        {
+          "name": "Get Detailed Inventory by Category",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/supermarket/inventory/detailed?category={{category}}",
+              "host": ["{{protocol}}://{{host}}:{{port}}"],
+              "path": ["api", "supermarket", "inventory", "detailed"],
+              "query": [
+                {
+                  "key": "category",
+                  "value": "{{category}}",
+                  "description": "Optional category filter"
+                }
+              ]
+            },
+            "description": "Get detailed inventory information filtered by category"
+          }
+        },
+        {
+          "name": "Get Detailed Inventory by Supplier",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/supermarket/inventory/detailed?supplier={{supplier}}",
+              "host": ["{{protocol}}://{{host}}:{{port}}"],
+              "path": ["api", "supermarket", "inventory", "detailed"],
+              "query": [
+                {
+                  "key": "supplier",
+                  "value": "{{supplier}}",
+                  "description": "Optional supplier filter"
+                }
+              ]
+            },
+            "description": "Get detailed inventory information filtered by supplier"
+          }
+        },
+        {
+          "name": "Get Detailed Inventory by Category and Supplier",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/supermarket/inventory/detailed?category={{category}}&supplier={{supplier}}",
+              "host": ["{{protocol}}://{{host}}:{{port}}"],
+              "path": ["api", "supermarket", "inventory", "detailed"],
+              "query": [
+                {
+                  "key": "category",
+                  "value": "{{category}}",
+                  "description": "Optional category filter"
+                },
+                {
+                  "key": "supplier",
+                  "value": "{{supplier}}",
+                  "description": "Optional supplier filter"
+                }
+              ]
+            },
+            "description": "Get detailed inventory information filtered by both category and supplier"
+          }
+        }
+      ],
+      "description": "Inventory-related endpoints"
+    },
+    {
+      "name": "Tools",
+      "item": [
+        {
+          "name": "Get Tools Schema",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/supermarket/tools/schema",
+              "host": ["{{protocol}}://{{host}}:{{port}}"],
+              "path": ["api", "supermarket", "tools", "schema"]
+            },
+            "description": "Get the schema for MCP tools index"
+          }
+        },
+        {
+          "name": "Get Indexed Tools",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/supermarket/tools/indexed",
+              "host": ["{{protocol}}://{{host}}:{{port}}"],
+              "path": ["api", "supermarket", "tools", "indexed"]
+            },
+            "description": "Get indexed MCP tools from Azure Search (for testing)"
+          }
+        }
+      ],
+      "description": "MCP tools and schema endpoints"
+    },
+    {
+      "name": "Chat",
+      "item": [
+        {
+          "name": "Process Chat Message",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"message\": \"{{chat_message}}\",\n  \"history\": [\n    {\n      \"speaker\": \"You\",\n      \"message\": \"Hello\",\n      \"timestamp\": \"2025-08-14T10:00:00Z\",\n      \"formattedMessage\": \"You: Hello\"\n    },\n    {\n      \"speaker\": \"AI\",\n      \"message\": \"Hi there! How can I help you today?\",\n      \"timestamp\": \"2025-08-14T10:00:01Z\",\n      \"formattedMessage\": \"AI: Hi there! How can I help you today?\"\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/chat/message",
+              "host": ["{{protocol}}://{{host}}:{{port}}"],
+              "path": ["api", "chat", "message"]
+            },
+            "description": "Process a chat message with optional conversation history"
+          }
+        },
+        {
+          "name": "Get Available Functions",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/chat/functions",
+              "host": ["{{protocol}}://{{host}}:{{port}}"],
+              "path": ["api", "chat", "functions"]
+            },
+            "description": "Get list of available AI functions"
+          }
+        },
+        {
+          "name": "Get Formatted Conversation",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"message\": \"{{chat_message}}\",\n  \"history\": [\n    {\n      \"speaker\": \"You\",\n      \"message\": \"What are your available functions?\",\n      \"timestamp\": \"2025-08-14T10:00:00Z\",\n      \"formattedMessage\": \"You: What are your available functions?\"\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/chat/conversation",
+              "host": ["{{protocol}}://{{host}}:{{port}}"],
+              "path": ["api", "chat", "conversation"]
+            },
+            "description": "Get a formatted conversation with speaker labels"
+          }
+        }
+      ],
+      "description": "AI chat and conversation endpoints"
+    },
+    {
+      "name": "ThirdApi Analytics (MongoDB)",
+      "item": [
+        {
+          "name": "Get Prices Without Base Item",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/thirdapi/prices-without-base-item",
+              "host": ["{{protocol}}://{{host}}:{{port}}"],
+              "path": ["api", "thirdapi", "prices-without-base-item"]
+            },
+            "description": "Analyzes pricing data excluding base items from third-party retail system. Returns detailed price information including UOM codes, price origins, type codes, effective/expiration dates, and package quantities."
+          }
+        },
+        {
+          "name": "Get Latest Statistics",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/thirdapi/latest-statistics",
+              "host": ["{{protocol}}://{{host}}:{{port}}"],
+              "path": ["api", "thirdapi", "latest-statistics"]
+            },
+            "description": "Provides comprehensive processing statistics from third-party retail system including total unique content types, total documents processed (82,056 documents across 51 types), and breakdown by content type with counts."
+          }
+        },
+        {
+          "name": "Get Content Types Summary",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/thirdapi/content-types",
+              "host": ["{{protocol}}://{{host}}:{{port}}"],
+              "path": ["api", "thirdapi", "content-types"]
+            },
+            "description": "Analyzes and returns the distribution of all third-party content types in the MongoDB database. Shows content type name, simplified class name, and document count for each type (e.g., ItemShelfAssignmentsDO: 22,115 records, PricingDataDO: 18,340 records)."
+          }
+        },
+        {
+          "name": "Find Articles by Name",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/thirdapi/articles/search?name={{article_name}}",
+              "host": ["{{protocol}}://{{host}}:{{port}}"],
+              "path": ["api", "thirdapi", "articles", "search"],
+              "query": [
+                {
+                  "key": "name",
+                  "value": "{{article_name}}",
+                  "description": "Part of the article name to search for (case-insensitive)"
+                }
+              ]
+            },
+            "description": "Find articles by name using case-insensitive partial match. Searches BaseItemDO documents in the third-party retail system. Example: searching for 'MASTI' will find all articles with 'MASTI' anywhere in the name."
+          }
+        },
+        {
+          "name": "Find Article by Content Key",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/thirdapi/articles/{{content_key}}",
+              "host": ["{{protocol}}://{{host}}:{{port}}"],
+              "path": ["api", "thirdapi", "articles", "{{content_key}}"]
+            },
+            "description": "Find a specific article by its content key. The content key will be automatically zero-padded to 18 digits (e.g., 1615 becomes 000000000000001615). Returns complete BaseItemDO article information including name, description, and item number."
+          }
+        },
+        {
+          "name": "Get PLU Data (SAP Fiori)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/thirdapi/plu-data",
+              "host": ["{{protocol}}://{{host}}:{{port}}"],
+              "path": ["api", "thirdapi", "plu-data"]
+            },
+            "description": "Get PLU (Price Look-Up) data from SAP Fiori DynamicTableauItemListDO. Returns PLU codes, business unit groups, group descriptions, POS item IDs, and sequence numbers. Used for POS item lists and product group organization. Data sorted by content key and sequence number."
+          }
+        }
+      ],
+      "description": "ThirdApi Plugin - Advanced analytics and data mining from third-party retail system stored in MongoDB (82,056 documents, 51 content types)"
+    },
+    {
+      "name": "Health Checks",
+      "item": [
+        {
+          "name": "System Health",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/health",
+              "host": ["{{protocol}}://{{host}}:{{port}}"],
+              "path": ["health"]
+            },
+            "description": "Check overall system health status"
+          }
+        },
+        {
+          "name": "Supermarket Plugin Health",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/supermarket/health",
+              "host": ["{{protocol}}://{{host}}:{{port}}"],
+              "path": ["api", "supermarket", "health"]
+            },
+            "description": "Check SQL Server database connectivity for Supermarket plugin"
+          }
+        },
+        {
+          "name": "ThirdApi Plugin Health",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/thirdapi/health",
+              "host": ["{{protocol}}://{{host}}:{{port}}"],
+              "path": ["api", "thirdapi", "health"]
+            },
+            "description": "Check MongoDB database connectivity for ThirdApi plugin"
+          }
+        }
+      ],
+      "description": "Health monitoring endpoints for system and individual plugins"
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [""]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "pm.test(\"Status code is 200\", function () {",
+          "    pm.response.to.have.status(200);",
+          "});",
+          "",
+          "pm.test(\"Response has success field\", function () {",
+          "    var jsonData = pm.response.json();",
+          "    pm.expect(jsonData).to.have.property('success');",
+          "});",
+          "",
+          "pm.test(\"Response has timestamp\", function () {",
+          "    var jsonData = pm.response.json();",
+          "    pm.expect(jsonData).to.have.property('timestamp');",
+          "});"
+        ]
+      }
+    }
+  ]
+}
