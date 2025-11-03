@@ -624,7 +624,7 @@ async function searchForTool(query) {
     query.toLowerCase().includes("analytics") ||
     query.toLowerCase().includes("statistics") ||
     query.toLowerCase().includes("content") ||
-    query.toLowerCase().includes("gk") ||
+    query.toLowerCase().includes("thirdapi") ||
     query.toLowerCase().includes("mongodb") ||
     query.toLowerCase().includes("prices") ||
     query.toLowerCase().includes("summary");
