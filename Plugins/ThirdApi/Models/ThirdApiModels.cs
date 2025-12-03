@@ -72,8 +72,19 @@ public class ProcessingStatistics
 /// </summary>
 public class ConsoleOutput
 {
+    /// <summary>
+    /// Old schema: JSON output file path
+    /// </summary>
     [BsonElement("jsonSavedTo")]
-    public string JsonSavedTo { get; set; } = string.Empty;
+    [BsonIgnoreIfNull]
+    public string? JsonSavedTo { get; set; }
+
+    /// <summary>
+    /// New schema: Source file path (replaces jsonSavedTo)
+    /// </summary>
+    [BsonElement("sourceFile")]
+    [BsonIgnoreIfNull]
+    public string? SourceFile { get; set; }
 
     [BsonElement("mongoDbMessage")]
     public string MongoDbMessage { get; set; } = string.Empty;
