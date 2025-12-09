@@ -35,4 +35,10 @@ public interface IThirdApiDataService : IDataService<ProcessingSummary>, IHealth
     /// Get PLU data from SAP Fiori (DynamicTableauItemListDO) sorted by content key and sequence number
     /// </summary>
     Task<IEnumerable<PluData>> GetPluDataAsync();
+
+    /// <summary>
+    /// Get articles with ingredients (INGR or IN text classes) from BaseItemDO
+    /// Returns concatenated ingredient texts grouped by content key, text class, and language
+    /// </summary>
+    Task<IEnumerable<ArticleIngredient>> GetArticlesWithIngredientsAsync();
 }

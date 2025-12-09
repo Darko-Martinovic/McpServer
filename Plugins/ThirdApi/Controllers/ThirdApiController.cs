@@ -162,6 +162,34 @@ public class ThirdApiController : ControllerBase
     }
 
     /// <summary>
+    /// Get articles with ingredients (INGR or IN text classes)
+    /// </summary>
+    /// <returns>List of articles with concatenated ingredient text</returns>
+    [HttpGet("articles/ingredients")]
+    public async Task<IActionResult> GetArticlesWithIngredients()
+    {
+        try
+        {
+            _logger.LogInformation("REST API: GetArticlesWithIngredients called");
+
+            var articlesWithIngredients = await _dataService.GetArticlesWithIngredientsAsync();
+
+            return Ok(new
+            {
+                success = true,
+                data = articlesWithIngredients,
+                count = articlesWithIngredients.Count(),
+                timestamp = DateTime.UtcNow
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "REST API: GetArticlesWithIngredients failed");
+            return StatusCode(500, new { success = false, error = ex.Message });
+        }
+    }
+
+    /// <summary>
     /// Find articles by name (case-insensitive partial match)
     /// </summary>
     /// <param name="name">Part of the article name to search for</param>

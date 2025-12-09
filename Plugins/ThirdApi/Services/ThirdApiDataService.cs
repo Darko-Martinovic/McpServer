@@ -362,6 +362,159 @@ public class ThirdApiDataService : IThirdApiDataService
             return new List<PluData>();
         }
     }
+
+    public async Task<IEnumerable<ArticleIngredient>> GetArticlesWithIngredientsAsync()
+    {
+        try
+        {
+            _logger.LogInformation("Executing articles with ingredients aggregation pipeline");
+
+            var pipeline = new BsonDocument[]
+            {
+                // Stage 1: Filter for BaseItemDO content type
+                new BsonDocument("$match", new BsonDocument
+                {
+                    ["transportElement.contentType"] = "com.gk_software.gkr.api.server.md.item.dto.dom.BaseItemDO"
+                }),
+
+                // Stage 2: Extract the BaseItemDO into a workable field using $getField
+                new BsonDocument("$addFields", new BsonDocument
+                {
+                    ["baseItem"] = new BsonDocument("$getField", new BsonDocument
+                    {
+                        ["field"] = "com.gk_software.gkr.api.server.md.item.dto.dom.BaseItemDO",
+                        ["input"] = "$transportElement.content"
+                    }),
+                    ["contentKey"] = "$transportElement.contentKey"
+                }),
+
+                // Stage 3: Filter documents that have uomItemList (exists and not empty)
+                new BsonDocument("$match", new BsonDocument
+                {
+                    ["baseItem.uomItemList"] = new BsonDocument
+                    {
+                        ["$exists"] = true,
+                        ["$ne"] = new BsonArray()
+                    }
+                }),
+
+                // Stage 4: Unwind the uomItemList
+                new BsonDocument("$unwind", "$baseItem.uomItemList"),
+
+                // Stage 5: Extract UomItemDO content using $getField
+                new BsonDocument("$addFields", new BsonDocument
+                {
+                    ["uomItem"] = new BsonDocument("$getField", new BsonDocument
+                    {
+                        ["field"] = "com.gk_software.gkr.api.server.md.item.dto.dom.UomItemDO",
+                        ["input"] = "$baseItem.uomItemList"
+                    })
+                }),
+
+                // Stage 6: Filter documents that have uomItemTextList (exists and not empty)
+                new BsonDocument("$match", new BsonDocument
+                {
+                    ["uomItem.uomItemTextList"] = new BsonDocument
+                    {
+                        ["$exists"] = true,
+                        ["$ne"] = new BsonArray()
+                    }
+                }),
+
+                // Stage 7: Unwind the uomItemTextList
+                new BsonDocument("$unwind", "$uomItem.uomItemTextList"),
+
+                // Stage 8: Extract UomItemTextDO content using $getField
+                new BsonDocument("$addFields", new BsonDocument
+                {
+                    ["textItem"] = new BsonDocument("$getField", new BsonDocument
+                    {
+                        ["field"] = "com.gk_software.gkr.api.server.md.item.dto.dom.UomItemTextDO",
+                        ["input"] = "$uomItem.uomItemTextList"
+                    })
+                }),
+
+                // Stage 9: Filter for INGR or IN text classes only
+                new BsonDocument("$match", new BsonDocument
+                {
+                    ["textItem.key.textClass"] = new BsonDocument("$in", new BsonArray { "INGR", "IN" })
+                }),
+
+                // Stage 10: Project needed fields for grouping
+                new BsonDocument("$project", new BsonDocument
+                {
+                    ["contentKey"] = 1,
+                    ["name"] = "$baseItem.name",
+                    ["textClass"] = "$textItem.key.textClass",
+                    ["languageId"] = "$textItem.key.languageId",
+                    ["textNumber"] = "$textItem.key.textNumber",
+                    ["text"] = "$textItem.text"
+                }),
+
+                // Stage 11: Sort by contentKey, textClass, languageId, and textNumber
+                new BsonDocument("$sort", new BsonDocument
+                {
+                    ["contentKey"] = 1,
+                    ["textClass"] = 1,
+                    ["languageId"] = 1,
+                    ["textNumber"] = 1
+                }),
+
+                // Stage 12: Group by contentKey, textClass, and languageId - concatenate texts
+                new BsonDocument("$group", new BsonDocument
+                {
+                    ["_id"] = new BsonDocument
+                    {
+                        ["contentKey"] = "$contentKey",
+                        ["name"] = "$name",
+                        ["textClass"] = "$textClass",
+                        ["languageId"] = "$languageId"
+                    },
+                    ["texts"] = new BsonDocument("$push", "$text")
+                }),
+
+                // Stage 13: Concatenate the text array with space separator
+                new BsonDocument("$project", new BsonDocument
+                {
+                    ["_id"] = 0,
+                    ["contentKey"] = "$_id.contentKey",
+                    ["name"] = "$_id.name",
+                    ["textClass"] = "$_id.textClass",
+                    ["languageId"] = "$_id.languageId",
+                    ["text"] = new BsonDocument("$reduce", new BsonDocument
+                    {
+                        ["input"] = "$texts",
+                        ["initialValue"] = "",
+                        ["in"] = new BsonDocument("$cond", new BsonDocument
+                        {
+                            ["if"] = new BsonDocument("$eq", new BsonArray { "$$value", "" }),
+                            ["then"] = "$$this",
+                            ["else"] = new BsonDocument("$concat", new BsonArray { "$$value", " ", "$$this" })
+                        })
+                    })
+                }),
+
+                // Stage 14: Final sort
+                new BsonDocument("$sort", new BsonDocument
+                {
+                    ["contentKey"] = 1,
+                    ["textClass"] = 1,
+                    ["languageId"] = 1
+                })
+            };
+
+            var result = await _pumpCollection.AggregateAsync<ArticleIngredient>(pipeline);
+            var articlesWithIngredients = await result.ToListAsync();
+
+            _logger.LogInformation("Found {Count} articles with ingredients", articlesWithIngredients.Count);
+            return articlesWithIngredients;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to get articles with ingredients");
+            return new List<ArticleIngredient>();
+        }
+    }
 }
 
 /// <summary>

@@ -180,7 +180,8 @@ public class McpToolIndexingService : IMcpToolIndexingService
             {"GetContentTypesSummary", "content-types"},
             {"FindArticlesByName", "articles/search"},
             {"FindArticleByContentKey", "articles/{contentKey}"},
-            {"GetPluData", "plu-data"}
+            {"GetPluData", "plu-data"},
+            {"GetArticlesWithIngredients", "articles/ingredients"}
         };
 
         // Use explicit mapping if available, otherwise fall back to kebab-case conversion

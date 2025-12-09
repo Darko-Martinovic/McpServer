@@ -168,3 +168,24 @@ public class PluData
     [BsonElement("lastUpdateTimestamp")]
     public DateTime LastUpdateTimestamp { get; set; }
 }
+
+/// <summary>
+/// Represents an article with ingredient information extracted from BaseItemDO
+/// </summary>
+public class ArticleIngredient
+{
+    [BsonElement("contentKey")]
+    public string ContentKey { get; set; } = string.Empty;
+
+    [BsonElement("name")]
+    public string Name { get; set; } = string.Empty;
+
+    [BsonElement("textClass")]
+    public string TextClass { get; set; } = string.Empty;
+
+    [BsonElement("languageId")]
+    public string LanguageId { get; set; } = string.Empty;
+
+    [BsonElement("text")]
+    public string Text { get; set; } = string.Empty;
+}

@@ -202,4 +202,30 @@ public static class ThirdApiMcpTools
             return $"Error retrieving PLU data: {ex.Message}";
         }
     }
+
+    [McpServerTool, Description("Show articles with ingredients. Retrieves all articles (BaseItemDO) that have ingredient information (INGR or IN text classes). Returns article content key, name, text class, language, and concatenated ingredient text. Use this when user asks about ingredients, article ingredients, product ingredients, or wants to see what ingredients articles contain.")]
+    public static async Task<string> GetArticlesWithIngredients(IThirdApiDataService dataService)
+    {
+        try
+        {
+            Serilog.Log.Information("MCP Tool 'GetArticlesWithIngredients' called at {Timestamp}", DateTime.Now);
+
+            var articlesWithIngredients = await dataService.GetArticlesWithIngredientsAsync();
+            var result = JsonSerializer.Serialize(
+                articlesWithIngredients,
+                new JsonSerializerOptions { WriteIndented = true }
+            );
+
+            Serilog.Log.Information(
+                "MCP Tool 'GetArticlesWithIngredients' completed successfully. Returned {Count} articles with ingredients",
+                articlesWithIngredients.Count()
+            );
+            return result;
+        }
+        catch (Exception ex)
+        {
+            Serilog.Log.Error(ex, "MCP Tool 'GetArticlesWithIngredients' failed: {Message}", ex.Message);
+            return $"Error retrieving articles with ingredients: {ex.Message}";
+        }
+    }
 }
