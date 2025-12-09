@@ -5,6 +5,7 @@ using McpServer.Plugins.Services;
 using McpServer.Controllers;
 using McpServer.Plugins.ThirdApi;
 using McpServer.Plugins.ThirdApi.Controllers;
+using McpServer.Plugins.ThirdApi.Services;
 using Serilog;
 
 
@@ -183,10 +184,11 @@ static async Task RunWebApiAsync(string[] args)
     }
 
     // Web API configuration - include plugin assemblies
-    // Manually include both SupermarketController and ThirdApiController assemblies
+    // Manually include both SupermarketController, ThirdApiController, and ToolProxyController assemblies
     builder.Services.AddControllers()
         .AddApplicationPart(typeof(ChatController).Assembly)
-        .AddApplicationPart(typeof(ThirdApiController).Assembly);
+        .AddApplicationPart(typeof(ThirdApiController).Assembly)
+        .AddApplicationPart(typeof(ToolProxyController).Assembly);
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen(c =>
     {
@@ -336,6 +338,9 @@ static void ConfigureCommonServices(IServiceCollection services, IConfiguration 
     services.AddScoped<IAzureSearchService, AzureSearchService>();
     services.AddScoped<IMcpToolIndexingService, McpToolIndexingService>();
     services.AddScoped<IAIConversationService, AIConversationService>();
+
+    // Register Tool Execution Service (replaces Node.js proxy)
+    services.AddScoped<IToolExecutionService, ToolExecutionService>();
 }
 
 static ApplicationRunMode DetermineRunMode(string[] args)
