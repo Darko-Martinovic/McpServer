@@ -23,13 +23,19 @@
       "enabled": true,
       "description": "Port for API requests"
     },
-
     {
       "key": "https_port",
       "value": "5001",
       "type": "default",
       "enabled": true,
       "description": "HTTPS port (when protocol is set to https, update port to this value)"
+    },
+    {
+      "key": "api_version",
+      "value": "v1",
+      "type": "default",
+      "enabled": true,
+      "description": "API version (v1, v2, etc.)"
     },
     {
       "key": "start_date",
@@ -47,7 +53,7 @@
     },
     {
       "key": "target_date",
-      "value": "2025-10-10",
+      "value": "2025-12-09",
       "type": "default",
       "enabled": true,
       "description": "Target date for single-date queries (today's date)"
@@ -93,6 +99,13 @@
       "type": "default",
       "enabled": true,
       "description": "Sample content key for article lookup (will be zero-padded to 18 digits)"
+    },
+    {
+      "key": "tool_name",
+      "value": "GetArticlesWithIngredients",
+      "type": "default",
+      "enabled": true,
+      "description": "Sample tool name for tool proxy testing"
     }
   ],
   "_postman_variable_scope": "environment"

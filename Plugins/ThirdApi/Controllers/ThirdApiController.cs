@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using MongoDB.Bson;
 using MongoDB.Bson.IO;
 using System.Text.Json;
+using Asp.Versioning;
 
 namespace McpServer.Plugins.ThirdApi.Controllers;
 
@@ -11,7 +12,8 @@ namespace McpServer.Plugins.ThirdApi.Controllers;
 /// REST API controller for ThirdApi operations
 /// </summary>
 [ApiController]
-[Route("api/thirdapi")]
+[ApiVersion("1.0")]
+[Route("api/v{version:apiVersion}/thirdapi")]
 [Produces("application/json")]
 public class ThirdApiController : ControllerBase
 {

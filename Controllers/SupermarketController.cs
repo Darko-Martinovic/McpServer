@@ -4,6 +4,7 @@ using Microsoft.Extensions.Logging;
 using McpServer.Services.Interfaces;
 using McpServer.Services;
 using System.ComponentModel.DataAnnotations;
+using Asp.Versioning;
 
 namespace McpServer.Controllers;
 
@@ -11,7 +12,8 @@ namespace McpServer.Controllers;
 /// REST API controller exposing supermarket MCP tools as HTTP endpoints
 /// </summary>
 [ApiController]
-[Route("api/[controller]")]
+[ApiVersion("1.0")]
+[Route("api/v{version:apiVersion}/[controller]")]
 [Produces("application/json")]
 public class SupermarketController : ControllerBase
 {

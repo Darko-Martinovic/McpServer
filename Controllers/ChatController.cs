@@ -1,11 +1,13 @@
 using Microsoft.AspNetCore.Mvc;
 using McpServer.Services;
 using McpServer.Models;
+using Asp.Versioning;
 
 namespace McpServer.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[ApiVersion("1.0")]
+[Route("api/v{version:apiVersion}/[controller]")]
 [Produces("application/json")]
 public class ChatController : ControllerBase
 {

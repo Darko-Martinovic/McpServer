@@ -2,6 +2,7 @@ using McpServer.Models.ToolProxy;
 using McpServer.Services;
 using McpServer.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Asp.Versioning;
 using System.Text.Json;
 
 namespace McpServer.Controllers;
@@ -11,7 +12,8 @@ namespace McpServer.Controllers;
 /// Handles tool routing, parameter extraction, and Azure Search integration
 /// </summary>
 [ApiController]
-[Route("api")]
+[ApiVersion("1.0")]
+[Route("api/v{version:apiVersion}")]
 [Produces("application/json")]
 public class ToolProxyController : ControllerBase
 {

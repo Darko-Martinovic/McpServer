@@ -1,12 +1,120 @@
 {
   "info": {
     "name": "McpServer API Collection",
-    "description": "Complete collection of McpServer REST API endpoints - includes Supermarket Plugin (SQL Server) and ThirdApi Plugin (MongoDB Analytics)",
-    "version": "2.0.0",
+    "description": "Complete collection of McpServer REST API endpoints - includes Supermarket Plugin (SQL Server), ThirdApi Plugin (MongoDB Analytics), and Tool Proxy (unified tool execution)",
+    "version": "3.0.0",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [],
   "item": [
+    {
+      "name": "Tool Proxy",
+      "item": [
+        {
+          "name": "Execute Tool",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tool\": \"{{tool_name}}\",\n  \"arguments\": {},\n  \"originalUserInput\": \"Show me articles with ingredients\"\n}"
+            },
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/{{api_version}}/tool",
+              "protocol": "{{protocol}}",
+              "host": ["{{host}}"],
+              "port": "{{port}}",
+              "path": ["api", "{{api_version}}", "tool"]
+            },
+            "description": "Execute any MCP tool by name. Supports tool routing, parameter extraction, and multi-tool operations."
+          }
+        },
+        {
+          "name": "Search Tools",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"articles with ingredients\"\n}"
+            },
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/{{api_version}}/search",
+              "protocol": "{{protocol}}",
+              "host": ["{{host}}"],
+              "port": "{{port}}",
+              "path": ["api", "{{api_version}}", "search"]
+            },
+            "description": "Search for tools using Azure Cognitive Search. Returns matching tools based on query."
+          }
+        },
+        {
+          "name": "Get Tool Schemas",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/{{api_version}}/tools/schema",
+              "protocol": "{{protocol}}",
+              "host": ["{{host}}"],
+              "port": "{{port}}",
+              "path": ["api", "{{api_version}}", "tools", "schema"]
+            },
+            "description": "Get all available tool schemas from all plugins (Supermarket and ThirdApi)"
+          }
+        },
+        {
+          "name": "Tool Proxy Health",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/{{api_version}}/proxy/health",
+              "protocol": "{{protocol}}",
+              "host": ["{{host}}"],
+              "port": "{{port}}",
+              "path": ["api", "{{api_version}}", "proxy", "health"]
+            },
+            "description": "Check health of the unified tool proxy service"
+          }
+        }
+      ],
+      "description": "Unified Tool Proxy - replaces Node.js middleware with native .NET implementation"
+    },
     {
       "name": "Products",
       "item": [
@@ -22,9 +130,11 @@
               }
             ],
             "url": {
-              "raw": "{{protocol}}://{{host}}:{{port}}/api/supermarket/products",
-              "host": ["{{protocol}}://{{host}}:{{port}}"],
-              "path": ["api", "supermarket", "products"]
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/{{api_version}}/supermarket/products",
+              "protocol": "{{protocol}}",
+              "host": ["{{host}}"],
+              "port": "{{port}}",
+              "path": ["api", "{{api_version}}", "supermarket", "products"]
             },
             "description": "Get all products in the supermarket inventory"
           }
@@ -41,9 +151,17 @@
               }
             ],
             "url": {
-              "raw": "{{protocol}}://{{host}}:{{port}}/api/supermarket/products/low-stock?threshold={{low_stock_threshold}}",
-              "host": ["{{protocol}}://{{host}}:{{port}}"],
-              "path": ["api", "supermarket", "products", "low-stock"],
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/{{api_version}}/supermarket/products/low-stock?threshold={{low_stock_threshold}}",
+              "protocol": "{{protocol}}",
+              "host": ["{{host}}"],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "{{api_version}}",
+                "supermarket",
+                "products",
+                "low-stock"
+              ],
               "query": [
                 {
                   "key": "threshold",
@@ -67,10 +185,13 @@
               }
             ],
             "url": {
-              "raw": "{{protocol}}://{{host}}:{{port}}/api/supermarket/products/category/{{category}}",
-              "host": ["{{protocol}}://{{host}}:{{port}}"],
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/{{api_version}}/supermarket/products/category/{{category}}",
+              "protocol": "{{protocol}}",
+              "host": ["{{host}}"],
+              "port": "{{port}}",
               "path": [
                 "api",
+                "{{api_version}}",
                 "supermarket",
                 "products",
                 "category",
@@ -92,10 +213,13 @@
               }
             ],
             "url": {
-              "raw": "{{protocol}}://{{host}}:{{port}}/api/supermarket/products/supplier/{{supplier}}",
-              "host": ["{{protocol}}://{{host}}:{{port}}"],
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/{{api_version}}/supermarket/products/supplier/{{supplier}}",
+              "protocol": "{{protocol}}",
+              "host": ["{{host}}"],
+              "port": "{{port}}",
               "path": [
                 "api",
+                "{{api_version}}",
                 "supermarket",
                 "products",
                 "supplier",
@@ -123,9 +247,11 @@
               }
             ],
             "url": {
-              "raw": "{{protocol}}://{{host}}:{{port}}/api/supermarket/sales?startDate={{start_date}}&endDate={{end_date}}",
-              "host": ["{{protocol}}://{{host}}:{{port}}"],
-              "path": ["api", "supermarket", "sales"],
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/{{api_version}}/supermarket/sales?startDate={{start_date}}&endDate={{end_date}}",
+              "protocol": "{{protocol}}",
+              "host": ["{{host}}"],
+              "port": "{{port}}",
+              "path": ["api", "{{api_version}}", "supermarket", "sales"],
               "query": [
                 {
                   "key": "startDate",
@@ -154,9 +280,11 @@
               }
             ],
             "url": {
-              "raw": "{{protocol}}://{{host}}:{{port}}/api/supermarket/revenue?startDate={{start_date}}&endDate={{end_date}}",
-              "host": ["{{protocol}}://{{host}}:{{port}}"],
-              "path": ["api", "supermarket", "revenue"],
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/{{api_version}}/supermarket/revenue?startDate={{start_date}}&endDate={{end_date}}",
+              "protocol": "{{protocol}}",
+              "host": ["{{host}}"],
+              "port": "{{port}}",
+              "path": ["api", "{{api_version}}", "supermarket", "revenue"],
               "query": [
                 {
                   "key": "startDate",
@@ -185,9 +313,17 @@
               }
             ],
             "url": {
-              "raw": "{{protocol}}://{{host}}:{{port}}/api/supermarket/sales/by-category?startDate={{start_date}}&endDate={{end_date}}",
-              "host": ["{{protocol}}://{{host}}:{{port}}"],
-              "path": ["api", "supermarket", "sales", "by-category"],
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/{{api_version}}/supermarket/sales/by-category?startDate={{start_date}}&endDate={{end_date}}",
+              "protocol": "{{protocol}}",
+              "host": ["{{host}}"],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "{{api_version}}",
+                "supermarket",
+                "sales",
+                "by-category"
+              ],
               "query": [
                 {
                   "key": "startDate",
@@ -216,9 +352,17 @@
               }
             ],
             "url": {
-              "raw": "{{protocol}}://{{host}}:{{port}}/api/supermarket/sales/daily-summary?date={{target_date}}",
-              "host": ["{{protocol}}://{{host}}:{{port}}"],
-              "path": ["api", "supermarket", "sales", "daily-summary"],
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/{{api_version}}/supermarket/sales/daily-summary?date={{target_date}}",
+              "protocol": "{{protocol}}",
+              "host": ["{{host}}"],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "{{api_version}}",
+                "supermarket",
+                "sales",
+                "daily-summary"
+              ],
               "query": [
                 {
                   "key": "date",
@@ -248,9 +392,17 @@
               }
             ],
             "url": {
-              "raw": "{{protocol}}://{{host}}:{{port}}/api/supermarket/inventory/status",
-              "host": ["{{protocol}}://{{host}}:{{port}}"],
-              "path": ["api", "supermarket", "inventory", "status"]
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/{{api_version}}/supermarket/inventory/status",
+              "protocol": "{{protocol}}",
+              "host": ["{{host}}"],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "{{api_version}}",
+                "supermarket",
+                "inventory",
+                "status"
+              ]
             },
             "description": "Get real-time inventory status with stock levels and recent sales"
           }
@@ -267,9 +419,17 @@
               }
             ],
             "url": {
-              "raw": "{{protocol}}://{{host}}:{{port}}/api/supermarket/inventory/detailed",
-              "host": ["{{protocol}}://{{host}}:{{port}}"],
-              "path": ["api", "supermarket", "inventory", "detailed"]
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/{{api_version}}/supermarket/inventory/detailed",
+              "protocol": "{{protocol}}",
+              "host": ["{{host}}"],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "{{api_version}}",
+                "supermarket",
+                "inventory",
+                "detailed"
+              ]
             },
             "description": "Get detailed inventory information for all products"
           }
@@ -286,9 +446,17 @@
               }
             ],
             "url": {
-              "raw": "{{protocol}}://{{host}}:{{port}}/api/supermarket/inventory/detailed?category={{category}}",
-              "host": ["{{protocol}}://{{host}}:{{port}}"],
-              "path": ["api", "supermarket", "inventory", "detailed"],
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/{{api_version}}/supermarket/inventory/detailed?category={{category}}",
+              "protocol": "{{protocol}}",
+              "host": ["{{host}}"],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "{{api_version}}",
+                "supermarket",
+                "inventory",
+                "detailed"
+              ],
               "query": [
                 {
                   "key": "category",
@@ -312,9 +480,17 @@
               }
             ],
             "url": {
-              "raw": "{{protocol}}://{{host}}:{{port}}/api/supermarket/inventory/detailed?supplier={{supplier}}",
-              "host": ["{{protocol}}://{{host}}:{{port}}"],
-              "path": ["api", "supermarket", "inventory", "detailed"],
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/{{api_version}}/supermarket/inventory/detailed?supplier={{supplier}}",
+              "protocol": "{{protocol}}",
+              "host": ["{{host}}"],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "{{api_version}}",
+                "supermarket",
+                "inventory",
+                "detailed"
+              ],
               "query": [
                 {
                   "key": "supplier",
@@ -338,9 +514,17 @@
               }
             ],
             "url": {
-              "raw": "{{protocol}}://{{host}}:{{port}}/api/supermarket/inventory/detailed?category={{category}}&supplier={{supplier}}",
-              "host": ["{{protocol}}://{{host}}:{{port}}"],
-              "path": ["api", "supermarket", "inventory", "detailed"],
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/{{api_version}}/supermarket/inventory/detailed?category={{category}}&supplier={{supplier}}",
+              "protocol": "{{protocol}}",
+              "host": ["{{host}}"],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "{{api_version}}",
+                "supermarket",
+                "inventory",
+                "detailed"
+              ],
               "query": [
                 {
                   "key": "category",
@@ -361,7 +545,7 @@
       "description": "Inventory-related endpoints"
     },
     {
-      "name": "Tools",
+      "name": "Supermarket Tools",
       "item": [
         {
           "name": "Get Tools Schema",
@@ -375,9 +559,17 @@
               }
             ],
             "url": {
-              "raw": "{{protocol}}://{{host}}:{{port}}/api/supermarket/tools/schema",
-              "host": ["{{protocol}}://{{host}}:{{port}}"],
-              "path": ["api", "supermarket", "tools", "schema"]
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/{{api_version}}/supermarket/tools/schema",
+              "protocol": "{{protocol}}",
+              "host": ["{{host}}"],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "{{api_version}}",
+                "supermarket",
+                "tools",
+                "schema"
+              ]
             },
             "description": "Get the schema for MCP tools index"
           }
@@ -394,15 +586,23 @@
               }
             ],
             "url": {
-              "raw": "{{protocol}}://{{host}}:{{port}}/api/supermarket/tools/indexed",
-              "host": ["{{protocol}}://{{host}}:{{port}}"],
-              "path": ["api", "supermarket", "tools", "indexed"]
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/{{api_version}}/supermarket/tools/indexed",
+              "protocol": "{{protocol}}",
+              "host": ["{{host}}"],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "{{api_version}}",
+                "supermarket",
+                "tools",
+                "indexed"
+              ]
             },
             "description": "Get indexed MCP tools from Azure Search (for testing)"
           }
         }
       ],
-      "description": "MCP tools and schema endpoints"
+      "description": "MCP tools and schema endpoints for Supermarket plugin"
     },
     {
       "name": "Chat",
@@ -428,9 +628,11 @@
               "raw": "{\n  \"message\": \"{{chat_message}}\",\n  \"history\": [\n    {\n      \"speaker\": \"You\",\n      \"message\": \"Hello\",\n      \"timestamp\": \"2025-08-14T10:00:00Z\",\n      \"formattedMessage\": \"You: Hello\"\n    },\n    {\n      \"speaker\": \"AI\",\n      \"message\": \"Hi there! How can I help you today?\",\n      \"timestamp\": \"2025-08-14T10:00:01Z\",\n      \"formattedMessage\": \"AI: Hi there! How can I help you today?\"\n    }\n  ]\n}"
             },
             "url": {
-              "raw": "{{protocol}}://{{host}}:{{port}}/api/chat/message",
-              "host": ["{{protocol}}://{{host}}:{{port}}"],
-              "path": ["api", "chat", "message"]
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/{{api_version}}/chat/message",
+              "protocol": "{{protocol}}",
+              "host": ["{{host}}"],
+              "port": "{{port}}",
+              "path": ["api", "{{api_version}}", "chat", "message"]
             },
             "description": "Process a chat message with optional conversation history"
           }
@@ -447,9 +649,11 @@
               }
             ],
             "url": {
-              "raw": "{{protocol}}://{{host}}:{{port}}/api/chat/functions",
-              "host": ["{{protocol}}://{{host}}:{{port}}"],
-              "path": ["api", "chat", "functions"]
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/{{api_version}}/chat/functions",
+              "protocol": "{{protocol}}",
+              "host": ["{{host}}"],
+              "port": "{{port}}",
+              "path": ["api", "{{api_version}}", "chat", "functions"]
             },
             "description": "Get list of available AI functions"
           }
@@ -475,9 +679,11 @@
               "raw": "{\n  \"message\": \"{{chat_message}}\",\n  \"history\": [\n    {\n      \"speaker\": \"You\",\n      \"message\": \"What are your available functions?\",\n      \"timestamp\": \"2025-08-14T10:00:00Z\",\n      \"formattedMessage\": \"You: What are your available functions?\"\n    }\n  ]\n}"
             },
             "url": {
-              "raw": "{{protocol}}://{{host}}:{{port}}/api/chat/conversation",
-              "host": ["{{protocol}}://{{host}}:{{port}}"],
-              "path": ["api", "chat", "conversation"]
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/{{api_version}}/chat/conversation",
+              "protocol": "{{protocol}}",
+              "host": ["{{host}}"],
+              "port": "{{port}}",
+              "path": ["api", "{{api_version}}", "chat", "conversation"]
             },
             "description": "Get a formatted conversation with speaker labels"
           }
@@ -500,9 +706,16 @@
               }
             ],
             "url": {
-              "raw": "{{protocol}}://{{host}}:{{port}}/api/thirdapi/prices-without-base-item",
-              "host": ["{{protocol}}://{{host}}:{{port}}"],
-              "path": ["api", "thirdapi", "prices-without-base-item"]
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/{{api_version}}/thirdapi/prices-without-base-item",
+              "protocol": "{{protocol}}",
+              "host": ["{{host}}"],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "{{api_version}}",
+                "thirdapi",
+                "prices-without-base-item"
+              ]
             },
             "description": "Analyzes pricing data excluding base items from third-party retail system. Returns detailed price information including UOM codes, price origins, type codes, effective/expiration dates, and package quantities."
           }
@@ -519,11 +732,18 @@
               }
             ],
             "url": {
-              "raw": "{{protocol}}://{{host}}:{{port}}/api/thirdapi/latest-statistics",
-              "host": ["{{protocol}}://{{host}}:{{port}}"],
-              "path": ["api", "thirdapi", "latest-statistics"]
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/{{api_version}}/thirdapi/latest-statistics",
+              "protocol": "{{protocol}}",
+              "host": ["{{host}}"],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "{{api_version}}",
+                "thirdapi",
+                "latest-statistics"
+              ]
             },
-            "description": "Provides comprehensive processing statistics from third-party retail system including total unique content types, total documents processed (82,056 documents across 51 types), and breakdown by content type with counts."
+            "description": "Provides comprehensive processing statistics from third-party retail system including total unique content types, total documents processed, and breakdown by content type with counts."
           }
         },
         {
@@ -538,11 +758,13 @@
               }
             ],
             "url": {
-              "raw": "{{protocol}}://{{host}}:{{port}}/api/thirdapi/content-types",
-              "host": ["{{protocol}}://{{host}}:{{port}}"],
-              "path": ["api", "thirdapi", "content-types"]
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/{{api_version}}/thirdapi/content-types",
+              "protocol": "{{protocol}}",
+              "host": ["{{host}}"],
+              "port": "{{port}}",
+              "path": ["api", "{{api_version}}", "thirdapi", "content-types"]
             },
-            "description": "Analyzes and returns the distribution of all third-party content types in the MongoDB database. Shows content type name, simplified class name, and document count for each type (e.g., ItemShelfAssignmentsDO: 22,115 records, PricingDataDO: 18,340 records)."
+            "description": "Analyzes and returns the distribution of all third-party content types in the MongoDB database. Shows content type name, simplified class name, and document count for each type."
           }
         },
         {
@@ -557,9 +779,17 @@
               }
             ],
             "url": {
-              "raw": "{{protocol}}://{{host}}:{{port}}/api/thirdapi/articles/search?name={{article_name}}",
-              "host": ["{{protocol}}://{{host}}:{{port}}"],
-              "path": ["api", "thirdapi", "articles", "search"],
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/{{api_version}}/thirdapi/articles/search?name={{article_name}}",
+              "protocol": "{{protocol}}",
+              "host": ["{{host}}"],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "{{api_version}}",
+                "thirdapi",
+                "articles",
+                "search"
+              ],
               "query": [
                 {
                   "key": "name",
@@ -568,7 +798,7 @@
                 }
               ]
             },
-            "description": "Find articles by name using case-insensitive partial match. Searches BaseItemDO documents in the third-party retail system. Example: searching for 'MASTI' will find all articles with 'MASTI' anywhere in the name."
+            "description": "Find articles by name using case-insensitive partial match. Searches BaseItemDO documents in the third-party retail system."
           }
         },
         {
@@ -583,11 +813,46 @@
               }
             ],
             "url": {
-              "raw": "{{protocol}}://{{host}}:{{port}}/api/thirdapi/articles/{{content_key}}",
-              "host": ["{{protocol}}://{{host}}:{{port}}"],
-              "path": ["api", "thirdapi", "articles", "{{content_key}}"]
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/{{api_version}}/thirdapi/articles/{{content_key}}",
+              "protocol": "{{protocol}}",
+              "host": ["{{host}}"],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "{{api_version}}",
+                "thirdapi",
+                "articles",
+                "{{content_key}}"
+              ]
             },
-            "description": "Find a specific article by its content key. The content key will be automatically zero-padded to 18 digits (e.g., 1615 becomes 000000000000001615). Returns complete BaseItemDO article information including name, description, and item number."
+            "description": "Find a specific article by its content key. The content key will be automatically zero-padded to 18 digits."
+          }
+        },
+        {
+          "name": "Get Articles with Ingredients",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/{{api_version}}/thirdapi/articles/ingredients",
+              "protocol": "{{protocol}}",
+              "host": ["{{host}}"],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "{{api_version}}",
+                "thirdapi",
+                "articles",
+                "ingredients"
+              ]
+            },
+            "description": "Get all articles (BaseItemDO) that have ingredient information (INGR or IN text classes). Returns article content key, name, text class, language, and concatenated ingredient text."
           }
         },
         {
@@ -602,15 +867,17 @@
               }
             ],
             "url": {
-              "raw": "{{protocol}}://{{host}}:{{port}}/api/thirdapi/plu-data",
-              "host": ["{{protocol}}://{{host}}:{{port}}"],
-              "path": ["api", "thirdapi", "plu-data"]
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/{{api_version}}/thirdapi/plu-data",
+              "protocol": "{{protocol}}",
+              "host": ["{{host}}"],
+              "port": "{{port}}",
+              "path": ["api", "{{api_version}}", "thirdapi", "plu-data"]
             },
-            "description": "Get PLU (Price Look-Up) data from SAP Fiori DynamicTableauItemListDO. Returns PLU codes, business unit groups, group descriptions, POS item IDs, and sequence numbers. Used for POS item lists and product group organization. Data sorted by content key and sequence number."
+            "description": "Get PLU (Price Look-Up) data from SAP Fiori DynamicTableauItemListDO. Returns PLU codes, business unit groups, group descriptions, POS item IDs, and sequence numbers."
           }
         }
       ],
-      "description": "ThirdApi Plugin - Advanced analytics and data mining from third-party retail system stored in MongoDB (82,056 documents, 51 content types)"
+      "description": "ThirdApi Plugin - Advanced analytics and data mining from third-party retail system stored in MongoDB"
     },
     {
       "name": "Health Checks",
@@ -628,7 +895,9 @@
             ],
             "url": {
               "raw": "{{protocol}}://{{host}}:{{port}}/health",
-              "host": ["{{protocol}}://{{host}}:{{port}}"],
+              "protocol": "{{protocol}}",
+              "host": ["{{host}}"],
+              "port": "{{port}}",
               "path": ["health"]
             },
             "description": "Check overall system health status"
@@ -646,9 +915,11 @@
               }
             ],
             "url": {
-              "raw": "{{protocol}}://{{host}}:{{port}}/api/supermarket/health",
-              "host": ["{{protocol}}://{{host}}:{{port}}"],
-              "path": ["api", "supermarket", "health"]
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/{{api_version}}/supermarket/health",
+              "protocol": "{{protocol}}",
+              "host": ["{{host}}"],
+              "port": "{{port}}",
+              "path": ["api", "{{api_version}}", "supermarket", "health"]
             },
             "description": "Check SQL Server database connectivity for Supermarket plugin"
           }
@@ -665,9 +936,11 @@
               }
             ],
             "url": {
-              "raw": "{{protocol}}://{{host}}:{{port}}/api/thirdapi/health",
-              "host": ["{{protocol}}://{{host}}:{{port}}"],
-              "path": ["api", "thirdapi", "health"]
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/{{api_version}}/thirdapi/health",
+              "protocol": "{{protocol}}",
+              "host": ["{{host}}"],
+              "port": "{{port}}",
+              "path": ["api", "{{api_version}}", "thirdapi", "health"]
             },
             "description": "Check MongoDB database connectivity for ThirdApi plugin"
           }

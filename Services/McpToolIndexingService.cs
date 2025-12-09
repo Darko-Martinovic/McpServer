@@ -189,7 +189,8 @@ public class McpToolIndexingService : IMcpToolIndexingService
             ? endpointMap[methodName]
             : string.Concat(methodName.Select((x, i) => i > 0 && char.IsUpper(x) ? "-" + x : x.ToString())).ToLowerInvariant();
 
-        return $"/api/{routePrefix}/{endpoint}";
+        // Include version in the API path (v1)
+        return $"/api/v1/{routePrefix}/{endpoint}";
     }
     private string ExtractMethodParameters(MethodInfo method)
     {

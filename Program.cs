@@ -6,6 +6,7 @@ using McpServer.Controllers;
 using McpServer.Plugins.ThirdApi;
 using McpServer.Plugins.ThirdApi.Controllers;
 using McpServer.Plugins.ThirdApi.Services;
+using Asp.Versioning;
 using Serilog;
 
 
@@ -189,6 +190,21 @@ static async Task RunWebApiAsync(string[] args)
         .AddApplicationPart(typeof(ChatController).Assembly)
         .AddApplicationPart(typeof(ThirdApiController).Assembly)
         .AddApplicationPart(typeof(ToolProxyController).Assembly);
+
+    // Configure API Versioning
+    builder.Services.AddApiVersioning(options =>
+    {
+        options.DefaultApiVersion = new ApiVersion(1, 0);
+        options.AssumeDefaultVersionWhenUnspecified = true;
+        options.ReportApiVersions = true;
+        options.ApiVersionReader = new UrlSegmentApiVersionReader();
+    })
+    .AddApiExplorer(options =>
+    {
+        options.GroupNameFormat = "'v'VVV";
+        options.SubstituteApiVersionInUrl = true;
+    });
+
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen(c =>
     {
