@@ -14,6 +14,9 @@ _The demo showcases dual-mode operation, MCP tool integration with Claude Deskto
 
 Recent Additions:
 
+- **API Versioning** - All endpoints now use versioned paths (`/api/v1/...`) for future compatibility
+- **Unified Tool Proxy** - Native .NET tool execution service replacing external middleware
+- **Articles with Ingredients** - New endpoint for retrieving articles with ingredient information from MongoDB
 - **Custom Plugin Support** - Define custom logic to access your database or API through configurable plugins
 - **Advanced JSON Viewer** - Interactive data visualizer with expand/collapse functionality and intelligent formatting
 - **Enhanced AI Response Tracking** - Each AI response now includes detailed metadata:
@@ -25,9 +28,11 @@ Recent Additions:
 ## Features
 
 - **Dual Mode:** Run as a Web API (REST endpoints) or as a console MCP tool provider
+- **API Versioning:** URI-based versioning (`/api/v1/...`) for all endpoints
 - **Plugin Architecture:** Extensible system supporting multiple data sources and operations
 - **Supermarket Analytics:** Inventory, sales, revenue, category, and stock tools (SQL Server)
-- **Third-Party-Provider API Integration:** MongoDB-based operations for prices analysis and content statistics
+- **ThirdApi Integration:** MongoDB-based operations for prices analysis, content statistics, and article ingredients
+- **Unified Tool Proxy:** Execute any MCP tool via a single endpoint with automatic routing
 - **Resource-like Endpoints:** Real-time inventory, daily summaries, detailed product info
 - **Advanced Analytics:** Complex MongoDB aggregation pipelines for data analysis
 - **Comprehensive Logging:** Serilog-based, file and console
@@ -38,8 +43,7 @@ Recent Additions:
 
 - .NET 9.0+
 - SQL Server 2014+ (for Supermarket plugin)
-- MongoDB 4.0+ (for third-party-provider plugin, optional)
-- Node.js (for MCP Inspector, optional)
+- MongoDB 4.0+ (for ThirdApi plugin, optional)
 
 ### Setup
 
@@ -68,17 +72,46 @@ Recent Additions:
 ### Web API Mode
 
 - Start the server with `--webapi`
-- **Supermarket Plugin Endpoints:**
-  - `GET http://localhost:5000/api/supermarket/products` (all products)
-  - `GET http://localhost:5000/api/supermarket/sales?startDate=2025-01-01&endDate=2025-01-31` (sales data)
-  - `GET http://localhost:5000/health` (general health check)
-- **Third-Party-Provider Plugin Endpoints:**
-  - `GET http://localhost:5000/api/third-party-provider/prices-without-base-item` (prices analysis)
-  - `GET http://localhost:5000/api/third-party-provider/latest-statistics` (processing statistics)
-  - `GET http://localhost:5000/api/third-party-provider/content-types` (content types summary)
-  - `GET http://localhost:5000/api/third-party-provider/health` (MongoDB health check)
-- **API Documentation:** `GET http://localhost:5000/swagger` (Swagger UI)
-- Any HTTP client or frontend can consume the API
+- **Base URL:** `http://localhost:5000`
+- **API Version:** `v1`
+
+#### Tool Proxy Endpoints (Unified Tool Execution)
+
+- `POST /api/v1/tool` - Execute any MCP tool by name
+- `POST /api/v1/search` - Search for tools via Azure Cognitive Search
+- `GET /api/v1/tools/schema` - Get all available tool schemas
+- `GET /api/v1/proxy/health` - Tool proxy health check
+
+#### Supermarket Plugin Endpoints (SQL Server)
+
+- `GET /api/v1/supermarket/products` - All products
+- `GET /api/v1/supermarket/products/low-stock?threshold=10` - Low stock products
+- `GET /api/v1/supermarket/sales?startDate=2025-01-01&endDate=2025-12-31` - Sales data
+- `GET /api/v1/supermarket/revenue?startDate=2025-01-01&endDate=2025-12-31` - Total revenue
+- `GET /api/v1/supermarket/inventory/status` - Inventory status
+- `GET /api/v1/supermarket/inventory/detailed` - Detailed inventory
+- `GET /api/v1/supermarket/health` - SQL Server health check
+
+#### ThirdApi Plugin Endpoints (MongoDB)
+
+- `GET /api/v1/thirdapi/prices-without-base-item` - Prices analysis
+- `GET /api/v1/thirdapi/latest-statistics` - Processing statistics
+- `GET /api/v1/thirdapi/content-types` - Content types summary
+- `GET /api/v1/thirdapi/articles/search?name=MASTI` - Find articles by name
+- `GET /api/v1/thirdapi/articles/{contentKey}` - Find article by content key
+- `GET /api/v1/thirdapi/articles/ingredients` - Articles with ingredients
+- `GET /api/v1/thirdapi/plu-data` - PLU data from SAP Fiori
+- `GET /api/v1/thirdapi/health` - MongoDB health check
+
+#### Chat Endpoints
+
+- `POST /api/v1/chat/message` - Process chat message with AI
+- `GET /api/v1/chat/functions` - Get available AI functions
+
+#### Health & Documentation
+
+- `GET /health` - General system health check
+- `GET /swagger` - Swagger UI API documentation
 
 ### MCP Tool Provider Mode
 
@@ -109,9 +142,9 @@ Recent Additions:
     }
   }
   ```
-- **MongoDB (Third-Party-Provider Plugin):** Default connection to `mongodb://localhost:27017/ThirdPartyProvider`
-  - Connects to `ThirdPartyProvider` database
-  - Uses `Pump` collection for price data
+- **MongoDB (ThirdApi Plugin):** Default connection to `mongodb://localhost:27017/ThirdApi`
+  - Connects to `ThirdApi` database
+  - Uses `Pump` collection for article and price data
   - Uses `Summary` collection for statistics
 
 ### Claude Desktop Integration
@@ -123,7 +156,7 @@ Recent Additions:
 The server supports a plugin-based architecture allowing multiple data sources:
 
 - **Supermarket Plugin:** SQL Server-based inventory and sales management
-- **Third-Party-Provider Plugin:** MongoDB-based price analysis and content statistics
+- **ThirdApi Plugin:** MongoDB-based price analysis, content statistics, and article ingredients
 - **Extensible Design:** Easy to add new plugins for additional data sources
 
 Each plugin provides:
@@ -133,11 +166,32 @@ Each plugin provides:
 - Health monitoring and logging
 - Independent data service layer
 
+## API Versioning
+
+All API endpoints use URI-based versioning:
+
+```
+/api/v1/supermarket/products
+/api/v1/thirdapi/articles/ingredients
+/api/v1/tool
+```
+
+- **Default Version:** v1.0
+- **Version Header:** API responses include `api-supported-versions` header
+- **Future Versions:** New versions (v2, v3) can be added without breaking existing clients
+
 ## Troubleshooting & Logs
 
 - Logs: `Logs/mcpserver.log` (file), console output
 - Common issues: Check connection string, database setup, and logs for errors
 - For MCP/Claude issues: Ensure config file is correct and restart the app after changes
+
+## Postman Collection
+
+Import the Postman collection and environment from the `postman/` folder:
+
+- `McpServer-Collection.json` - All API endpoints
+- `McpServer-Environment.json` - Environment variables (protocol, host, port, api_version)
 
 ## 📄 License
 
