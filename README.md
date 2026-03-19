@@ -1,5 +1,7 @@
 # Supermarket MCP Server
 
+[![Security Scan](https://img.shields.io/endpoint?url=https://mcpampel.com/badge/darko-martinovic/mcpserver.json)](https://mcpampel.com/repo/darko-martinovic/mcpserver)
+
 A modern, dual-mode server for supermarket inventory and sales management. Supports both **Web API** (REST) and **console/MCP** operation for integration with AI tools like Claude Desktop.
 
 ## 🎬 Demo Video
