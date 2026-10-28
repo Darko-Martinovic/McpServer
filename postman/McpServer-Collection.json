@@ -1,0 +1,1150 @@
+{
+  "info": {
+    "name": "McpServer API Collection",
+    "description": "Complete collection of McpServer REST API endpoints - includes Supermarket Plugin (SQL Server), Catalog Plugin (MongoDB Analytics), and Tool Proxy (unified tool execution)",
+    "version": "3.0.0",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [],
+  "item": [
+    {
+      "name": "Tool Proxy",
+      "item": [
+        {
+          "name": "Execute Tool",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tool\": \"{{tool_name}}\",\n  \"arguments\": {},\n  \"originalUserInput\": \"Show me articles with ingredients\"\n}"
+            },
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/{{api_version}}/tool",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "{{api_version}}",
+                "tool"
+              ]
+            },
+            "description": "Execute any MCP tool by name. Supports tool routing, parameter extraction, and multi-tool operations."
+          }
+        },
+        {
+          "name": "Search Tools",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"query\": \"articles with ingredients\"\n}"
+            },
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/{{api_version}}/search",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "{{api_version}}",
+                "search"
+              ]
+            },
+            "description": "Search for tools using Azure Cognitive Search. Returns matching tools based on query."
+          }
+        },
+        {
+          "name": "Get Tool Schemas",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/{{api_version}}/tools/schema",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "{{api_version}}",
+                "tools",
+                "schema"
+              ]
+            },
+            "description": "Get all available tool schemas from all plugins (Supermarket and Catalog)"
+          }
+        },
+        {
+          "name": "Tool Proxy Health",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/{{api_version}}/proxy/health",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "{{api_version}}",
+                "proxy",
+                "health"
+              ]
+            },
+            "description": "Check health of the unified tool proxy service"
+          }
+        }
+      ],
+      "description": "Unified Tool Proxy - replaces Node.js middleware with native .NET implementation"
+    },
+    {
+      "name": "Products",
+      "item": [
+        {
+          "name": "Get All Products",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/{{api_version}}/supermarket/products",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "{{api_version}}",
+                "supermarket",
+                "products"
+              ]
+            },
+            "description": "Get all products in the supermarket inventory"
+          }
+        },
+        {
+          "name": "Get Low Stock Products",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/{{api_version}}/supermarket/products/low-stock?threshold={{low_stock_threshold}}",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "{{api_version}}",
+                "supermarket",
+                "products",
+                "low-stock"
+              ],
+              "query": [
+                {
+                  "key": "threshold",
+                  "value": "{{low_stock_threshold}}",
+                  "description": "Stock threshold (default: 10)"
+                }
+              ]
+            },
+            "description": "Get products with stock levels below threshold"
+          }
+        },
+        {
+          "name": "Get Products by Category",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/{{api_version}}/supermarket/products/category/{{category}}",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "{{api_version}}",
+                "supermarket",
+                "products",
+                "category",
+                "{{category}}"
+              ]
+            },
+            "description": "Get products filtered by category"
+          }
+        },
+        {
+          "name": "Get Products by Supplier",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/{{api_version}}/supermarket/products/supplier/{{supplier}}",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "{{api_version}}",
+                "supermarket",
+                "products",
+                "supplier",
+                "{{supplier}}"
+              ]
+            },
+            "description": "Get products filtered by supplier"
+          }
+        }
+      ],
+      "description": "Product-related endpoints"
+    },
+    {
+      "name": "Sales",
+      "item": [
+        {
+          "name": "Get Sales Data",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/{{api_version}}/supermarket/sales?startDate={{start_date}}&endDate={{end_date}}",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "{{api_version}}",
+                "supermarket",
+                "sales"
+              ],
+              "query": [
+                {
+                  "key": "startDate",
+                  "value": "{{start_date}}",
+                  "description": "Start date in YYYY-MM-DD format"
+                },
+                {
+                  "key": "endDate",
+                  "value": "{{end_date}}",
+                  "description": "End date in YYYY-MM-DD format"
+                }
+              ]
+            },
+            "description": "Get sales data for a specific date range"
+          }
+        },
+        {
+          "name": "Get Total Revenue",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/{{api_version}}/supermarket/revenue?startDate={{start_date}}&endDate={{end_date}}",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "{{api_version}}",
+                "supermarket",
+                "revenue"
+              ],
+              "query": [
+                {
+                  "key": "startDate",
+                  "value": "{{start_date}}",
+                  "description": "Start date in YYYY-MM-DD format"
+                },
+                {
+                  "key": "endDate",
+                  "value": "{{end_date}}",
+                  "description": "End date in YYYY-MM-DD format"
+                }
+              ]
+            },
+            "description": "Calculate total revenue for a date range"
+          }
+        },
+        {
+          "name": "Get Sales by Category",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/{{api_version}}/supermarket/sales/by-category?startDate={{start_date}}&endDate={{end_date}}",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "{{api_version}}",
+                "supermarket",
+                "sales",
+                "by-category"
+              ],
+              "query": [
+                {
+                  "key": "startDate",
+                  "value": "{{start_date}}",
+                  "description": "Start date in YYYY-MM-DD format"
+                },
+                {
+                  "key": "endDate",
+                  "value": "{{end_date}}",
+                  "description": "End date in YYYY-MM-DD format"
+                }
+              ]
+            },
+            "description": "Get sales performance by product category"
+          }
+        },
+        {
+          "name": "Get Daily Summary",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/{{api_version}}/supermarket/sales/daily-summary?date={{target_date}}",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "{{api_version}}",
+                "supermarket",
+                "sales",
+                "daily-summary"
+              ],
+              "query": [
+                {
+                  "key": "date",
+                  "value": "{{target_date}}",
+                  "description": "Date in YYYY-MM-DD format (optional, defaults to today)"
+                }
+              ]
+            },
+            "description": "Get daily sales summary"
+          }
+        }
+      ],
+      "description": "Sales-related endpoints"
+    },
+    {
+      "name": "Inventory",
+      "item": [
+        {
+          "name": "Get Inventory Status",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/{{api_version}}/supermarket/inventory/status",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "{{api_version}}",
+                "supermarket",
+                "inventory",
+                "status"
+              ]
+            },
+            "description": "Get real-time inventory status with stock levels and recent sales"
+          }
+        },
+        {
+          "name": "Get Detailed Inventory",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/{{api_version}}/supermarket/inventory/detailed",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "{{api_version}}",
+                "supermarket",
+                "inventory",
+                "detailed"
+              ]
+            },
+            "description": "Get detailed inventory information for all products"
+          }
+        },
+        {
+          "name": "Get Detailed Inventory by Category",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/{{api_version}}/supermarket/inventory/detailed?category={{category}}",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "{{api_version}}",
+                "supermarket",
+                "inventory",
+                "detailed"
+              ],
+              "query": [
+                {
+                  "key": "category",
+                  "value": "{{category}}",
+                  "description": "Optional category filter"
+                }
+              ]
+            },
+            "description": "Get detailed inventory information filtered by category"
+          }
+        },
+        {
+          "name": "Get Detailed Inventory by Supplier",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/{{api_version}}/supermarket/inventory/detailed?supplier={{supplier}}",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "{{api_version}}",
+                "supermarket",
+                "inventory",
+                "detailed"
+              ],
+              "query": [
+                {
+                  "key": "supplier",
+                  "value": "{{supplier}}",
+                  "description": "Optional supplier filter"
+                }
+              ]
+            },
+            "description": "Get detailed inventory information filtered by supplier"
+          }
+        },
+        {
+          "name": "Get Detailed Inventory by Category and Supplier",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/{{api_version}}/supermarket/inventory/detailed?category={{category}}&supplier={{supplier}}",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "{{api_version}}",
+                "supermarket",
+                "inventory",
+                "detailed"
+              ],
+              "query": [
+                {
+                  "key": "category",
+                  "value": "{{category}}",
+                  "description": "Optional category filter"
+                },
+                {
+                  "key": "supplier",
+                  "value": "{{supplier}}",
+                  "description": "Optional supplier filter"
+                }
+              ]
+            },
+            "description": "Get detailed inventory information filtered by both category and supplier"
+          }
+        }
+      ],
+      "description": "Inventory-related endpoints"
+    },
+    {
+      "name": "Supermarket Tools",
+      "item": [
+        {
+          "name": "Get Tools Schema",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/{{api_version}}/supermarket/tools/schema",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "{{api_version}}",
+                "supermarket",
+                "tools",
+                "schema"
+              ]
+            },
+            "description": "Get the schema for MCP tools index"
+          }
+        },
+        {
+          "name": "Get Indexed Tools",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/{{api_version}}/supermarket/tools/indexed",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "{{api_version}}",
+                "supermarket",
+                "tools",
+                "indexed"
+              ]
+            },
+            "description": "Get indexed MCP tools from Azure Search (for testing)"
+          }
+        }
+      ],
+      "description": "MCP tools and schema endpoints for Supermarket plugin"
+    },
+    {
+      "name": "Chat",
+      "item": [
+        {
+          "name": "Process Chat Message",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"message\": \"{{chat_message}}\",\n  \"history\": [\n    {\n      \"speaker\": \"You\",\n      \"message\": \"Hello\",\n      \"timestamp\": \"2025-08-14T10:00:00Z\",\n      \"formattedMessage\": \"You: Hello\"\n    },\n    {\n      \"speaker\": \"AI\",\n      \"message\": \"Hi there! How can I help you today?\",\n      \"timestamp\": \"2025-08-14T10:00:01Z\",\n      \"formattedMessage\": \"AI: Hi there! How can I help you today?\"\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/{{api_version}}/chat/message",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "{{api_version}}",
+                "chat",
+                "message"
+              ]
+            },
+            "description": "Process a chat message with optional conversation history"
+          }
+        },
+        {
+          "name": "Chat Completion (Azure OpenAI proxy)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"You are a helpful supermarket assistant.\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": \"{{chat_message}}\"\n    }\n  ],\n  \"max_tokens\": 200\n}"
+            },
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/{{api_version}}/chat/completions",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "{{api_version}}",
+                "chat",
+                "completions"
+              ]
+            },
+            "description": "Forward a chat completion request to Azure OpenAI with the server's key. 503 when Azure OpenAI isn't configured."
+          }
+        },
+        {
+          "name": "Get Available Functions",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/{{api_version}}/chat/functions",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "{{api_version}}",
+                "chat",
+                "functions"
+              ]
+            },
+            "description": "Get list of available AI functions"
+          }
+        },
+        {
+          "name": "Get Formatted Conversation",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"message\": \"{{chat_message}}\",\n  \"history\": [\n    {\n      \"speaker\": \"You\",\n      \"message\": \"What are your available functions?\",\n      \"timestamp\": \"2025-08-14T10:00:00Z\",\n      \"formattedMessage\": \"You: What are your available functions?\"\n    }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/{{api_version}}/chat/conversation",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "{{api_version}}",
+                "chat",
+                "conversation"
+              ]
+            },
+            "description": "Get a formatted conversation with speaker labels"
+          }
+        }
+      ],
+      "description": "AI chat and conversation endpoints"
+    },
+    {
+      "name": "Catalog Analytics (MongoDB)",
+      "item": [
+        {
+          "name": "Get Prices Without Article",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/{{api_version}}/catalog/prices-without-article",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "{{api_version}}",
+                "catalog",
+                "prices-without-article"
+              ]
+            },
+            "description": "Analyzes pricing data excluding articles from Acme retail system. Returns detailed price information including UOM codes, price origins, type codes, effective/expiration dates, and package quantities."
+          }
+        },
+        {
+          "name": "Get Latest Statistics",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/{{api_version}}/catalog/latest-statistics",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "{{api_version}}",
+                "catalog",
+                "latest-statistics"
+              ]
+            },
+            "description": "Provides comprehensive processing statistics from Acme retail system including total unique content types, total documents processed, and breakdown by content type with counts."
+          }
+        },
+        {
+          "name": "Get Content Types Summary",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/{{api_version}}/catalog/content-types",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "{{api_version}}",
+                "catalog",
+                "content-types"
+              ]
+            },
+            "description": "Analyzes and returns the distribution of all Acme content types in the MongoDB database. Shows content type name, simplified class name, and document count for each type."
+          }
+        },
+        {
+          "name": "Find Articles by Name",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/{{api_version}}/catalog/articles/search?name={{article_name}}",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "{{api_version}}",
+                "catalog",
+                "articles",
+                "search"
+              ],
+              "query": [
+                {
+                  "key": "name",
+                  "value": "{{article_name}}",
+                  "description": "Part of the article name to search for (case-insensitive)"
+                }
+              ]
+            },
+            "description": "Find articles by name using case-insensitive partial match. Searches Article documents in the Acme retail system."
+          }
+        },
+        {
+          "name": "Find Article by Article Key",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/{{api_version}}/catalog/articles/{{article_key}}",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "{{api_version}}",
+                "catalog",
+                "articles",
+                "{{article_key}}"
+              ]
+            },
+            "description": "Find a specific article by its article key. The article key will be automatically zero-padded to 8 digits."
+          }
+        },
+        {
+          "name": "Get Articles with Ingredients",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/{{api_version}}/catalog/articles/ingredients",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "{{api_version}}",
+                "catalog",
+                "articles",
+                "ingredients"
+              ]
+            },
+            "description": "Get all articles that have ingredient information (the INGREDIENTS text type). Returns article article key, name, text type, language, and concatenated ingredient text."
+          }
+        },
+        {
+          "name": "Get PLU Data (Acme back office)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/{{api_version}}/catalog/plu-data",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "{{api_version}}",
+                "catalog",
+                "plu-data"
+              ]
+            },
+            "description": "Get PLU (Price Look-Up) data from Acme's back office PosItemList. Returns PLU codes, business unit groups, group descriptions, POS item IDs, and sequence numbers."
+          }
+        }
+      ],
+      "description": "Catalog Plugin - Advanced analytics and data mining from Acme retail system stored in MongoDB"
+    },
+    {
+      "name": "Health Checks",
+      "item": [
+        {
+          "name": "System Health",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/health",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "health"
+              ]
+            },
+            "description": "Check overall system health status"
+          }
+        },
+        {
+          "name": "Supermarket Plugin Health",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/{{api_version}}/supermarket/health",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "{{api_version}}",
+                "supermarket",
+                "health"
+              ]
+            },
+            "description": "Check SQL Server database connectivity for Supermarket plugin"
+          }
+        },
+        {
+          "name": "Catalog Plugin Health",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Accept",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{protocol}}://{{host}}:{{port}}/api/{{api_version}}/catalog/health",
+              "protocol": "{{protocol}}",
+              "host": [
+                "{{host}}"
+              ],
+              "port": "{{port}}",
+              "path": [
+                "api",
+                "{{api_version}}",
+                "catalog",
+                "health"
+              ]
+            },
+            "description": "Check MongoDB database connectivity for Catalog plugin"
+          }
+        }
+      ],
+      "description": "Health monitoring endpoints for system and individual plugins"
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "pm.test(\"Status code is 200\", function () {",
+          "    pm.response.to.have.status(200);",
+          "});",
+          "",
+          "pm.test(\"Response has success field\", function () {",
+          "    var jsonData = pm.response.json();",
+          "    pm.expect(jsonData).to.have.property('success');",
+          "});",
+          "",
+          "pm.test(\"Response has timestamp\", function () {",
+          "    var jsonData = pm.response.json();",
+          "    pm.expect(jsonData).to.have.property('timestamp');",
+          "});"
+        ]
+      }
+    }
+  ]
+}
