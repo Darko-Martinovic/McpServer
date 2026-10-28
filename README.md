@@ -1,6 +1,9 @@
 # Supermarket MCP Server
 
-A modern, dual-mode server for supermarket inventory and sales management. Supports both **Web API** (REST) and **console/MCP** operation for integration with AI tools like Claude Desktop.
+A .NET 9 server for supermarket inventory, sales and product-catalog data. It runs in one of two modes:
+
+- **MCP mode** (stdio): an MCP tool provider for Claude Desktop, MCP Inspector or any other MCP client
+- **Web API mode** (REST): the backend for [react-mcp-client](https://github.com/Darko-Martinovic/react-mcp-client), with Swagger, a unified tool proxy and an Azure OpenAI chat proxy
 
 ## 🎬 Demo Video
 
@@ -10,189 +13,162 @@ https://github.com/user-attachments/assets/7675de32-fa05-48e1-9327-8417670e9165
 
 _The demo showcases dual-mode operation, MCP tool integration with Claude Desktop, and REST API endpoints._
 
-## 🆕 Latest Features
-
-Recent Additions:
-
-- **API Versioning** - All endpoints now use versioned paths (`/api/v1/...`) for future compatibility
-- **Unified Tool Proxy** - Native .NET tool execution service replacing external middleware
-- **Articles with Ingredients** - New endpoint for retrieving articles with ingredient information from MongoDB
-- **Custom Plugin Support** - Define custom logic to access your database or API through configurable plugins
-- **Advanced JSON Viewer** - Interactive data visualizer with expand/collapse functionality and intelligent formatting
-- **Enhanced AI Response Tracking** - Each AI response now includes detailed metadata:
-  - Number of tokens used (prompt + completion)
-  - Estimated cost breakdown
-  - Tools utilized during processing
-  - AI model information
-
 ## Features
 
-- **Dual Mode:** Run as a Web API (REST endpoints) or as a console MCP tool provider
-- **API Versioning:** URI-based versioning (`/api/v1/...`) for all endpoints
-- **Plugin Architecture:** Extensible system supporting multiple data sources and operations
-- **Supermarket Analytics:** Inventory, sales, revenue, category, and stock tools (SQL Server)
-- **Catalog Integration:** MongoDB-based operations for prices analysis, content statistics, and article ingredients
-- **Unified Tool Proxy:** Execute any MCP tool via a single endpoint with automatic routing
-- **Resource-like Endpoints:** Real-time inventory, daily summaries, detailed product info
-- **Advanced Analytics:** Complex MongoDB aggregation pipelines for data analysis
-- **Comprehensive Logging:** Serilog-based, file and console
+- **Two modes:** MCP over stdio, or a versioned REST API (`/api/v1/...`)
+- **Plugin architecture:** each data source is a plugin with its own MCP tools, REST endpoints, data service and health check
+- **Supermarket plugin (SQL Server):** products, sales, revenue, categories, inventory, daily summaries, seasonal trends and critical stock alerts
+- **Catalog plugin (MongoDB, optional):** article search, prices without an article, import statistics, content types, ingredients and PLU data, built on aggregation pipelines
+- **Unified tool proxy:** run any MCP tool by name through one endpoint, and find tools with Azure AI Search
+- **Chat:** AI conversations with function calling, and an Azure OpenAI proxy so the React client never holds a key
+- **AI response metadata:** tokens used, estimated cost, tools called and model
+- **Logging:** Serilog, to the console and `Logs/mcpserver.log`
 
 ## Quick Start
 
 ### Prerequisites
 
-- .NET 9.0+
-- SQL Server 2014+ (for Supermarket plugin)
-- MongoDB 4.0+ (for Catalog plugin, optional)
+- .NET 9 SDK
+- SQL Server (LocalDB, Express or full) for the Supermarket plugin
+- MongoDB 4.0+ for the Catalog plugin (optional)
+- Azure OpenAI and Azure AI Search (optional; needed for the chat and tool-search endpoints)
 
 ### Setup
 
-1. **Database:**
-   - Run `Database/SetupDatabase.sql` to create tables and sample data
-2. **Configure:**
-   - Edit `appsettings.json` with your SQL Server connection string
-3. **Build:**
+1. **Database:** run `Database/SetupDatabase.sql` to create the tables and sample data.
+2. **Connection string:** `appsettings.json` points at `(localdb)\MSSQLLocalDB` by default; change `ConnectionStrings:DefaultConnection` if your SQL Server is elsewhere.
+3. **Keys:** copy `.env.example` to `.env` and fill in the Azure settings you use. The server reads `.env` from the directory it starts in, and `.env` is never committed.
+4. **Build:**
    ```bash
    dotnet build
    ```
-4. **Run:**
-   - **Web API mode:**
-     ```bash
-     dotnet run --webapi
-     # or use your published executable with --webapi
-     ```
-   - **Console/MCP mode:**
-     ```bash
-     dotnet run
-     # or use with Claude Desktop/Inspector as shown below
-     ```
+5. **Run:**
+   ```bash
+   # Web API mode (http://localhost:5000, Swagger at /swagger)
+   dotnet run -- --webapi
 
-## Usage
-
-### Web API Mode
-
-- Start the server with `--webapi`
-- **Base URL:** `http://localhost:5000`
-- **API Version:** `v1`
-
-#### Tool Proxy Endpoints (Unified Tool Execution)
-
-- `POST /api/v1/tool` - Execute any MCP tool by name
-- `POST /api/v1/search` - Search for tools via Azure Cognitive Search
-- `GET /api/v1/tools/schema` - Get all available tool schemas
-- `GET /api/v1/proxy/health` - Tool proxy health check
-
-#### Supermarket Plugin Endpoints (SQL Server)
-
-- `GET /api/v1/supermarket/products` - All products
-- `GET /api/v1/supermarket/products/low-stock?threshold=10` - Low stock products
-- `GET /api/v1/supermarket/sales?startDate=2025-01-01&endDate=2025-12-31` - Sales data
-- `GET /api/v1/supermarket/revenue?startDate=2025-01-01&endDate=2025-12-31` - Total revenue
-- `GET /api/v1/supermarket/inventory/status` - Inventory status
-- `GET /api/v1/supermarket/inventory/detailed` - Detailed inventory
-- `GET /api/v1/supermarket/health` - SQL Server health check
-
-#### Catalog Plugin Endpoints (MongoDB)
-
-- `GET /api/v1/catalog/prices-without-article` - Prices analysis
-- `GET /api/v1/catalog/latest-statistics` - Processing statistics
-- `GET /api/v1/catalog/content-types` - Content types summary
-- `GET /api/v1/catalog/articles/search?name=COLA` - Find articles by name
-- `GET /api/v1/catalog/articles/{articleKey}` - Find article by article key
-- `GET /api/v1/catalog/articles/ingredients` - Articles with ingredients
-- `GET /api/v1/catalog/plu-data` - PLU data from Acme's back office
-- `GET /api/v1/catalog/health` - MongoDB health check
-
-#### Chat Endpoints
-
-- `POST /api/v1/chat/message` - Process chat message with AI
-- `POST /api/v1/chat/completions` - Chat completion on Azure OpenAI with the server's key, for the React client (the body is passed on as it is)
-- `GET /api/v1/chat/functions` - Get available AI functions
-
-#### Health & Documentation
-
-- `GET /health` - General system health check
-- `GET /swagger` - Swagger UI API documentation
-
-### MCP Tool Provider Mode
-
-- Start the server without `--webapi`
-- Integrate with Claude Desktop or MCP Inspector
-- Example Claude config (`claude_desktop_config.json`):
-  ```json
-  {
-    "mcpServers": {
-      "supermarket": {
-        "command": "dotnet",
-        "args": ["run", "--project", "/path/to/your/McpServer", "--no-build"]
-      }
-    }
-  }
-  ```
-- Config file location: `C:\Users\<YourUsername>\AppData\Roaming\Claude`
+   # MCP mode (stdio)
+   dotnet run -- --console
+   ```
+   `--web`/`--webapi` and `--console`/`--mcp` pick the mode. Pass one explicitly: without it the server guesses from how it was started.
 
 ## Configuration
 
-### Database Connections
+`.env` (see `.env.example`):
 
-- **SQL Server (Supermarket Plugin):** Edit `appsettings.json`:
-  ```json
-  {
-    "ConnectionStrings": {
-      "DefaultConnection": "Server=your-server;Database=your-db;Integrated Security=true;TrustServerCertificate=true;"
+| Variable | Used for |
+|---|---|
+| `AOAI_ENDPOINT`, `AOAI_APIKEY`, `CHATCOMPLETION_DEPLOYMENTNAME` | Azure OpenAI: the chat endpoints and the chat completions proxy |
+| `EMBEDDING_DEPLOYMENTNAME` | Read but not used yet |
+| `AOAI_API_VERSION` | Optional; the API version for chat completions (default `2024-10-21`) |
+| `COGNITIVESEARCH_ENDPOINT`, `COGNITIVESEARCH_APIKEY` | Azure AI Search: tool indexing and `POST /api/v1/search` |
+| `CORS_ORIGINS` | Optional; browser origins allowed to call the API (default `http://localhost:5173,http://localhost:5174`) |
+
+`appsettings.json`:
+
+- `ConnectionStrings:DefaultConnection`: the SQL Server database
+- `ApplicationMode:Web:Urls`: where the Web API listens (`http://localhost:5000` and `https://localhost:5001`)
+- MongoDB: the Catalog plugin connects to `mongodb://localhost:27017`, database `Catalog`, collections `articles` (articles and prices) and `import_stats` (import statistics)
+
+## MCP Mode
+
+Claude Desktop config (`%APPDATA%\Claude\claude_desktop_config.json` on Windows):
+
+```json
+{
+  "mcpServers": {
+    "supermarket": {
+      "command": "dotnet",
+      "args": ["run", "--project", "/path/to/McpServer", "--no-build", "--", "--console"]
     }
   }
-  ```
-- **MongoDB (Catalog Plugin):** Default connection to `mongodb://localhost:27017/Catalog`
-  - Connects to `Catalog` database
-  - Uses `articles` collection for article and price data
-  - Uses `import_stats` collection for statistics
+}
+```
 
-### Claude Desktop Integration
+Or publish the server (`dotnet publish -c Release -o publish`) and point `command` at `publish/McpServer.exe` with `"args": ["--console"]`, as in `claude-mcp-config.json`. Restart Claude Desktop after a change.
 
-- **Claude Desktop:** See above for config example and file location
+### Tools
+
+| Plugin | Tools |
+|---|---|
+| Supermarket | `GetProducts`, `GetSalesData`, `GetTotalRevenue`, `GetLowStockProducts`, `GetSalesByCategory`, `GetInventoryStatus`, `GetDailySummary`, `GetDetailedInventory`, `GetSeasonalTrends`, `GetCriticalAlerts`, `PredictDemand`, `GetStockoutRisks`, `GetReorderRecommendations` |
+| Catalog | `GetPricesWithoutArticle`, `GetLatestStatistics`, `GetContentTypesSummary`, `FindArticlesByName`, `FindArticleByArticleKey` (keys are zero-padded to 8 digits), `GetPluData`, `GetArticlesWithIngredients` |
+
+## Web API Mode
+
+Base URL `http://localhost:5000`, API version `v1`. Swagger UI at `/swagger` lists every endpoint with its parameters.
+
+#### Tool proxy
+
+- `POST /api/v1/tool` - Run any MCP tool by name
+- `POST /api/v1/search` - Find tools with Azure AI Search
+- `GET /api/v1/tools/schema` - All tool schemas
+- `GET /api/v1/proxy/health` - Tool proxy health
+
+#### Supermarket plugin (SQL Server)
+
+- `GET /api/v1/supermarket/products` - All products
+- `GET /api/v1/supermarket/products/low-stock?threshold=10` - Products low in stock
+- `GET /api/v1/supermarket/products/category/{category}` - Products in a category
+- `GET /api/v1/supermarket/products/supplier/{supplier}` - Products from a supplier
+- `GET /api/v1/supermarket/sales?startDate=2025-01-01&endDate=2025-12-31` - Sales
+- `GET /api/v1/supermarket/sales/by-category?startDate=...&endDate=...` - Sales by category
+- `GET /api/v1/supermarket/sales/daily-summary?date=2025-06-01` - Daily summary (today by default)
+- `GET /api/v1/supermarket/revenue?startDate=...&endDate=...` - Total revenue
+- `GET /api/v1/supermarket/inventory/status` - Inventory status
+- `GET /api/v1/supermarket/inventory/detailed` - Detailed inventory
+- `GET /api/v1/supermarket/tools/schema` - The plugin's tool schemas
+- `GET /api/v1/supermarket/tools/indexed` - Tools indexed in Azure AI Search
+
+#### Catalog plugin (MongoDB)
+
+- `GET /api/v1/catalog/prices-without-article` - Prices with no matching article
+- `GET /api/v1/catalog/latest-statistics` - Latest import statistics
+- `GET /api/v1/catalog/content-types` - Content types summary
+- `GET /api/v1/catalog/articles/search?name=COLA` - Articles by name
+- `GET /api/v1/catalog/articles/{articleKey}` - An article by its key
+- `GET /api/v1/catalog/articles/ingredients` - Articles with ingredients
+- `GET /api/v1/catalog/plu-data` - PLU data from Acme's back office
+- `GET /api/v1/catalog/health` - MongoDB health
+
+#### Chat
+
+- `POST /api/v1/chat/message` - A chat message, answered by Azure OpenAI with the tools
+- `POST /api/v1/chat/conversation` - The same, returned as a formatted transcript with the history
+- `GET /api/v1/chat/functions` - The functions the AI can call
+- `POST /api/v1/chat/completions` - Azure OpenAI chat completion with the server's key, for the React client. The body is passed on as it is, with at most 4000 `max_tokens` and one choice; 503 when Azure OpenAI isn't configured
+
+#### Health
+
+- `GET /health` - Server health
 
 ## Plugin Architecture
 
-The server supports a plugin-based architecture allowing multiple data sources:
-
-- **Supermarket Plugin:** SQL Server-based inventory and sales management
-- **Catalog Plugin:** MongoDB-based price analysis, content statistics, and article ingredients
-- **Extensible Design:** Easy to add new plugins for additional data sources
-
-Each plugin provides:
-
-- MCP tools for AI integration
-- REST API endpoints for web clients
-- Health monitoring and logging
-- Independent data service layer
-
-## API Versioning
-
-All API endpoints use URI-based versioning:
-
 ```
-/api/v1/supermarket/products
-/api/v1/catalog/articles/ingredients
-/api/v1/tool
+Plugins/
+├── Interfaces/   # IToolProvider, IDataService, IPluginMetadata
+├── Services/     # Plugin discovery, MCP and controller registration
+└── Catalog/      # The Catalog plugin: MCP tools, controller, models, data service
 ```
 
-- **Default Version:** v1.0
-- **Version Header:** API responses include `api-supported-versions` header
-- **Future Versions:** New versions (v2, v3) can be added without breaking existing clients
-
-## Troubleshooting & Logs
-
-- Logs: `Logs/mcpserver.log` (file), console output
-- Common issues: Check connection string, database setup, and logs for errors
-- For MCP/Claude issues: Ensure config file is correct and restart the app after changes
+The Supermarket plugin's tools are in `SupermarketMcpTools.cs`, its controller in `Controllers/` and its data service in `Services/`. A new data source is a new plugin with its own tools, endpoints and health check.
 
 ## Postman Collection
 
-Import the Postman collection and environment from the `postman/` folder:
+Import both files from `postman/`:
 
-- `McpServer-Collection.json` - All API endpoints
-- `McpServer-Environment.json` - Environment variables (protocol, host, port, api_version)
+- `McpServer-Collection.json` - Every endpoint
+- `McpServer-Environment.json` - `protocol`, `host`, `port`, `api_version`
+
+## Troubleshooting
+
+- **Logs:** `Logs/mcpserver.log` and the console. In MCP mode the console output goes to stderr, so it doesn't break JSON-RPC on stdout.
+- **Database errors:** check the connection string and that `SetupDatabase.sql` ran.
+- **Chat returns 503:** `.env` is missing the Azure OpenAI settings, or the server started in another directory and didn't find `.env`.
+- **The React client gets CORS errors:** run it through Vite's proxy (`npm run dev`), or add its origin to `CORS_ORIGINS`.
+- **Claude Desktop doesn't see the tools:** check the config path and `--console`, then restart Claude Desktop.
+
+`search-proxy-complete.cjs` is the earlier Node.js tool proxy, kept for reference; the server's own tool proxy replaces it.
 
 ## 📄 License
 
@@ -203,7 +179,3 @@ MIT License - see LICENSE file for details.
 This project was developed independently on personal equipment and in personal time.
 It is not affiliated with, endorsed by, or derived from the intellectual property of any employer or client.
 All examples, configurations, and data are generic and intended solely for demonstration and educational purposes.
-
----
-
-For more details, see the code and comments. Contributions welcome!
